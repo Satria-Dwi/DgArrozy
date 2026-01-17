@@ -2,15 +2,27 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\admin\MainAdminController;
 use App\Http\Controllers\admin\SigninController;
 
 Route::get('/', function () {
-    return view('mainmenu',[
+    return view('mainmenu', [
         'title' => 'mainmenu',
         'active' => 'home',
     ]);
 });
 
-Route::get('/signin', [SigninController::class, 'index']);
+
+Route::get('/signin', [SigninController::class, 'index'])->name('signin');
+Route::post('/signin', [SigninController::class, 'authenticate']);
+Route::post('/signout', [SigninController::class, 'signout']);
+
 Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::get('/dashboard-data', [DashboardController::class, 'dashboardData']);
+
+
+Route::middleware(['dgarrozy.auth:admin'])->group(function () {
+    Route::get('/mainadmin', [MainAdminController::class, 'index']);
+    Route::get('/mainadmin/pasien-summary', [MainAdminController::class, 'pasienSummary']);
+    Route::get('/mainadmin/manajemendata', [MainAdminController::class, 'manajemendata']);
+});

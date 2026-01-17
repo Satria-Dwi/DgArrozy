@@ -498,6 +498,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     setInterval(realtimeClock, 1000); // update tiap detik
 
     initSliders();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
     loadDashboard();
     setInterval(loadDashboard, 15000);
 });

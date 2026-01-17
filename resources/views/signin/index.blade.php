@@ -15,14 +15,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
-        <form class="card" method="POST">
+        <form class="card" method="POST" action="/signin">
             @csrf
             <h1>Welcome</h1>
             <p>Please Sign in</p>
 
 
-            <label for="email">Email</label>
-            <input class=" @error('email') is-invalid @enderror" name="email" type="email" id="email" placeholder="nama@contoh.com" autofocus required value="{{ old('email') }}">
+            <label for="email">User</label>
+            <input class=" @error('email') is-invalid @enderror" name="email" type="email" id="email" placeholder="email" autofocus required value="{{ old('email') }}">
             @error('email')
                 <div class="invalid-tooltip">
                     {{ $message }}
@@ -39,9 +39,9 @@
 
             <button class="btn" type="submit">Sign in</button>
 
-            <div class="alt">
+            {{-- <div class="alt">
                 Not Registered yet ? <a href="/signup">sign up</a>
-            </div>
+            </div> --}}
         </form>
     </div>
 @endsection 

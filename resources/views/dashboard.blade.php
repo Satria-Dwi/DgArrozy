@@ -221,9 +221,9 @@
                         </table>
                     </div>
                 </div>
-                <div class="kpi-card red">
+                {{-- <div class="kpi-card red">
 
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

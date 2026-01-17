@@ -3,14 +3,14 @@
         <!-- Contact Person -->
         <div class="flex flex-col items-start">
             <h2 class="text-2xl font-bold mb-2">Contact Person</h2>
-            <p class="mb-1">WhatsApp: <a href="https://wa.me/6281234567890" class="underline hover:text-blue-200">+62 812-3456-7890</a></p>
-            <p class="mb-1">Email: <a href="mailto:info@anomsite.com" class="underline hover:text-blue-200">info@anomsite.com</a></p>
-            <p>Alamat: Jl. Teknologi No. 123, Jakarta</p>
+            <p class="mb-1">WhatsApp: <a href="https://wa.me/6281234567890" class="underline hover:text-blue-200">-</a></p>
+            <p class="mb-1">Email: <a href="mailto:info@anomsite.com" class="underline hover:text-blue-200"> RSUD Ar Rozy</a></p>
+            <p>Alamat: Probolinggo - Jawa Timur</p>
         </div>
         <!-- Iklan Kerjasama -->
         <div class="flex flex-col items-start">
-            <h2 class="text-2xl font-bold mb-2">Iklan Kerjasama</h2>
-            <p class="mb-2">Ingin beriklan atau kerjasama dengan AnomSite?</p>
+            <h2 class="text-2xl font-bold mb-2"></h2>
+            <p class="mb-2">Thank You</p>
             <a href="mailto:kerjasama@anomsite.com"
                class="bg-white text-blue-600 font-semibold px-5 py-2 rounded-lg shadow hover:bg-blue-100 transition">
                 Hubungi Kami
@@ -18,6 +18,6 @@
         </div>
     </div>
     <div class="text-center mt-8 text-sm opacity-80">
-        &copy; {{ date('Y') }} AnomSite. All rights reserved.
+        &copy; {{ date('Y') }} IT Team. All rights reserved.
     </div>
 </footer>
