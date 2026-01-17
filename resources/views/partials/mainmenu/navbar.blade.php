@@ -37,7 +37,7 @@
                     <ul x-show="open" x-cloak @click.away="open = false"
                         class="absolute right-0 mt-2 w-48 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 border rounded shadow-lg">
                         <li class="relative">
-                            <a href="/dashboard"
+                            <a href="/mainadmin"
                                 class="relative z-10 flex items-center gap-3 px-4 py-3 rounded-lg
           transition hover:bg-blue-500/10 hover:text-blue-400">
                                 <i class="bi bi-layout-text-window-reverse"></i>

@@ -7,7 +7,7 @@ use App\Http\Controllers\admin\SigninController;
 
 Route::get('/', function () {
     return view('mainmenu', [
-        'title' => 'mainmenu',
+        'title' => 'RSUD Ar Rozy',
         'active' => 'home',
     ]);
 });
@@ -25,4 +25,6 @@ Route::middleware(['dgarrozy.auth:admin'])->group(function () {
     Route::get('/mainadmin', [MainAdminController::class, 'index']);
     Route::get('/mainadmin/pasien-summary', [MainAdminController::class, 'pasienSummary']);
     Route::get('/mainadmin/manajemendata', [MainAdminController::class, 'manajemendata']);
+    Route::get('/mainadmin/tempat-tidur-bangsal', [MainAdminController::class, 'tempatTidurPerBangsal']);
+    Route::get('/admin/top-penyakit-bulan-ini', [MainAdminController::class, 'topPenyakitBulanIni']);
 });

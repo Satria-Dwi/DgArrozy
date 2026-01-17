@@ -19,7 +19,7 @@ class SigninController extends Controller
         }
 
         return view('signin.index', [
-            'title' => 'Signin',
+            'title' => 'Signin | Portal DgArRozy',
             'active' => 'signin'
         ]);
     }

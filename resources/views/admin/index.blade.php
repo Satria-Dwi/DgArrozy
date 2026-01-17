@@ -6,9 +6,9 @@
             <div class="p-6 text-2xl font-bold tracking-wide">MArRozy</div>
             <nav class="flex-1 px-4 space-y-2">
                 <a href="#" class="block px-4 py-2 rounded-lg bg-blue-600">Dashboard</a>
-                <a href="#" class="block px-4 py-2 rounded-lg hover:bg-gray-800">Users</a>
+                {{-- <a href="#" class="block px-4 py-2 rounded-lg hover:bg-gray-800">Users</a>
                 <a href="#" class="block px-4 py-2 rounded-lg hover:bg-gray-800">Reports</a>
-                <a href="#" class="block px-4 py-2 rounded-lg hover:bg-gray-800">Settings</a>
+                <a href="#" class="block px-4 py-2 rounded-lg hover:bg-gray-800">Settings</a> --}}
             </nav>
             <div class="p-4 text-sm text-gray-400">© 2026</div>
         </aside>
@@ -17,20 +17,36 @@
         <main class="flex-1 p-6">
             <!-- Header -->
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold">Data Manajemen</h1>
+                <h1 class="text-3xl font-bold">Data Manajemen RSUD Ar Rozy</h1>
                 {{-- <div class="flex items-center gap-4">
                     <span class="text-sm">Admin</span>
                     <img src="https://i.pravatar.cc/40" class="rounded-full" />
                 </div> --}}
             </div>
-            <div class="kpi-card teal">
-                <div class="kpi-header">
-                    <span class="kpi-title">Total Pasien Terdaftar</span>
-                    <i class="fas fa-users kpi-icon"></i>
+            <div class="kpi-head">
+                <div class="kpi-container">
+                    <div class="kpi-card blue">
+                        <div class="kpi-header">
+                            <span class="kpi-title-mainadmin">Total Pasien Terdaftar</span>
+                            <i class="fas fa-users kpi-icon"></i>
+                        </div>
+                        <div class="kpi-value-mainadmin" id="totalPasien">-</div>
+                        <div class="kpi-trend-mainadmin">Rekam Medis Tersedia</div>
+                    </div>
+                    <div class="kpi-card-line crypto">
+                        <div class="kpi-header-line">
+                            <span class="kpi-title-line">Trend 10 Penyakit Bulan Ini</span>
+                            <i class="fas fa-chart-line kpi-icon-line"></i>
+                        </div>
+                        <div class="chart-wrapper-line">
+                            <canvas id="chartTopPenyakit"></canvas>
+                        </div>
+                    </div>
                 </div>
                 <div class="kpi-value" id="totalPasien">-</div>
                 <div class="kpi-trend">Rekam Medis Tersedia</div>
             </div>
+
             <div class="container mx-auto p-6">
 
                 <!-- ================= FILTER CARD ================= -->
@@ -122,6 +138,34 @@
                             <div class="text-4xl opacity-70">
                                 🏬
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="kpi-head">
+                <div class="kpi-container">
+                    <div class="kpi-card teal">
+                        <!-- ===== TEMPAT TIDUR PER BANGSAL ===== -->
+                        <div class="kpi-header">
+                            <span class="kpi-title-table">Detail Tempat Tidur per Hari Ini
+                                ({{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }})</span>
+                            <i class="fas fa-table kpi-icon"></i>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left">Bangsal</th>
+                                        <th class="px-4 py-2 text-center">Jumlah Bed</th>
+                                        <th class="px-4 py-2 text-center">Bed Terisi</th>
+                                        <th class="px-4 py-2 text-center">Bed Kosong</th>
+                                        <th class="px-4 py-2 text-center">Persentase BOR</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tempat_tidur_per_bangsal" class="divide-y divide-gray-100">
+                                    <!-- Akan diisi JS -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

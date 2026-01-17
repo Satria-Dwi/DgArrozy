@@ -158,6 +158,16 @@ h3 {
     /* margin-bottom: 10px; */
 }
 
+.kpi-title-mainadmin {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #6b7280;
+    padding: 1px;
+    /* margin-bottom: 10px; */
+}
+
 /* =========================
         KPI ICON
         ========================= */
@@ -180,11 +190,25 @@ h3 {
     color: #111827;
 }
 
+.kpi-value-mainadmin {
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 2rem 0;
+    letter-spacing: -1px;
+    color: #111827;
+}
+
 /* =========================
             KPI TREND TEXT
              ========================= */
 .kpi-trend {
     font-size: 0.85rem;
+    color: #16a34a;
+    font-weight: 500;
+}
+
+.kpi-trend-mainadmin {
+    font-size: 1rem;
     color: #16a34a;
     font-weight: 500;
 }

@@ -12,7 +12,7 @@ class MainAdminController extends Controller
     public function index()
     {
         return view('admin.index', [
-            'title' => 'Main Admin',
+            'title' => 'MArRozzy | Manajemen',
             'active' => 'mainadmin'
         ]); // Blade yang kamu kirim
     }
@@ -57,6 +57,70 @@ class MainAdminController extends Controller
                     ->count(),
 
             ]
+        ]);
+    }
+
+    public function tempatTidurPerBangsal()
+    {
+        // Ambil semua bangsal aktif
+        $bangsal = DB::table('bangsal')
+            ->where('status', '1')
+            ->select('kd_bangsal', 'nm_bangsal')
+            ->get();
+
+        // Ambil data kamar (1 QUERY)
+        $kamar = DB::table('kamar')
+            ->where('statusdata', '1')
+            ->select(
+                'kd_bangsal',
+                DB::raw('COUNT(*) as jumlah_bed'),
+                DB::raw("SUM(CASE WHEN status = 'ISI' THEN 1 ELSE 0 END) as bed_terisi")
+            )
+            ->groupBy('kd_bangsal')
+            ->get()
+            ->keyBy('kd_bangsal');
+
+        // Mapping & hitung BOR
+        $result = $bangsal->map(function ($b) use ($kamar) {
+            $jumlah = $kamar[$b->kd_bangsal]->jumlah_bed ?? 0;
+            $terisi = $kamar[$b->kd_bangsal]->bed_terisi ?? 0;
+            $kosong = $jumlah - $terisi;
+            $bor = $jumlah > 0 ? ($terisi / $jumlah) * 100 : 0;
+
+            return [
+                "nm_bangsal"     => $b->nm_bangsal,
+                "jumlah_bed"     => (int) $jumlah,
+                "bed_terisi"     => (int) $terisi,
+                "bed_kosong"     => (int) $kosong,
+                "persentase_bor" => round($bor, 2),
+            ];
+        });
+
+        // Format untuk chart
+        return response()->json([
+            "labels"      => $result->pluck("nm_bangsal")->values(),
+            "data_terisi" => $result->pluck("bed_terisi")->values(),
+            "data_kosong" => $result->pluck("bed_kosong")->values(),
+            "bor"         => $result->pluck("persentase_bor")->values(),
+        ]);
+    }
+
+    public function topPenyakitBulanIni()
+    {
+        $data = DB::table('reg_periksa')
+            ->join('diagnosa_pasien', 'diagnosa_pasien.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('penyakit', 'penyakit.kd_penyakit', '=', 'diagnosa_pasien.kd_penyakit')
+            ->selectRaw('penyakit.nm_penyakit, COUNT(*) as cnt')
+            ->whereMonth('reg_periksa.tgl_registrasi', date('m'))
+            ->whereYear('reg_periksa.tgl_registrasi', date('Y'))
+            ->groupBy('penyakit.nm_penyakit')
+            ->orderBy('cnt', 'desc')
+            ->limit(10) // Ambil Top 10
+            ->get();
+
+        return response()->json([
+            'labels' => $data->pluck('nm_penyakit'),
+            'data'   => $data->pluck('cnt')
         ]);
     }
 }
