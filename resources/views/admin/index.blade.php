@@ -2,16 +2,7 @@
 @section('content')
     <!-- Sidebar -->
     <div class="flex min-h-screen">
-        <aside class="w-64 bg-gray-900 text-white flex flex-col">
-            <div class="p-6 text-2xl font-bold tracking-wide">MArRozy</div>
-            <nav class="flex-1 px-4 space-y-2">
-                <a href="#" class="block px-4 py-2 rounded-lg bg-blue-600">Dashboard</a>
-                {{-- <a href="#" class="block px-4 py-2 rounded-lg hover:bg-gray-800">Users</a>
-                <a href="#" class="block px-4 py-2 rounded-lg hover:bg-gray-800">Reports</a>
-                <a href="#" class="block px-4 py-2 rounded-lg hover:bg-gray-800">Settings</a> --}}
-            </nav>
-            <div class="p-4 text-sm text-gray-400">© 2026</div>
-        </aside>
+        @include('admin.layouts.sidebar')
 
         <!-- Main Content -->
         <main class="flex-1 p-6">
@@ -25,24 +16,47 @@
             </div>
             <div class="kpi-head">
                 <div class="kpi-container">
+                    <div class="kpi-card green">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Total Pasien Terdaftar</span>
+                            <i class="fas fa-user kpi-icon"></i>
+                        </div>
+                        <div class="kpi-value" id="totalPasien">-</div>
+                        <div class="kpi-trend">Rekam Medis Tersedia</div>
+                    </div>
+                    <div class="kpi-card teal">
+                        <div class="kpi-header">
+                            <span class="kpi-title">IKM TW1 2026</span>
+                            <i class="fas fa-smile kpi-icon"></i>
+                        </div>
+                        <div class="kpi-value">84,42</div>
+                        <div class="kpi-trend">(Baik)</div>
+                    </div>
+                    <div class="kpi-card orange">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Indeks Mutu</span>
+                            <i class="fas fa-thumbs-up kpi-icon"></i>
+                        </div>
+                        <div class="kpi-value">---</div>
+                        <div class="kpi-trend">(Baik)</div>
+                    </div>
                     <div class="kpi-card blue">
                         <div class="kpi-header">
-                            <span class="kpi-title-mainadmin">Total Pasien Terdaftar</span>
-                            <i class="fas fa-users kpi-icon"></i>
+                            <span class="kpi-title">Rata2 Lama Layanan</span>
+                            <i class="fas fa-heart kpi-icon"></i>
                         </div>
-                        <div class="kpi-value-mainadmin" id="totalPasien">-</div>
-                        <div class="kpi-trend-mainadmin">Rekam Medis Tersedia</div>
+                        <div class="kpi-value">---</div>
+                        <div class="kpi-trend">Menit</div>
                     </div>
-                    <div class="kpi-card-line crypto">
-                        <div class="kpi-header-line">
-                            <span class="kpi-title-line">Trend 10 Penyakit Bulan Ini</span>
-                            <i class="fas fa-chart-line kpi-icon-line"></i>
+                    <div class="kpi-card purple">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Google Review</span>
+                            <i class="fas fa-star kpi-icon"></i>
                         </div>
-                        <div class="chart-wrapper-line">
-                            <canvas id="chartTopPenyakit"></canvas>
-                        </div>
+                        <div class="kpi-value">4.6</div>
+                        <div class="kpi-trend">⭐⭐⭐⭐⭐</div>
                     </div>
-                </div>
+                </div>                       
             </div>
 
             <div class="container mx-auto p-6">
@@ -138,8 +152,72 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- RAWAT IGD -->
+                    <div class="bg-gradient-to-br from-purple-400 to-purple-500 text-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm uppercase tracking-wide opacity-80">
+                                    IGD Aktif
+                                </p>
+                                <p id="totaligd" class="text-4xl font-bold mt-2">
+                                    0
+                                </p>
+                            </div>
+                            <div class="text-4xl opacity-70">
+                                🚑
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Operasi -->
+                    <div class="bg-gradient-to-br from-gray-400 to-gray-500 text-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm uppercase tracking-wide opacity-80">
+                                    Jadwal Operasi
+                                </p>
+                                <p id="totaloperasi" class="text-4xl font-bold mt-2">
+                                    0
+                                </p>
+                            </div>
+                            <div class="text-4xl opacity-70">
+                                👩‍⚕️👨‍⚕️
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Operasi -->
+                    <div class="bg-gradient-to-br from-yellow-400 to-yellow-500 text-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm uppercase tracking-wide opacity-80">
+                                    Bayi Lahir Hari Ini
+                                </p>
+                                <p id="totaloperasi" class="text-4xl font-bold mt-2">
+                                    0
+                                </p>
+                            </div>
+                            <div class="text-4xl opacity-70">
+                                👶
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+            <div class="kpi-card orange">
+                <div class="kpi-header">
+                    <span class="kpi-title-mainadmin">Trend Kunjungan Poli
+                        ({{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }})</span>
+                    <i class="fas fa-chart-bar kpi-icon"></i>
+                </div>
+                <div class="chart-wrapper-mainadmin">
+                    <canvas id="chartKunjunganPoli"></canvas>
+                </div>
+            </div>
+
             <div class="kpi-head">
                 <div class="kpi-container">
                     <div class="kpi-card teal">

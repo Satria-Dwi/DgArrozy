@@ -159,7 +159,7 @@ h3 {
 }
 
 .kpi-title-mainadmin {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 600;
     letter-spacing: 0.4px;
     text-transform: uppercase;
@@ -193,7 +193,7 @@ h3 {
 .kpi-value-mainadmin {
     font-size: 3rem;
     font-weight: 800;
-    margin: 2rem 0;
+    margin: 2.2rem 0;
     letter-spacing: -1px;
     color: #111827;
 }
@@ -208,7 +208,7 @@ h3 {
 }
 
 .kpi-trend-mainadmin {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #16a34a;
     font-weight: 500;
 }

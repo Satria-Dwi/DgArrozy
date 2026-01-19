@@ -13,9 +13,14 @@ class DgarrozyAccount extends Model
     protected $fillable = [
         'email',
         'password',
-        'role',
+        'role_id',
         'is_active',
     ];
 
     protected $hidden = ['password'];
+
+    public function role()
+    {
+        return $this->belongsTo(DgarrozyRole::class, 'role_id');
+    }
 }

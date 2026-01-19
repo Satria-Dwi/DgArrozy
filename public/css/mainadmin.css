@@ -1,0 +1,60 @@
+.slider-container-mainadmin {
+    position: relative;
+    width: 100%;
+}
+
+.slider-wrapper-mainadmin {
+    position: relative;
+    overflow: hidden;
+}
+
+.slider-mainadmin {
+    display: flex;
+    transition: transform 0.6s ease;
+}
+
+.slide-mainadmin {
+    min-width: 100%;
+    flex-shrink: 0;
+}
+
+/* OVERLAY CONTROLS */
+.slider-overlay-mainadmin {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 12px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.slider-btn-mainadmin {
+    pointer-events: auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(17, 24, 39, 0.8);
+    color: #fff;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.slider-btn-mainadmin:hover {
+    background: #6366f1;
+}
+
+.chart-icon-box {
+    width: 32px;
+    height: 32px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6366f1;
+}

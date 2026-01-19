@@ -51,9 +51,19 @@ class MainAdminController extends Controller
                     ->groupBy('tgl')
                     ->orderBy('tgl')
                     ->get(),
+
                 'poli' => DB::table('reg_periksa')
                     ->whereBetween('tgl_registrasi', [$from, $to])
                     ->where('kd_poli', '!=', 'IGDK')
+                    ->count(),
+
+                'igd' => DB::table('reg_periksa')
+                    ->whereBetween('tgl_registrasi', ["$from", "$to"])
+                    ->where('kd_poli', 'IGDK')
+                    ->count(),
+
+                'operasi' => DB::table('booking_operasi')
+                    ->where('tanggal', ["$from", "$to"])
                     ->count(),
 
             ]
@@ -121,6 +131,32 @@ class MainAdminController extends Controller
         return response()->json([
             'labels' => $data->pluck('nm_penyakit'),
             'data'   => $data->pluck('cnt')
+        ]);
+    }
+
+    public function updatepoli()
+    {
+        $today = Carbon::today()->toDateString();
+
+        $data = DB::table('poliklinik as p')
+            ->leftJoin('reg_periksa as r', function ($join) use ($today) {
+                $join->on('p.kd_poli', '=', 'r.kd_poli')
+                    ->whereBetween('r.tgl_registrasi', [
+                        "$today 00:00:00",
+                        "$today 23:59:59"
+                    ]);
+            })
+            ->select(
+                'p.nm_poli',
+                DB::raw('COUNT(r.no_rawat) as total')
+            )
+            ->groupBy('p.nm_poli')
+            ->orderBy('total', 'desc')
+            ->get();
+
+        return response()->json([
+            'labels' => $data->pluck('nm_poli'),
+            'data'   => $data->pluck('total'),
         ]);
     }
 }

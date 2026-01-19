@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\admin;
 
-use App\Models\User;
-use Illuminate\Http\Request;
 use App\Models\DgarrozyAccount;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class SigninController extends Controller
@@ -31,7 +28,9 @@ class SigninController extends Controller
             'password' => 'required|string',
         ]);
 
-        $account = DgarrozyAccount::where('email', $request->email)->first();
+        $account = DgarrozyAccount::with('role') // ambil relasi role
+                    ->where('email', $request->email)
+                    ->first();
 
         if (!$account) {
             return back()->with('signinneror', 'Email tidak terdaftar');
@@ -45,12 +44,15 @@ class SigninController extends Controller
             return back()->with('signinneror', 'Password salah');
         }
 
+        // Simpan role code & nama role di session
         session([
-            'dgarrozy_login' => true,
-            'account_id'    => $account->id,
-            'account_email' => $account->email,
-            'account_role'  => $account->role,
-            'account_is_active' => (int) $account->is_active
+            'dgarrozy_login'   => true,
+            'account_id'       => $account->id,
+            'account_email'    => $account->email,
+            'account_role_id'  => $account->role_id,
+            'account_role_code'=> $account->role->code ?? null,
+            'account_role_name'=> $account->role->name ?? null,
+            'account_is_active'=> (int) $account->is_active
         ]);
 
         return redirect('/mainadmin');

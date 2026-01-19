@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalPasien = document.getElementById("totalPasien");
     const totalRegPasien = document.getElementById("totalRegPasien");
     const totalPoli = document.getElementById("totalPoli");
+    const totaligd = document.getElementById("totaligd");
+    const totaloperasi = document.getElementById("totaloperasi");
 
     // KAMAR PER BANGSAL (GLOBAL)
     const kamarBangsal = document.getElementById("tempat_tidur_per_bangsal");
@@ -85,6 +87,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // POLI
             totalPoli.textContent = summary.poli ?? 0;
+      
+            // IGD
+            totaligd.textContent = summary.igd ?? 0;
+            
+            // IGD
+            totaloperasi.textContent = summary.operasi ?? 0;
+
         } catch {
             totalRanap.textContent = "—";
             totalRegPasien.textContent = "—";
@@ -171,11 +180,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // fetch top penyakit //
     let chartTopPenyakit = null;
 
     const fetchTopPenyakit = async () => {
         try {
-            const res = await fetch("/admin/top-penyakit-bulan-ini");
+            const res = await fetch("/mainadmin/top-penyakit-bulan-ini");
             if (!res.ok) throw new Error(res.status);
 
             const data = await res.json();
@@ -267,6 +277,121 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    // fetch kunjungan poli hari ini
+
+    let chartKunjunganPoli = null;
+
+    const fetchKunjunganPoli = async () => {
+        try {
+            const url = window.location.origin + "/mainadmin/kunjungan-poli";
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+            let { labels = [], data = [] } = await res.json();
+
+            const canvas = document.getElementById("chartKunjunganPoli");
+            if (!canvas) return;
+
+            // Filter & sort data
+            let combined = labels
+                .map((label, i) => ({
+                    label: label,
+                    value: Number(data[i]) || 0,
+                }))
+                .filter((item) => item.value > 0)
+                .sort((a, b) => b.value - a.value);
+
+            if (combined.length === 0) {
+                canvas.parentElement.style.height = "100px";
+                return;
+            }
+
+            const cleanLabels = combined.map((i) => i.label);
+            const cleanData = combined.map((i) => i.value);
+
+            const colorPalette = [
+                "#6366f1",
+                "#4f46e5",
+                "#4338ca",
+                "#3730a3",
+                "#312e81",
+            ];
+            const backgroundColors = cleanLabels.map(
+                (_, i) => colorPalette[i % colorPalette.length],
+            );
+
+            // Set dynamic height
+            const rowHeight = 40;
+            canvas.parentElement.style.height =
+                Math.max(cleanLabels.length * rowHeight, 180) + "px";
+
+            if (!chartKunjunganPoli) {
+                chartKunjunganPoli = new Chart(canvas, {
+                    type: "bar",
+                    plugins: [ChartDataLabels],
+                    data: {
+                        labels: cleanLabels,
+                        datasets: [
+                            {
+                                data: cleanData,
+                                backgroundColor: backgroundColors,
+                                borderRadius: 6,
+                                barThickness: 30,
+                            },
+                        ],
+                    },
+                    options: {
+                        indexAxis: "y",
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { display: false, beginAtZero: true },
+                            y: {
+                                grid: { display: false },
+                                border: { display: false },
+                                ticks: { display: false }, // hide default Y ticks
+                            },
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: { enabled: true },
+                            datalabels: {
+                                color: function (context) {
+                                    // putih di tengah, hitam di ujung kanan
+                                    return context.datasetIndex === 0
+                                        ? "#ffffff"
+                                        : "#000000";
+                                },
+                                font: { size: 14, weight: "700" },
+                                anchor: "center", // default untuk nama bar
+                                align: "center",
+                                formatter: function (value, context) {
+                                    // overlay dua label: nama + value
+                                    if (context.dataIndex !== undefined) {
+                                        let label =
+                                            context.chart.data.labels[
+                                                context.dataIndex
+                                            ];
+                                        return label + " (" + value + ")"; // "NamaBar (Value)"
+                                    }
+                                    return value;
+                                },
+                            },
+                        },
+                    },
+                });
+            } else {
+                chartKunjunganPoli.data.labels = cleanLabels;
+                chartKunjunganPoli.data.datasets[0].data = cleanData;
+                chartKunjunganPoli.data.datasets[0].backgroundColor =
+                    backgroundColors;
+                chartKunjunganPoli.update();
+            }
+        } catch (error) {
+            console.error("Gagal fetch Kunjungan Poli:", error);
+        }
+    };
+
     const fetchAll = async () => {
         if (isFetching) return;
 
@@ -279,6 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 fetchPasien(), // 🌍 global
                 fetchKamarBangsal(), // 🏥 global (TIDAK ikut filter)
                 fetchTopPenyakit(),
+                fetchKunjunganPoli(),
             ]);
         } catch (e) {
             console.error("❌ fetchAll error:", e);
@@ -288,30 +414,80 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
+    let fastInterval = null;
+    let isFastFetching = false;
+
+    const fastRefresh = async () => {
+        if (isFastFetching) return;
+        isFastFetching = true;
+
+        try {
+            await Promise.all([
+                fetchPasien(),
+                fetchSummary(),
+            ]);
+        } catch (e) {
+            console.error("❌ fastRefresh error:", e);
+        } finally {
+            isFastFetching = false;
+        }
+    };
+
+    let mediumInterval = null;
+    let isMediumFetching = false;
+
+    const mediumRefresh = async () => {
+        if (isMediumFetching) return;
+        isMediumFetching = true;
+
+        try {
+            await Promise.all([
+                fetchTopPenyakit(), 
+                fetchKamarBangsal(), 
+                fetchKunjunganPoli(),
+            ]);
+        } catch (e) {
+            console.error("❌ mediumRefresh error:", e);
+        } finally {
+            isMediumFetching = false;
+        }
+    };
+
+    const fetchFilteredData = async () => {
+        setLoading(true);
+        await fetchSummary();
+        setLoading(false);
+    };
+
     // =========================
     // AUTO REFRESH GLOBAL
     // =========================
     const startAutoRefresh = () => {
-        clearInterval(autoRefresh);
-        autoRefresh = setInterval(fetchAll, 30000);
+        clearInterval(fastInterval);
+        clearInterval(mediumInterval);
+
+        fastRefresh();
+        mediumRefresh();
+
+        fastInterval = setInterval(fastRefresh, 30000); // 30 detik
+        mediumInterval = setInterval(mediumRefresh, 60000); // 60 detik
     };
 
     // =========================
     // EVENT
     // =========================
-    btnFilter.addEventListener("click", () => {
-        fetchAll();
-        startAutoRefresh();
+    btnFilter.addEventListener("click", async () => {
+        await fetchFilteredData();
     });
 
-    btnRefresh.addEventListener("click", () => {
-        fetchAll();
-        startAutoRefresh();
+    btnRefresh.addEventListener("click", async () => {
+        await fetchFilteredData();
     });
 
     // =========================
     // INIT
     // =========================
     fetchAll();
+    fetchFilteredData(); // sekali saat load
     startAutoRefresh();
 });
