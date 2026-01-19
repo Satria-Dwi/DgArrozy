@@ -195,7 +195,7 @@
                                 <p class="text-sm uppercase tracking-wide opacity-80">
                                     Bayi Lahir Hari Ini
                                 </p>
-                                <p id="totaloperasi" class="text-4xl font-bold mt-2">
+                                <p id="bayilahir" class="text-4xl font-bold mt-2">
                                     0
                                 </p>
                             </div>

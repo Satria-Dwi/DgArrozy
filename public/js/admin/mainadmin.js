@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalPoli = document.getElementById("totalPoli");
     const totaligd = document.getElementById("totaligd");
     const totaloperasi = document.getElementById("totaloperasi");
+    const bayilahir = document.getElementById("bayilahir");
 
     // KAMAR PER BANGSAL (GLOBAL)
     const kamarBangsal = document.getElementById("tempat_tidur_per_bangsal");
@@ -91,8 +92,11 @@ document.addEventListener("DOMContentLoaded", () => {
             // IGD
             totaligd.textContent = summary.igd ?? 0;
             
-            // IGD
+            // operasi
             totaloperasi.textContent = summary.operasi ?? 0;
+            
+            // operasi
+            bayilahir.textContent = summary.lahir ?? 0;
 
         } catch {
             totalRanap.textContent = "—";

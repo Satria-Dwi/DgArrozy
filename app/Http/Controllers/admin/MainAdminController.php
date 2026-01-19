@@ -66,6 +66,9 @@ class MainAdminController extends Controller
                     ->where('tanggal', ["$from", "$to"])
                     ->count(),
 
+                'lahir' => DB::table('pasien')
+                    ->where('tgl_lahir', ["$from", "$to"])
+                    ->count()
             ]
         ]);
     }
