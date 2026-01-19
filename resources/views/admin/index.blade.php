@@ -43,8 +43,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="kpi-value" id="totalPasien">-</div>
-                <div class="kpi-trend">Rekam Medis Tersedia</div>
             </div>
 
             <div class="container mx-auto p-6">
