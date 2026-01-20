@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\SigninController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\MainAdminController;
 use App\Http\Controllers\admin\DgarrozyAccountController;
+use App\Http\Controllers\Admin\DgarrozyOfficer\DgarrozyOfficerController;
 use App\Http\Controllers\admin\DgarrozyRoleController;
 use Faker\Guesser\Name;
 
@@ -31,6 +32,9 @@ Route::middleware(['dgarrozy.auth:admin|manajemen'])->group(function () {
     Route::get('/mainadmin/tempat-tidur-bangsal', [MainAdminController::class, 'tempatTidurPerBangsal']);
     Route::get('/mainadmin/top-penyakit-bulan-ini', [MainAdminController::class, 'topPenyakitBulanIni']);
     Route::get('/mainadmin/kunjungan-poli', [MainAdminController::class, 'updatepoli']);
+
+    Route::get('/officer', [DgarrozyOfficerController::class, 'index'])->name('admin.officer.index');
+    // Route::get('/officer/{id}', [DgarrozyOfficerController::class, 'show'])->name('admin.officer.show');
 });
 
 Route::middleware(['dgarrozy.auth:admin'])->group(function () {
@@ -47,4 +51,3 @@ Route::middleware(['dgarrozy.auth:admin'])->group(function () {
     Route::put('/dgarrozy-user/{id}', [DgarrozyAccountController::class, 'update'])->name('admin.account.update');
     Route::delete('/dgarrozy-user/{id}', [DgarrozyAccountController::class, 'destroy'])->name('admin.account.destroy');
 });
-

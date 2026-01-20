@@ -40,6 +40,8 @@
 
     {{-- PAGE SCRIPT --}}
     @yield('scripts')
+    @stack('scripts')
+
 
 </body>
 
