@@ -1,13 +1,14 @@
 <?php
 
+use Faker\Guesser\Name;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\SigninController;
 use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\MainAdminController;
+use App\Http\Controllers\admin\DgarrozyFinance\DgarrozyFinanceController;
+use App\Http\Controllers\admin\DgarrozyRoleController;
 use App\Http\Controllers\admin\DgarrozyAccountController;
 use App\Http\Controllers\Admin\DgarrozyOfficer\DgarrozyOfficerController;
-use App\Http\Controllers\admin\DgarrozyRoleController;
-use Faker\Guesser\Name;
 
 Route::get('/', function () {
     return view('mainmenu', [
@@ -24,6 +25,8 @@ Route::post('/signout', [SigninController::class, 'signout']);
 Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::get('/dashboard-data', [DashboardController::class, 'dashboardData']);
 
+Route::resource('/finances', DgarrozyFinanceController::class);
+
 
 Route::middleware(['dgarrozy.auth:admin|manajemen'])->group(function () {
     Route::get('/mainadmin', [MainAdminController::class, 'index']);
@@ -34,7 +37,6 @@ Route::middleware(['dgarrozy.auth:admin|manajemen'])->group(function () {
     Route::get('/mainadmin/kunjungan-poli', [MainAdminController::class, 'updatepoli']);
 
     Route::get('/officer', [DgarrozyOfficerController::class, 'index'])->name('admin.officer.index');
-    // Route::get('/officer/{id}', [DgarrozyOfficerController::class, 'show'])->name('admin.officer.show');
 });
 
 Route::middleware(['dgarrozy.auth:admin'])->group(function () {

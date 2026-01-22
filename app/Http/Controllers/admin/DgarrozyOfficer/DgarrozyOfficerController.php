@@ -13,7 +13,7 @@ class DgarrozyOfficerController extends Controller
      */
     public function index(Request $request)
     {
-        $pegawai = DB::table('pegawai as p')
+        $query = DB::table('pegawai as p')
             ->leftJoin('jnj_jabatan as j', 'j.kode', '=', 'p.jnj_jabatan')
             ->leftJoin('departemen as d', 'd.dep_id', '=', 'p.departemen')
             ->select(
@@ -26,33 +26,35 @@ class DgarrozyOfficerController extends Controller
                 'p.stts_aktif'
             );
 
+        // 🔹 FILTER
         if ($request->filled('nama')) {
-            $pegawai->where('p.nama', 'like', '%' . $request->nama . '%');
+            $query->where('p.nama', 'like', '%' . $request->nama . '%');
         }
 
         if ($request->filled('jabatan')) {
-            $pegawai->where('p.jbtn', 'like', '%' . $request->jabatan . '%');
+            $query->where('p.jbtn', 'like', '%' . $request->jabatan . '%');
         }
 
         if ($request->filled('departemen')) {
-            $pegawai->where('d.nama', 'like', '%' . $request->departemen . '%');
+            $query->where('d.nama', 'like', '%' . $request->departemen . '%');
         }
 
-        $pegawai = $pegawai
+        // 🔹 PAGINATION (FIX LARAVEL 8)
+        $pegawai = $query
             ->orderBy('p.nama', 'asc')
-            ->paginate(20); // ⬅️ PENTING
-        
-        $paginationView = view('admin.officer.partials.pagination', ['pegawai' => $pegawai])->render();
+            ->paginate(20)
+            ->appends($request->query()); // ✅ INI KUNCINYA
 
-        // ⬇️ JIKA AJAX
+        // 🔹 AJAX RESPONSE
         if ($request->ajax()) {
             return response()->json([
-                'table' => view('admin.officer.partials.table', compact('pegawai'))->render(),
-                'total' => $pegawai->total(),
-                'pagination' => $paginationView, // ✅ FIX UTAMA
+                'table'      => view('admin.officer.partials.table', compact('pegawai'))->render(),
+                'pagination' => view('admin.officer.partials.pagination', compact('pegawai'))->render(),
+                'total'      => $pegawai->total(),
             ]);
         }
 
+        // 🔹 NORMAL VIEW
         return view('admin.officer.index', compact('pegawai'), [
             'title'  => 'MArRozzy | Officer',
             'active' => 'mainadmin'

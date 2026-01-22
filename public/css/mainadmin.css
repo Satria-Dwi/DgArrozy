@@ -58,3 +58,20 @@
     justify-content: center;
     color: #6366f1;
 }
+
+.input-modern {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    color: #111827;
+    transition: all 0.2s ease;
+}
+
+.input-modern:focus {
+    outline: none;
+    border-color: #6366f1;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
