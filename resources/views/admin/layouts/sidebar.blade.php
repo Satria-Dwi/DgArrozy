@@ -1,17 +1,44 @@
-<aside class="w-64 bg-gray-900 text-white flex flex-col">
-    
-    <div class="p-6 text-2xl font-bold tracking-wide">MArRozy</div>
-    <nav class="flex-1 px-4 space-y-2">
-        <a href="/mainadmin" class="block px-4 py-2 rounded-lg bg-blue-600 hover:bg-gray-800">Dashboard</a>
-        <a href="/officer" class="block px-4 py-2 rounded-lg bg-blue-600 hover:bg-gray-800">Officer</a>
-        <a href="/finances" class="block px-4 py-2 rounded-lg bg-blue-600 hover:bg-gray-800">Finances</a>
-        @php
-            $roleCode = session('account_role_code'); // ambil code dari session
-        @endphp
+<aside id="sidebar" class="sidebar">
+    <div class="sidebar-brand">
+        <span>MArRozy</span>
+    </div>
 
+    <nav class="sidebar-menu">
+        <a href="/mainadmin" class="menu-item {{ request()->is('mainadmin') ? 'active' : '' }}">
+            <i class="fas fa-chart-pie"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/officer" class="menu-item {{ request()->is('officer') ? 'active' : '' }}">
+            <i class="fas fa-user-md"></i>
+            <span>Officer</span>
+        </a>
+
+        <a href="/finances" class="menu-item {{ request()->is('finances*') ? 'active' : '' }}">
+            <i class="fas fa-wallet"></i>
+            <span>Finances</span>
+        </a>
+
+        @php $roleCode = session('account_role_code'); @endphp
         @if (session('dgarrozy_login') && in_array($roleCode, ['admin']))
-            <a href="/dgarrozy-user" class="block px-4 py-2 rounded-lg bg-blue-600 hover:bg-gray-800">MAccounts</a>
+            <a href="/dgarrozy-user" class="menu-item {{ request()->is('dgarrozy-user*') ? 'active' : '' }}">
+                <i class="fas fa-users-cog"></i>
+                <span>MAccounts</span>
+            </a>
         @endif
     </nav>
-    <div class="p-4 text-sm text-gray-400">© 2026</div>
+
+    <div class="sidebar-footer">
+        <form action="/signout" method="POST">
+            @csrf
+            <button class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Signout</span>
+            </button>
+        </form>
+
+        <div class="copyright">© 2026</div>
+    </div>
 </aside>
+
+<div id="sidebarOverlay" class="sidebar-overlay"></div>

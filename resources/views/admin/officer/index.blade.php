@@ -1,10 +1,10 @@
-@extends('layouts.app')
+@extends('admin.mainlayouts.app')
 
 @section('content')
     <div class="flex min-h-screen bg-gray-100">
         @include('admin.layouts.sidebar')
 
-        <main class="flex-1 p-6">
+        <main class="flex-1 p-6 main-content">
             <!-- Card -->
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
 

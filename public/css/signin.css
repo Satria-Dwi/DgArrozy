@@ -160,3 +160,38 @@ input:focus {
     color: #38bdf8;
 }
 
+@media (max-width: 768px) {
+    .form,
+    .form-edit {
+        padding: 16px;
+        min-height: 50vh;
+        box-sizing: border-box;
+    }
+
+    .card,
+    .card-edit {
+        max-width: 100%;
+        padding: 1.5rem;
+        border-radius: 14px;
+    }
+
+    .card h1,
+    .card-edit h1 {
+        font-size: 1.35rem;
+    }
+
+    label {
+        font-size: 0.8rem;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.9rem;
+    }
+
+    .btn {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}

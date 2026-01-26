@@ -25,17 +25,17 @@ Route::post('/signout', [SigninController::class, 'signout']);
 Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::get('/dashboard-data', [DashboardController::class, 'dashboardData']);
 
-Route::resource('/finances', DgarrozyFinanceController::class);
 
 
 Route::middleware(['dgarrozy.auth:admin|manajemen'])->group(function () {
-    Route::get('/mainadmin', [MainAdminController::class, 'index']);
+    Route::get('/mainadmin', [MainAdminController::class, 'index'])->name('mainadmin.index');
     Route::get('/mainadmin/pasien-summary', [MainAdminController::class, 'pasienSummary']);
     Route::get('/mainadmin/manajemendata', [MainAdminController::class, 'manajemendata']);
     Route::get('/mainadmin/tempat-tidur-bangsal', [MainAdminController::class, 'tempatTidurPerBangsal']);
     Route::get('/mainadmin/top-penyakit-bulan-ini', [MainAdminController::class, 'topPenyakitBulanIni']);
     Route::get('/mainadmin/kunjungan-poli', [MainAdminController::class, 'updatepoli']);
-
+    
+    Route::resource('/finances', DgarrozyFinanceController::class);
     Route::get('/officer', [DgarrozyOfficerController::class, 'index'])->name('admin.officer.index');
 });
 

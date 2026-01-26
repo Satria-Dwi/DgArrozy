@@ -88,16 +88,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // POLI
             totalPoli.textContent = summary.poli ?? 0;
-      
+
             // IGD
             totaligd.textContent = summary.igd ?? 0;
-            
+
             // operasi
             totaloperasi.textContent = summary.operasi ?? 0;
-            
+
             // operasi
             bayilahir.textContent = summary.lahir ?? 0;
-
         } catch {
             totalRanap.textContent = "—";
             totalRegPasien.textContent = "—";
@@ -296,99 +295,104 @@ document.addEventListener("DOMContentLoaded", () => {
             const canvas = document.getElementById("chartKunjunganPoli");
             if (!canvas) return;
 
-            // Filter & sort data
-            let combined = labels
+            // Combine, filter & sort
+            const combined = labels
                 .map((label, i) => ({
-                    label: label,
+                    label,
                     value: Number(data[i]) || 0,
                 }))
-                .filter((item) => item.value > 0)
+                .filter((i) => i.value > 0)
                 .sort((a, b) => b.value - a.value);
 
+            // Empty state
             if (combined.length === 0) {
-                canvas.parentElement.style.height = "100px";
+                canvas.parentElement.innerHTML = `
+                <div class="flex items-center justify-center h-[120px] text-white/80 text-sm">
+                    Tidak ada data kunjungan
+                </div>`;
                 return;
             }
 
             const cleanLabels = combined.map((i) => i.label);
             const cleanData = combined.map((i) => i.value);
 
-            const colorPalette = [
-                "#6366f1",
-                "#4f46e5",
-                "#4338ca",
-                "#3730a3",
-                "#312e81",
+            const palette = [
+                "#ffffffcc",
+                "#ffffffb3",
+                "#ffffff99",
+                "#ffffff80",
+                "#ffffff66",
             ];
-            const backgroundColors = cleanLabels.map(
-                (_, i) => colorPalette[i % colorPalette.length],
-            );
 
-            // Set dynamic height
-            const rowHeight = 40;
+            // Dynamic height
+            const rowHeight = 42;
             canvas.parentElement.style.height =
                 Math.max(cleanLabels.length * rowHeight, 180) + "px";
 
+            const config = {
+                type: "bar",
+                plugins: [ChartDataLabels],
+                data: {
+                    labels: cleanLabels,
+                    datasets: [
+                        {
+                            data: cleanData,
+                            backgroundColor: palette.slice(0, cleanData.length),
+                            borderRadius: 10,
+                            barThickness: 26,
+                        },
+                    ],
+                },
+                options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 900,
+                        easing: "easeOutQuart",
+                    },
+                    scales: {
+                        x: {
+                            display: false,
+                            beginAtZero: true,
+                        },
+                        y: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { display: false },
+                        },
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) =>
+                                    `${ctx.label}: ${ctx.raw} kunjungan`,
+                            },
+                        },
+                        datalabels: {
+                            color: "#1f2937",
+                            backgroundColor: "#ffffff",
+                            borderRadius: 6,
+                            padding: { left: 8, right: 8, top: 4, bottom: 4 },
+                            font: {
+                                size: 12,
+                                weight: "700",
+                            },
+                            anchor: "end",
+                            align: "right",
+                            formatter: (value, ctx) =>
+                                `${ctx.chart.data.labels[ctx.dataIndex]} (${value})`,
+                        },
+                    },
+                },
+            };
+
             if (!chartKunjunganPoli) {
-                chartKunjunganPoli = new Chart(canvas, {
-                    type: "bar",
-                    plugins: [ChartDataLabels],
-                    data: {
-                        labels: cleanLabels,
-                        datasets: [
-                            {
-                                data: cleanData,
-                                backgroundColor: backgroundColors,
-                                borderRadius: 6,
-                                barThickness: 30,
-                            },
-                        ],
-                    },
-                    options: {
-                        indexAxis: "y",
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            x: { display: false, beginAtZero: true },
-                            y: {
-                                grid: { display: false },
-                                border: { display: false },
-                                ticks: { display: false }, // hide default Y ticks
-                            },
-                        },
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: { enabled: true },
-                            datalabels: {
-                                color: function (context) {
-                                    // putih di tengah, hitam di ujung kanan
-                                    return context.datasetIndex === 0
-                                        ? "#ffffff"
-                                        : "#000000";
-                                },
-                                font: { size: 14, weight: "700" },
-                                anchor: "center", // default untuk nama bar
-                                align: "center",
-                                formatter: function (value, context) {
-                                    // overlay dua label: nama + value
-                                    if (context.dataIndex !== undefined) {
-                                        let label =
-                                            context.chart.data.labels[
-                                                context.dataIndex
-                                            ];
-                                        return label + " (" + value + ")"; // "NamaBar (Value)"
-                                    }
-                                    return value;
-                                },
-                            },
-                        },
-                    },
-                });
+                chartKunjunganPoli = new Chart(canvas, config);
             } else {
                 chartKunjunganPoli.data.labels = cleanLabels;
                 chartKunjunganPoli.data.datasets[0].data = cleanData;
-                chartKunjunganPoli.data.datasets[0].backgroundColor =
-                    backgroundColors;
                 chartKunjunganPoli.update();
             }
         } catch (error) {
@@ -426,10 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
         isFastFetching = true;
 
         try {
-            await Promise.all([
-                fetchPasien(),
-                fetchSummary(),
-            ]);
+            await Promise.all([fetchPasien(), fetchSummary()]);
         } catch (e) {
             console.error("❌ fastRefresh error:", e);
         } finally {
@@ -446,8 +447,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             await Promise.all([
-                fetchTopPenyakit(), 
-                fetchKamarBangsal(), 
+                fetchTopPenyakit(),
+                fetchKamarBangsal(),
                 fetchKunjunganPoli(),
             ]);
         } catch (e) {

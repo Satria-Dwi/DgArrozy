@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- sesuaikan dengan layout kamu --}}
+@extends('admin.mainlayouts.app') {{-- sesuaikan dengan layout kamu --}}
 
 @section('content')
     <div class="flex min-h-screen">
@@ -10,7 +10,7 @@
                 {{ session('success') }}
             </div>
         @endif
-        <main class="flex-1 p-6">
+        <main class="flex-1 p-6 main-content">
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
                 <div class="p-6 bg-gradient-to-r from-indigo-600 to-blue-500">
 

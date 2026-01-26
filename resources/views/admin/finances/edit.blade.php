@@ -1,10 +1,10 @@
-@extends('layouts.app')
+@extends('admin.mainlayouts.app')
 
 @section('content')
 <div class="flex min-h-screen">
     @include('admin.layouts.sidebar')
 
-    <main class="flex-1 p-6">
+    <main class="flex-1 p-6 main-content">
         <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
             <h2 class="text-xl font-semibold mb-6">
                 ✏️ Edit Perencanaan Keuangan

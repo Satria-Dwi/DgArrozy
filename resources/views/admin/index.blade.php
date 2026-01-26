@@ -1,251 +1,283 @@
-@extends('layouts.app')
+@extends('admin.mainlayouts.app')
 @section('content')
     <!-- Sidebar -->
     <div class="flex min-h-screen">
         @include('admin.layouts.sidebar')
 
         <!-- Main Content -->
-        <main class="flex-1 p-6">
+        <main class="flex-1 p-3 main-content">
             <!-- Header -->
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-bold">Data Manajemen RSUD Ar Rozy</h1>
-                {{-- <div class="flex items-center gap-4">
+            {{-- <div class="flex justify-between items-center mb-3">
+                <h1 class="text-3xl font-bold">Data Manajemen RSUD Ar Rozy</h1> --}}
+            {{-- <div class="flex items-center gap-4">
                     <span class="text-sm">Admin</span>
                     <img src="https://i.pravatar.cc/40" class="rounded-full" />
                 </div> --}}
-            </div>
-            <div class="kpi-head">
-                <div class="kpi-container">
-                    <div class="kpi-card green">
-                        <div class="kpi-header">
-                            <span class="kpi-title">Total Pasien Terdaftar</span>
-                            <i class="fas fa-user kpi-icon"></i>
+            {{-- </div> --}}
+            <div class="kpi-head-mainmenu">
+                <div class="kpi-container-mainmenu">
+                    <div class="kpi-card-mainmenu green">
+                        <div class="kpi-header-mainmenu">
+                            <span>Total Pasien Terdaftar</span>
+                            <i class="fas fa-user"></i>
                         </div>
-                        <div class="kpi-value" id="totalPasien">-</div>
-                        <div class="kpi-trend">Rekam Medis Tersedia</div>
+                        <div class="kpi-value-mainmenu" id="totalPasien">-</div>
+                        <div class="kpi-trend text-white">Rekam Medis Tersedia</div>
                     </div>
-                    <div class="kpi-card teal">
-                        <div class="kpi-header">
-                            <span class="kpi-title">IKM TW1 2026</span>
-                            <i class="fas fa-smile kpi-icon"></i>
+
+                    <div class="kpi-card-mainmenu teal">
+                        <div class="kpi-header-mainmenu">
+                            <span>IKM TW1 2026</span>
+                            <i class="fas fa-smile"></i>
                         </div>
-                        <div class="kpi-value">84,42</div>
-                        <div class="kpi-trend">(Baik)</div>
+                        <div class="kpi-value-mainmenu">84,42</div>
+                        <div class="kpi-trend text-white">Baik</div>
                     </div>
-                    <div class="kpi-card orange">
-                        <div class="kpi-header">
-                            <span class="kpi-title">Indeks Mutu</span>
-                            <i class="fas fa-thumbs-up kpi-icon"></i>
+
+                    <div class="kpi-card-mainmenu orange">
+                        <div class="kpi-header-mainmenu">
+                            <span>Indeks Mutu</span>
+                            <i class="fas fa-thumbs-up"></i>
                         </div>
-                        <div class="kpi-value">---</div>
-                        <div class="kpi-trend">(Baik)</div>
+                        <div class="kpi-value-mainmenu">---</div>
+                        <div class="kpi-trend text-white">Baik</div>
                     </div>
-                    <div class="kpi-card blue">
-                        <div class="kpi-header">
-                            <span class="kpi-title">Rata2 Lama Layanan</span>
-                            <i class="fas fa-heart kpi-icon"></i>
+
+                    <div class="kpi-card-mainmenu blue">
+                        <div class="kpi-header-mainmenu">
+                            <span>Rata-rata Lama Layanan</span>
+                            <i class="fas fa-heart"></i>
                         </div>
-                        <div class="kpi-value">---</div>
-                        <div class="kpi-trend">Menit</div>
+                        <div class="kpi-value-mainmenu">---</div>
+                        <div class="kpi-trend text-white">Menit</div>
                     </div>
-                    <div class="kpi-card purple">
-                        <div class="kpi-header">
-                            <span class="kpi-title">Google Review</span>
-                            <i class="fas fa-star kpi-icon"></i>
+
+                    <div class="kpi-card-mainmenu purple">
+                        <div class="kpi-header-mainmenu">
+                            <span>Google Review</span>
+                            <i class="fas fa-star"></i>
                         </div>
-                        <div class="kpi-value">4.6</div>
-                        <div class="kpi-trend">⭐⭐⭐⭐⭐</div>
+                        <div class="kpi-value-mainmenu">4.6</div>
+                        <div class="kpi-trend text-white">⭐⭐⭐⭐⭐</div>
                     </div>
-                </div>                       
+                </div>
             </div>
 
             <div class="container mx-auto p-6">
 
                 <!-- ================= FILTER CARD ================= -->
-                <div class="bg-white rounded-xl shadow-md p-4 mb-6">
-                    <div class="flex flex-wrap items-end gap-4">
-                        <div>
-                            <label for="from" class="block text-sm font-medium text-gray-600 mb-1">
-                                Dari Tanggal
-                            </label>
-                            <input type="date" id="from"
-                                class="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400">
+                <div class="filter-card">
+                    <div class="filter-grid">
+
+                        <div class="filter-item">
+                            <label for="from">Dari Tanggal</label>
+                            <input type="date" id="from">
                         </div>
-                        <div>
-                            <label for="to" class="block text-sm font-medium text-gray-600 mb-1">
-                                Sampai Tanggal
-                            </label>
-                            <input type="date" id="to"
-                                class="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400">
+
+                        <div class="filter-item">
+                            <label for="to">Sampai Tanggal</label>
+                            <input type="date" id="to">
                         </div>
-                        <div class="flex gap-2">
-                            <button id="btnFilter"
-                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow">
-                                🔍 Filter
+
+                        <div class="filter-action">
+                            <button id="btnFilter" class="btn-primary">
+                                <i class="fas fa-search"></i>
+                                Filter
                             </button>
 
-                            <button id="btnRefresh"
-                                class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-semibold">
-                                🔄 Refresh
+                            <button id="btnRefresh" class="btn-secondary">
+                                <i class="fas fa-rotate"></i>
+                                Refresh
                             </button>
                         </div>
 
                     </div>
                 </div>
 
+
                 <!-- ================= SUMMARY ================= -->
-                <div class="mb-4 text-sm text-gray-600">
-                    Filter Tanggal:
-                    <span id="filterTanggal" class="font-semibold text-gray-800"></span>
+                <div class="mb-6 flex items-center gap-2 text-sm text-slate-600">
+                    <i class="fas fa-calendar-alt text-blue-500"></i>
+                    <span>Filter Tanggal:</span>
+                    <span id="filterTanggal" class="px-3 py-1 rounded-full bg-blue-50 text-blue-600 font-semibold">
+                        -
+                    </span>
                 </div>
+
 
                 <!-- ================= KPI CARDS ================= -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                    <!-- REGISTRASI PASIEN -->
-                    <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-xl shadow-lg p-6">
+                    <!-- Registrasi Pasien -->
+                    <div
+                        class="group relative bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm uppercase tracking-wide opacity-80">
+                                <p class="text-xs uppercase tracking-wider opacity-80">
                                     Registrasi Pasien
                                 </p>
-                                <p id="totalRegPasien" class="text-4xl font-bold mt-2">
+                                <p id="totalRegPasien" class="text-4xl font-bold mt-3">
                                     0
                                 </p>
                             </div>
-                            <div class="text-4xl opacity-70">
+                            <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-white/20 text-3xl">
                                 🧾
                             </div>
                         </div>
                     </div>
 
-                    <!-- RAWAT INAP -->
-                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-lg p-6">
+                    <!-- Rawat Inap -->
+                    <div
+                        class="group relative bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm uppercase tracking-wide opacity-80">
+                                <p class="text-xs uppercase tracking-wider opacity-80">
                                     Rawat Inap Aktif
                                 </p>
-                                <p id="totalRanap" class="text-4xl font-bold mt-2">
+                                <p id="totalRanap" class="text-4xl font-bold mt-3">
                                     0
                                 </p>
                             </div>
-                            <div class="text-4xl opacity-70">
+                            <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-white/20 text-3xl">
                                 🏥
                             </div>
                         </div>
                     </div>
 
-                    <!-- RAWAT INAP -->
-                    <div class="bg-gradient-to-br from-red-400 to-red-500 text-white rounded-xl shadow-lg p-6">
+                    <!-- Poli -->
+                    <div
+                        class="group relative bg-gradient-to-br from-rose-500 to-rose-600 text-white rounded-2xl p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm uppercase tracking-wide opacity-80">
+                                <p class="text-xs uppercase tracking-wider opacity-80">
                                     Poli Aktif
                                 </p>
-                                <p id="totalPoli" class="text-4xl font-bold mt-2">
+                                <p id="totalPoli" class="text-4xl font-bold mt-3">
                                     0
                                 </p>
                             </div>
-                            <div class="text-4xl opacity-70">
+                            <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-white/20 text-3xl">
                                 🏬
                             </div>
                         </div>
                     </div>
 
-                    <!-- RAWAT IGD -->
-                    <div class="bg-gradient-to-br from-purple-400 to-purple-500 text-white rounded-xl shadow-lg p-6">
+                    <!-- IGD -->
+                    <div
+                        class="group relative bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm uppercase tracking-wide opacity-80">
+                                <p class="text-xs uppercase tracking-wider opacity-80">
                                     IGD Aktif
                                 </p>
-                                <p id="totaligd" class="text-4xl font-bold mt-2">
+                                <p id="totaligd" class="text-4xl font-bold mt-3">
                                     0
                                 </p>
                             </div>
-                            <div class="text-4xl opacity-70">
+                            <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-white/20 text-3xl">
                                 🚑
                             </div>
                         </div>
                     </div>
-                    
-                    
+
                     <!-- Operasi -->
-                    <div class="bg-gradient-to-br from-gray-400 to-gray-500 text-white rounded-xl shadow-lg p-6">
+                    <div
+                        class="group relative bg-gradient-to-br from-slate-500 to-slate-600 text-white rounded-2xl p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm uppercase tracking-wide opacity-80">
+                                <p class="text-xs uppercase tracking-wider opacity-80">
                                     Jadwal Operasi
                                 </p>
-                                <p id="totaloperasi" class="text-4xl font-bold mt-2">
+                                <p id="totaloperasi" class="text-4xl font-bold mt-3">
                                     0
                                 </p>
                             </div>
-                            <div class="text-4xl opacity-70">
+                            <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-white/20 text-3xl">
                                 👩‍⚕️👨‍⚕️
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Operasi -->
-                    <div class="bg-gradient-to-br from-yellow-400 to-yellow-500 text-white rounded-xl shadow-lg p-6">
+
+                    <!-- Bayi Lahir -->
+                    <div
+                        class="group relative bg-gradient-to-br from-amber-400 to-amber-500 text-white rounded-2xl p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm uppercase tracking-wide opacity-80">
+                                <p class="text-xs uppercase tracking-wider opacity-80">
                                     Bayi Lahir Hari Ini
                                 </p>
-                                <p id="bayilahir" class="text-4xl font-bold mt-2">
+                                <p id="bayilahir" class="text-4xl font-bold mt-3">
                                     0
                                 </p>
                             </div>
-                            <div class="text-4xl opacity-70">
+                            <div class="w-14 h-14 flex items-center justify-center rounded-xl bg-white/20 text-3xl">
                                 👶
                             </div>
                         </div>
                     </div>
 
                 </div>
+
             </div>
-            <div class="kpi-card orange">
-                <div class="kpi-header">
-                    <span class="kpi-title-mainadmin">Trend Kunjungan Poli
-                        ({{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }})</span>
-                    <i class="fas fa-chart-bar kpi-icon"></i>
+            <div
+                class="kpi-card-mainadmin-menu relative overflow-hidden bg-gradient-to-br from-blue-400 via-sky-400 to-blue-500
+ rounded-2xl shadow-xl p-6 text-white mb-4">
+
+                <!-- Header -->
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <p class="text-xs uppercase tracking-widest opacity-80">
+                            Trend Kunjungan Poli
+                        </p>
+                        <p class="text-sm font-semibold opacity-90">
+                            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+                        </p>
+                    </div>
+                    <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-white/20 text-xl">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
                 </div>
-                <div class="chart-wrapper-mainadmin">
+
+                <!-- Chart -->
+                <div class="chart-wrapper-mainadmin-menu relative">
                     <canvas id="chartKunjunganPoli"></canvas>
                 </div>
             </div>
 
-            <div class="kpi-head">
-                <div class="kpi-container">
-                    <div class="kpi-card teal">
-                        <!-- ===== TEMPAT TIDUR PER BANGSAL ===== -->
-                        <div class="kpi-header">
-                            <span class="kpi-title-table">Detail Tempat Tidur per Hari Ini
-                                ({{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }})</span>
-                            <i class="fas fa-table kpi-icon"></i>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 text-sm">
-                                <thead class="bg-gray-100">
-                                    <tr>
-                                        <th class="px-4 py-2 text-left">Bangsal</th>
-                                        <th class="px-4 py-2 text-center">Jumlah Bed</th>
-                                        <th class="px-4 py-2 text-center">Bed Terisi</th>
-                                        <th class="px-4 py-2 text-center">Bed Kosong</th>
-                                        <th class="px-4 py-2 text-center">Persentase BOR</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tempat_tidur_per_bangsal" class="divide-y divide-gray-100">
-                                    <!-- Akan diisi JS -->
-                                </tbody>
-                            </table>
-                        </div>
+
+            <div class="bed-card">
+                <!-- Header -->
+                <div class="bed-card-header">
+                    <div>
+                        <p class="bed-card-subtitle">Detail Tempat Tidur</p>
+                        <p class="bed-card-title">
+                            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('l, d F Y') }}
+                        </p>
+                    </div>
+                    <div class="bed-card-icon">
+                        <i class="fas fa-bed"></i>
                     </div>
                 </div>
+
+                <!-- Table -->
+                <div class="bed-table-wrapper">
+                    <table class="bed-table">
+                        <thead>
+                            <tr>
+                                <th>Bangsal</th>
+                                <th class="center">Jumlah Bed</th>
+                                <th class="center">Bed Terisi</th>
+                                <th class="center">Bed Kosong</th>
+                                <th class="center">BOR</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tempat_tidur_per_bangsal">
+                            <!-- Diisi via JS -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
         </main>
     </div>
 @endsection

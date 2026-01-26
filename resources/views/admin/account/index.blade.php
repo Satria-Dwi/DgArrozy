@@ -1,11 +1,11 @@
-@extends('layouts.app')
+@extends('admin.mainlayouts.app')
 
 @section('content')
 <div class="flex min-h-screen">
      @include('admin.layouts.sidebar')
 
     <!-- Main Content -->
-    <main class="flex-1 p-6">
+    <main class="flex-1 p-6 main-content">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold">Accounts List</h1>
             <a href="{{ route('admin.account.create') }}" 

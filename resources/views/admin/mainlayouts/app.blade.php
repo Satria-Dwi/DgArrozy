@@ -8,9 +8,9 @@
     <title>{{ $title }}</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('css/signin.css') }}">
-    {{-- <link rel="stylesheet" href="{{ asset('css/mainadmin.css') }}"> --}}
+    <link rel="stylesheet" href="{{ asset('css/mainadmin.css') }}">
     <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
 
     {{-- GOOGLE FONT --}}
@@ -23,14 +23,14 @@
 <body class="bg-white text-gray-800 font-sans">
 
     {{-- NAVBAR --}}
-    @include('partials.mainmenu.navbar')
+    {{-- @include('partials.mainmenu.navbar') --}}
 
     {{-- CONTENT --}}
     <div>
         @yield('content')
     </div>
 
-    @include('partials.mainmenu.footer')
+    {{-- @include('partials.mainmenu.footer') --}}
 
     {{-- CHART JS --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

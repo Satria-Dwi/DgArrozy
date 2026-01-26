@@ -70,7 +70,7 @@
                         <span class="kpi-title-line">Trend 10 Penyakit Bulan Ini</span>
                         <i class="fas fa-chart-line kpi-icon-line"></i>
                     </div>
-                    <div class="chart-wrapper-line">
+                    <div class="chart-wrapper">
                         <canvas id="chartPenyakitBulanIni"></canvas>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
                                         Terakhir)</span>
                                     <i class="fas fa-chart-bar kpi-icon"></i>
                                 </div>
-                                <div>
+                                <div class="chart-wrapper">
                                     <canvas id="chartHarian"></canvas>
                                 </div>
                             </div>
@@ -139,7 +139,7 @@
                                     </span>
                                     <i class="fas fa-chart-bar kpi-icon"></i>
                                 </div>
-                                <div>
+                                <div class="chart-wrapper">
                                     <canvas id="chartPolihari"></canvas>
                                 </div>
                             </div>
@@ -161,7 +161,7 @@
                                     </span>
                                     <i class="fas fa-chart-bar kpi-icon"></i>
                                 </div>
-                                <div>
+                                <div class="chart-wrapper">
                                     <canvas id="penjaminChart"></canvas>
                                 </div>
                             </div>

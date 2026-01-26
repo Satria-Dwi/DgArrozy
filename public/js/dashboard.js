@@ -25,17 +25,17 @@ async function loadDashboard() {
     if (chartHarian) {
         chartHarian.data.labels = json.chart_harian.map((d) => d.tgl);
         chartHarian.data.datasets[0].data = json.chart_harian.map(
-            (d) => d.total
+            (d) => d.total,
         );
         chartHarian.update();
     }
 
     if (chartPoliHariIni) {
         chartPoliHariIni.data.labels = json.chart_poli_hari_ini.map(
-            (d) => d.nm_poli
+            (d) => d.nm_poli,
         );
         chartPoliHariIni.data.datasets[0].data = json.chart_poli_hari_ini.map(
-            (d) => d.total
+            (d) => d.total,
         );
         chartPoliHariIni.update();
     }
@@ -96,9 +96,41 @@ function initSliders() {
     });
 }
 
+const isTablet = window.matchMedia("(max-width: 1024px)").matches;
+const isMobile = window.matchMedia("(max-width: 768px)").matches;
+const responsiveScales = {
+    ticks: {
+        font: {
+            size: isMobile ? 10 : isTablet ? 11 : 12,
+        },
+    },
+};
+
+const responsiveLegend = {
+    display: isMobile || isTablet,
+    position: "bottom",
+    labels: {
+        boxWidth: 12,
+        font: {
+            size: isMobile ? 10 : 11,
+        },
+    },
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
     const res = await fetch("/dashboard-data");
     const json = await res.json();
+
+    const isTablet = window.matchMedia("(max-width: 1024px)").matches;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    const responsiveScales = {
+        ticks: {
+            font: {
+                size: isMobile ? 10 : isTablet ? 11 : 12,
+            },
+        },
+    };
 
     // ===== CHART HARIAN =====
     chartHarian = new Chart(document.getElementById("chartHarian"), {
@@ -111,15 +143,38 @@ document.addEventListener("DOMContentLoaded", async () => {
                     data: json.chart_harian.map((d) => d.total),
                     backgroundColor: "#4facfe",
                     borderRadius: 8,
+                    maxBarThickness: isMobile ? 18 : 32, // 📱 lebih ramping
                 },
             ],
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false, // ⬅ WAJIB untuk wrapper height
             scales: {
+                x: {
+                    ...responsiveScales,
+                    ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: isMobile ? 6 : 10,
+                    },
+                },
                 y: {
                     beginAtZero: true,
                     ticks: {
                         precision: 0,
+                        font: {
+                            size: isMobile ? 10 : 12,
+                        },
+                    },
+                },
+            },
+            plugins: {
+                legend: {
+                    display: !isMobile, // 📱 mobile: hide legend
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `${ctx.raw} pasien`,
                     },
                 },
             },
@@ -137,16 +192,28 @@ document.addEventListener("DOMContentLoaded", async () => {
                     data: json.chart_poli_hari_ini.map((d) => d.total),
                     backgroundColor: "#fb923c",
                     borderRadius: 8,
+                    maxBarThickness: isMobile ? 18 : 32,
                 },
             ],
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false, // ⬅️ WAJIB
             scales: {
+                x: responsiveScales,
                 y: {
                     beginAtZero: true,
                     ticks: {
                         precision: 0,
+                        font: {
+                            size: isMobile ? 10 : 12,
+                        },
                     },
+                },
+            },
+            plugins: {
+                legend: {
+                    display: !isMobile,
                 },
             },
         },
@@ -154,7 +221,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // ===== CHART TAHUN (PIE / DOUGHNUT) =====
     const canvasTahun = document.getElementById("chartTahunPasien");
-    if (canvasTahun) {
+    if (canvasTahun && json.chart_tahun) {
         chartTahun = new Chart(canvasTahun, {
             type: "doughnut",
             data: {
@@ -177,6 +244,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false, // 🔥 WAJIB (biar ikut chart-wrapper)
                 cutout: "62%",
                 animation: {
                     duration: 900,
@@ -192,15 +260,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                         },
                     },
                     datalabels: {
-                        color: "#fff",
+                        color: "#ffffff",
                         font: {
                             weight: "bold",
-                            size: 12,
+                            size: isMobile ? 9 : 11, // 📱 responsive
                         },
-                        formatter: (value, ctx) =>
-                            `${
-                                ctx.chart.data.labels[ctx.dataIndex]
-                            }\n${value} pasien`,
+                        anchor: "center",
+                        align: "center",
+                        formatter: (value, ctx) => {
+                            if (value === 0) return "";
+
+                            const tahun = ctx.chart.data.labels[ctx.dataIndex];
+                            return `Tahun ${tahun}\n${value} pasien`;
+                        },
                     },
                 },
             },
@@ -299,14 +371,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         chartStatusKamar = new Chart(canvasStatusKamar, {
             type: "doughnut",
             data: {
-                labels: json.status_kamar.labels,
+                labels: json.status_kamar.labels, // ["Kosong", "Isi", "Booking"]
                 datasets: [
                     {
                         data: json.status_kamar.data,
                         backgroundColor: [
                             "#22c55e", // Kosong
                             "#ef4444", // Isi
-                            "#f59e0b", // Rusak
+                            "#f59e0b", // Booking
                         ],
                         borderWidth: 2,
                         borderColor: "#ffffff",
@@ -315,34 +387,35 @@ document.addEventListener("DOMContentLoaded", async () => {
             },
             options: {
                 responsive: true,
-                cutout: "62%", // ✅ sama persis
+                maintainAspectRatio: false,
+                cutout: "62%",
                 animation: {
-                    duration: 900, // ✅ sama
-                    easing: "easeOutQuart", // ✅ sama
+                    duration: 900,
+                    easing: "easeOutQuart",
                 },
                 plugins: {
-                    legend: {
-                        display: false, // ✅ sama
-                    },
+                    legend: { display: false },
                     tooltip: {
                         callbacks: {
                             label: (ctx) => `${ctx.label}: ${ctx.raw} kamar`,
                         },
                     },
                     datalabels: {
-                        color: "#fff", // ✅ sama
+                        color: "#ffffff",
                         font: {
                             weight: "bold",
-                            size: 12,
+                            size: isMobile ? 10 : 12,
                         },
-                        formatter: (value, ctx) =>
-                            `${
-                                ctx.chart.data.labels[ctx.dataIndex]
-                            }\n${value} kamar`,
+                        anchor: "center",
+                        align: "center",
+                        formatter: (value, ctx) => {
+                            const label = ctx.chart.data.labels[ctx.dataIndex];
+                            return `${label}\n${value}`;
+                        },
                     },
                 },
             },
-            plugins: [ChartDataLabels], // ✅ sama
+            plugins: [ChartDataLabels],
         });
     }
 
@@ -357,7 +430,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             0,
             0,
             0,
-            canvasPenyakit.height
+            canvasPenyakit.height,
         );
         gradientFill.addColorStop(0, "rgba(99,102,241,0.35)");
         gradientFill.addColorStop(1, "rgba(99,102,241,0.03)");
