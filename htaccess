@@ -1,0 +1,46 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    <Files .env>
+       Order allow,deny
+       Deny from all
+    </Files>
+
+    <Files laravel.log>
+       Order allow,deny
+       Deny from all
+    </Files>
+
+    <IfModule mod_headers.c>
+        # Tambahkan header untuk semua jenis file statis
+        <FilesMatch "\.(bmp|cur|gif|ico|jpe?g|png|svgz?|webp|pdf|eot|otf|tt[cf]|woff2?)$">
+            Header set Access-Control-Allow-Origin "*"
+        </FilesMatch>
+        
+        # Alternatif lain yang lebih sederhana:
+        # Header set Access-Control-Allow-Origin "*"
+    </IfModule>
+
+    RewriteEngine On
+
+    RewriteCond %{HTTP_USER_AGENT} ^python-httpx/0.24.1 [NC]
+    RewriteRule .* - [F,L]
+    RewriteRule ^\.git/ - [F]
+    RewriteRule "^/cgi-bin/" - [F,L]
+    
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>

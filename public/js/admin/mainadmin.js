@@ -1,0 +1,502 @@
+document.addEventListener("DOMContentLoaded", () => {
+    // =========================
+    // ELEMENT
+    // =========================
+    const fromInput = document.getElementById("from");
+    const toInput = document.getElementById("to");
+    const btnFilter = document.getElementById("btnFilter");
+    const btnRefresh = document.getElementById("btnRefresh");
+
+    const filterTanggal = document.getElementById("filterTanggal");
+    const totalRanap = document.getElementById("totalRanap");
+    const totalPasien = document.getElementById("totalPasien");
+    const totalRegPasien = document.getElementById("totalRegPasien");
+    const totalPoli = document.getElementById("totalPoli");
+    const totaligd = document.getElementById("totaligd");
+    const totaloperasi = document.getElementById("totaloperasi");
+    const bayilahir = document.getElementById("bayilahir");
+
+    // KAMAR PER BANGSAL (GLOBAL)
+    const kamarBangsal = document.getElementById("tempat_tidur_per_bangsal");
+
+    if (!fromInput || !toInput || !btnFilter || !btnRefresh) {
+        console.error("❌ Element tidak lengkap");
+        return;
+    }
+
+    // =========================
+    // DEFAULT TANGGAL
+    // =========================
+    const today = new Date().toISOString().split("T")[0];
+    fromInput.value = today;
+    toInput.value = today;
+
+    let isFetching = false;
+    let autoRefresh = null;
+
+    // =========================
+    // LOADING
+    // =========================
+    const setLoading = (state) => {
+        btnFilter.disabled = state;
+        btnRefresh.disabled = state;
+        btnFilter.textContent = state ? "Loading..." : "Filter";
+    };
+
+    // =========================
+    // FETCH PASIEN (GLOBAL)
+    // =========================
+    const fetchPasien = async () => {
+        try {
+            const res = await fetch("/mainadmin/pasien-summary");
+            if (!res.ok) throw new Error(res.status);
+
+            const data = await res.json();
+            totalPasien.textContent = data.total_pasien ?? 0;
+        } catch {
+            totalPasien.textContent = "—";
+        }
+    };
+
+    // =========================
+    // FETCH SUMMARY (FILTER)
+    // =========================
+    const fetchSummary = async () => {
+        const from = fromInput.value;
+        const to = toInput.value;
+
+        filterTanggal.textContent = `${from} s/d ${to}`;
+
+        try {
+            const res = await fetch(
+                `/mainadmin/manajemendata?from=${from}&to=${to}`,
+            );
+            if (!res.ok) throw new Error(res.status);
+
+            const { summary = {} } = await res.json();
+
+            // RAWAT INAP
+            totalRanap.textContent = summary.rawat_inap ?? 0;
+
+            // REG PASIEN (AKUMULASI)
+            const regData = summary.reg_pasien ?? [];
+            const totalReg = regData.reduce(
+                (sum, r) => sum + Number(r.total),
+                0,
+            );
+            totalRegPasien.textContent = totalReg;
+
+            // POLI
+            totalPoli.textContent = summary.poli ?? 0;
+
+            // IGD
+            totaligd.textContent = summary.igd ?? 0;
+
+            // operasi
+            totaloperasi.textContent = summary.operasi ?? 0;
+
+            // operasi
+            bayilahir.textContent = summary.lahir ?? 0;
+        } catch {
+            totalRanap.textContent = "—";
+            totalRegPasien.textContent = "—";
+            totalPoli.textContent = "—";
+        }
+    };
+
+    // =========================
+    // FETCH KAMAR PER BANGSAL (TANPA FILTER)
+    // =========================
+    const fetchKamarBangsal = async () => {
+        try {
+            const res = await fetch("/mainadmin/tempat-tidur-bangsal");
+            if (!res.ok) throw new Error(res.status);
+
+            const data = await res.json();
+
+            kamarBangsal.innerHTML = ""; // reset table
+
+            if (!data.labels || data.labels.length === 0) {
+                kamarBangsal.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center py-4 text-gray-500">
+                    Tidak ada data
+                </td>
+            </tr>`;
+                return;
+            }
+
+            let hasData = false;
+
+            data.labels.forEach((bangsal, i) => {
+                const totalBed = data.data_terisi[i] + data.data_kosong[i];
+
+                // Jika total bed = 0, skip bangsal ini
+                if (totalBed === 0) return;
+
+                hasData = true;
+
+                const borValue = Math.min(
+                    100,
+                    Math.max(0, Number(data.bor[i]) || 0),
+                );
+
+                let borClass = "low";
+                if (borValue >= 80) borClass = "high";
+                else if (borValue >= 50) borClass = "medium";
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${bangsal}</td>
+                    <td class="center">${totalBed}</td>
+                    <td class="center text-red-500 font-semibold">
+                        ${data.data_terisi[i]}
+                    </td>
+                    <td class="center text-green-500 font-semibold">
+                        ${data.data_kosong[i]}
+                    </td>
+                    <td>
+                        <div class="bor-bar">
+                            <div class="bor-fill ${borClass}" style="width:${borValue}%">
+                                ${borValue}%
+                            </div>
+                        </div>
+                    </td>
+                `;
+
+                kamarBangsal.appendChild(tr);
+            });
+
+            // Jika setelah filter semua kosong
+            if (!hasData) {
+                kamarBangsal.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center py-4 text-gray-500">
+                    Tidak ada data
+                </td>
+            </tr>`;
+            }
+        } catch (err) {
+            console.error("❌ Kamar bangsal error:", err);
+            kamarBangsal.innerHTML = `
+        <tr>
+            <td colspan="5" class="text-center py-4 text-red-500">
+                Gagal memuat data
+            </td>
+        </tr>`;
+        }
+    };
+
+    // fetch top penyakit //
+    let chartTopPenyakit = null;
+
+    const fetchTopPenyakit = async () => {
+        try {
+            const res = await fetch("/mainadmin/top-penyakit-bulan-ini");
+            if (!res.ok) throw new Error(res.status);
+
+            const data = await res.json();
+            const labels = data.labels; // Nama penyakit
+            const counts = data.data; // Jumlah kasus
+
+            const canvas = document.getElementById("chartTopPenyakit");
+            if (!canvas) return;
+
+            const ctx = canvas.getContext("2d");
+
+            // Gradient fill area
+            const gradientFill = ctx.createLinearGradient(
+                0,
+                0,
+                0,
+                canvas.height,
+            );
+            gradientFill.addColorStop(0, "rgba(99,102,241,0.35)");
+            gradientFill.addColorStop(1, "rgba(99,102,241,0.03)");
+
+            if (!chartTopPenyakit) {
+                chartTopPenyakit = new Chart(ctx, {
+                    type: "line",
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                data: counts,
+                                borderColor: "#6366f1", // Indigo
+                                borderWidth: 2.5,
+                                tension: 0.45,
+                                fill: true,
+                                backgroundColor: gradientFill,
+
+                                pointRadius: 0,
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: "#6366f1",
+                                pointBorderColor: "#fff",
+                                pointBorderWidth: 2,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: "index",
+                            intersect: false,
+                        },
+                        animation: {
+                            duration: 1200,
+                            easing: "easeOutCubic",
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: "rgba(17,24,39,0.95)",
+                                titleColor: "#e5e7eb",
+                                bodyColor: "#fff",
+                                padding: 12,
+                                cornerRadius: 8,
+                                displayColors: false,
+                                callbacks: {
+                                    label: (ctx) => ` ${ctx.raw} pasien`,
+                                },
+                            },
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: "#9ca3af", font: { size: 11 } },
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: "rgba(255,255,255,0.05)" },
+                                ticks: { color: "#9ca3af", precision: 0 },
+                            },
+                        },
+                    },
+                });
+            } else {
+                chartTopPenyakit.data.labels = labels;
+                chartTopPenyakit.data.datasets[0].data = counts;
+                chartTopPenyakit.update();
+            }
+        } catch (err) {
+            console.error("Gagal fetch top penyakit:", err);
+        }
+    };
+
+    // fetch kunjungan poli hari ini
+
+    let chartKunjunganPoli = null;
+
+    const fetchKunjunganPoli = async () => {
+        try {
+            const url = window.location.origin + "/mainadmin/kunjungan-poli";
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+            let { labels = [], data = [] } = await res.json();
+
+            const canvas = document.getElementById("chartKunjunganPoli");
+            if (!canvas) return;
+
+            // Combine, filter & sort
+            const combined = labels
+                .map((label, i) => ({
+                    label,
+                    value: Number(data[i]) || 0,
+                }))
+                .filter((i) => i.value > 0)
+                .sort((a, b) => b.value - a.value);
+
+            // Empty state
+            if (combined.length === 0) {
+                canvas.parentElement.innerHTML = `
+                <div class="flex items-center justify-center h-[120px] text-white/80 text-sm">
+                    Tidak ada data kunjungan
+                </div>`;
+                return;
+            }
+
+            const cleanLabels = combined.map((i) => i.label);
+            const cleanData = combined.map((i) => i.value);
+
+            const palette = [
+                "#ffffffcc",
+                "#ffffffb3",
+                "#ffffff99",
+                "#ffffff80",
+                "#ffffff66",
+            ];
+
+            // Dynamic height
+            const rowHeight = 42;
+            canvas.parentElement.style.height =
+                Math.max(cleanLabels.length * rowHeight, 180) + "px";
+
+            const config = {
+                type: "bar",
+                plugins: [ChartDataLabels],
+                data: {
+                    labels: cleanLabels,
+                    datasets: [
+                        {
+                            data: cleanData,
+                            backgroundColor: palette.slice(0, cleanData.length),
+                            borderRadius: 10,
+                            barThickness: 26,
+                        },
+                    ],
+                },
+                options: {
+                    indexAxis: "y",
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 900,
+                        easing: "easeOutQuart",
+                    },
+                    scales: {
+                        x: {
+                            display: false,
+                            beginAtZero: true,
+                        },
+                        y: {
+                            grid: { display: false },
+                            border: { display: false },
+                            ticks: { display: false },
+                        },
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) =>
+                                    `${ctx.label}: ${ctx.raw} kunjungan`,
+                            },
+                        },
+                        datalabels: {
+                            color: "#1f2937",
+                            backgroundColor: "#ffffff",
+                            borderRadius: 6,
+                            padding: { left: 8, right: 8, top: 4, bottom: 4 },
+                            font: {
+                                size: 12,
+                                weight: "700",
+                            },
+                            anchor: "end",
+                            align: "right",
+                            formatter: (value, ctx) =>
+                                `${ctx.chart.data.labels[ctx.dataIndex]} (${value})`,
+                        },
+                    },
+                },
+            };
+
+            if (!chartKunjunganPoli) {
+                chartKunjunganPoli = new Chart(canvas, config);
+            } else {
+                chartKunjunganPoli.data.labels = cleanLabels;
+                chartKunjunganPoli.data.datasets[0].data = cleanData;
+                chartKunjunganPoli.update();
+            }
+        } catch (error) {
+            console.error("Gagal fetch Kunjungan Poli:", error);
+        }
+    };
+
+    const fetchAll = async () => {
+        if (isFetching) return;
+
+        isFetching = true;
+        setLoading(true);
+
+        try {
+            await Promise.all([
+                fetchSummary(), // 🔍 pakai filter tanggal
+                fetchPasien(), // 🌍 global
+                fetchKamarBangsal(), // 🏥 global (TIDAK ikut filter)
+                fetchTopPenyakit(),
+                fetchKunjunganPoli(),
+            ]);
+        } catch (e) {
+            console.error("❌ fetchAll error:", e);
+        } finally {
+            setLoading(false);
+            isFetching = false;
+        }
+    };
+
+    let fastInterval = null;
+    let isFastFetching = false;
+
+    const fastRefresh = async () => {
+        if (isFastFetching) return;
+        isFastFetching = true;
+
+        try {
+            await Promise.all([fetchPasien(), fetchSummary()]);
+        } catch (e) {
+            console.error("❌ fastRefresh error:", e);
+        } finally {
+            isFastFetching = false;
+        }
+    };
+
+    let mediumInterval = null;
+    let isMediumFetching = false;
+
+    const mediumRefresh = async () => {
+        if (isMediumFetching) return;
+        isMediumFetching = true;
+
+        try {
+            await Promise.all([
+                fetchTopPenyakit(),
+                fetchKamarBangsal(),
+                fetchKunjunganPoli(),
+            ]);
+        } catch (e) {
+            console.error("❌ mediumRefresh error:", e);
+        } finally {
+            isMediumFetching = false;
+        }
+    };
+
+    const fetchFilteredData = async () => {
+        setLoading(true);
+        await fetchSummary();
+        setLoading(false);
+    };
+
+    // =========================
+    // AUTO REFRESH GLOBAL
+    // =========================
+    const startAutoRefresh = () => {
+        clearInterval(fastInterval);
+        clearInterval(mediumInterval);
+
+        fastRefresh();
+        mediumRefresh();
+
+        fastInterval = setInterval(fastRefresh, 30000); // 30 detik
+        mediumInterval = setInterval(mediumRefresh, 60000); // 60 detik
+    };
+
+    // =========================
+    // EVENT
+    // =========================
+    btnFilter.addEventListener("click", async () => {
+        await fetchFilteredData();
+    });
+
+    btnRefresh.addEventListener("click", async () => {
+        await fetchFilteredData();
+    });
+
+    // =========================
+    // INIT
+    // =========================
+    fetchAll();
+    fetchFilteredData(); // sekali saat load
+    startAutoRefresh();
+});

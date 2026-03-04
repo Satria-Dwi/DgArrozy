@@ -1,0 +1,72 @@
+.kpi-card {
+    @apply bg-slate-900 rounded-xl p-4 text-center
+           text-slate-200 border border-slate-800;
+}
+.kpi-card span {
+    @apply text-2xl font-bold block mt-1;
+}
+.menu-box {
+    @apply bg-indigo-500/20 text-indigo-400
+           p-4 rounded-xl text-center font-semibold
+           hover:bg-indigo-500/30 transition;
+}
+
+.sidebar-link {
+    @apply relative flex items-center gap-3 px-4 py-2.5 rounded-xl
+               text-slate-300
+               hover:bg-white/5 hover:text-white
+               transition-all duration-200;
+}
+
+.sidebar-link i {
+    @apply w-5 text-center opacity-80;
+}
+
+.sidebar-link.active {
+    @apply bg-gradient-to-r from-indigo-600 to-indigo-500
+               text-white font-semibold shadow-md;
+}
+
+.sidebar-link.active::before {
+    content: "";
+    @apply absolute left-0 top-1/2 -translate-y-1/2
+               w-1 h-6 bg-white rounded-r;
+}
+
+/* ===== ROLE SELECT MODERN ===== */
+.role-modern {
+    appearance: none;
+    padding-right: 2.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='gray'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+}
+
+/* Hover */
+.role-modern:hover {
+    border-color: #6366f1;
+}
+
+/* Warna berdasarkan role */
+.role-modern[data-role="pembuat"] {
+    background-color: #eef2ff;
+}
+.role-modern[data-role="head_section"] {
+    background-color: #ecfeff;
+}
+.role-modern[data-role="app_dept"] {
+    background-color: #f0fdf4;
+}
+.role-modern[data-role="approved"] {
+    background-color: #fefce8;
+}
+.role-modern[data-role="admin"] {
+    background-color: #fef2f2;
+}
+
+.header-icon {
+        width: 30px;
+        height: 25px;
+        display: inline-block;
+    }
