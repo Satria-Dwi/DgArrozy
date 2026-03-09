@@ -58,32 +58,6 @@
         </div>
 
     </div>
-    <div class="px-6 py-4 border-b border-slate-700 flex justify-between items-center">
-        <h2 class="text-lg font-semibold text-red-400"> Admin Sistem </h2> <span class="text-xs text-slate-400"> Akses
-            tingkat tinggi </span>
-    </div>
-    <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-            <thead class="bg-red-600/90 text-white">
-                <tr>
-                    <th class="px-4 py-3 text-left">#</th>
-                    <th class="px-4 py-3 text-left">Username</th>
-                    <th class="px-4 py-3 text-left">Password</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-700">
-                @forelse ($admin as $i => $row)
-                    <tr class="hover:bg-slate-800/70 transition">
-                        <td class="px-4 py-3"> {{ $i + 1 }} </td>
-                        <td class="px-4 py-3 font-mono"> {{ $row->username }} </td>
-                        <td class="px-4 py-3 font-mono text-red-400"> {{ $row->password }} </td>
-                </tr> @empty <tr>
-                        <td colspan="3" class="text-center py-6 text-slate-400"> Tidak ada data admin </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
 @endsection
 
 @push('scripts')
