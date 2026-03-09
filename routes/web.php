@@ -6,9 +6,10 @@ use App\Http\Controllers\Admin\DgarrozyFinance\DgarrozyFinanceController;
 use App\Http\Controllers\Admin\DgarrozyOfficer\DgarrozyOfficerController;
 use App\Http\Controllers\Admin\DgarrozyRoleController;
 use App\Http\Controllers\Admin\DgarrozySimrs\DashboardSimrsController;
-use App\Http\Controllers\Admin\DgarrozySimrs\dokter\DokterController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Dokter\DokterController;
 use App\Http\Controllers\Admin\DgarrozySimrs\ITMaster\UserController;
 use App\Http\Controllers\Admin\DgarrozySimrs\LoginController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\DetailTindakan\DetailTindakanController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\ManajemenController;
 use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RekamMedisController;
 use App\Http\Controllers\Admin\MainAdminController;
@@ -95,8 +96,12 @@ Route::middleware(['simrs.login:admin,dokter'])->group(function () {
 });
 
 Route::middleware(['simrs.login:petugas'])->group(function () {
-    Route::get('/manajemen', [ManajemenController::class, 'index'])->name('marrozy.manajemen');
+    Route::get('/manajemen', [ManajemenController::class, 'index'])->name('manajemen.index');
+    Route::get('/manajemen/detailtindakan', [DetailTindakanController::class, 'index'])->name('manajemen.detailtindakan.index');
+    Route::get('/manajemen/detailtindakan/{jenis}', [DetailTindakanController::class, 'detailtindakan'])->name('manajemen.detailtindakan');
+    
     Route::get('/dashboard/laporan-dokter-realtime', [ManajemenController::class, 'laporanDokterRealtime']);
+
 
     Route::get('/rm', [RekamMedisController::class, 'index'])->name('marrozy.rekammedis');
     Route::get('/rm/pasien/ralan', [RekamMedisController::class, 'getDataPasienRalan']);

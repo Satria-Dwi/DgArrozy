@@ -5,20 +5,36 @@
 
         <h1 class="text-2xl font-bold mb-6">Data Pasien Resume</h1>
 
-        {{-- TAB STATUS --}}
-        <div class="flex space-x-2 ">
-            <button id="tabRalan" onclick="setTab('Ralan')"
-                class="px-4 py-2 rounded-t-lg border-b-2 border-blue-600 bg-blue-100 text-blue-700 font-medium">
-                Ralan
-            </button>
-            <button id="tabRanap" onclick="setTab('Ranap')"
-                class="px-4 py-2 rounded-t-lg border-b-2 border-transparent bg-gray-100 text-gray-700 font-medium hover:bg-gray-200">
-                Ranap
-            </button>
+        {{-- ===== Tab Jenis Layanan ===== --}}
+        <div class="w-full md:w-auto">
+            <label class="block text-sm font-semibold text-slate-600 mb-2">
+                Jenis Layanan
+            </label>
+
+            <div class="inline-flex bg-slate-100 rounded-xl p-1 shadow-inner">
+
+                <!-- RAWAT JALAN -->
+                <button type="button"
+                    class="tabJenis px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 bg-white text-blue-600 shadow-sm"
+                    id="tabRalan" onclick="setTab('Ralan')">
+                    Rawat Jalan
+                </button>
+
+                <!-- RAWAT INAP -->
+                <button type="button"
+                    class="tabJenis px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-blue-600"
+                    id="tabRanap" onclick="setTab('Ranap')">
+                    Rawat Inap
+                </button>
+
+            </div>
+
+            <!-- hidden input tetap ada untuk JS -->
+            <input type="hidden" id="jenisRawat" value="ralan">
         </div>
 
         {{-- FILTER --}}
-        <div class="bg-white shadow rounded-lg p-4 mb-6 grid grid-cols-1 md:grid-cols-6 gap-4 text-black">
+        <div class="bg-white shadow rounded-lg p-4 mb-6 grid grid-cols-1 md:grid-cols-6 gap-4 text-black mt-4">
 
             <!-- Filter Tanggal -->
             <div class="md:col-span-2 p-3 border border-gray-200 rounded-lg">

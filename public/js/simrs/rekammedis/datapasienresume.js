@@ -21,31 +21,17 @@ function updateTabUI() {
     const tabRalan = document.getElementById("tabRalan");
     const tabRanap = document.getElementById("tabRanap");
 
-    tabRalan.className = "px-4 py-2 rounded-t-lg border-b-2 font-medium";
-    tabRanap.className = "px-4 py-2 rounded-t-lg border-b-2 font-medium";
+    // Reset semua tombol ke default (non-aktif)
+    tabRalan.className =
+        "tabJenis px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-blue-600";
+    tabRanap.className =
+        "tabJenis px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-blue-600";
 
+    // Tambahkan class aktif sesuai tab
     if (currentTab === "Ralan") {
-        tabRalan.classList.add(
-            "border-blue-600",
-            "bg-blue-100",
-            "text-blue-700",
-        );
-        tabRanap.classList.add(
-            "border-transparent",
-            "bg-gray-100",
-            "text-gray-700",
-        );
+        tabRalan.classList.add("bg-white", "text-blue-600", "shadow-sm");
     } else {
-        tabRanap.classList.add(
-            "border-blue-600",
-            "bg-blue-100",
-            "text-blue-700",
-        );
-        tabRalan.classList.add(
-            "border-transparent",
-            "bg-gray-100",
-            "text-gray-700",
-        );
+        tabRanap.classList.add("bg-white", "text-blue-600", "shadow-sm");
     }
 }
 

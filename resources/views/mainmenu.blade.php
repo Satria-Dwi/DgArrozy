@@ -3,8 +3,8 @@
     <!-- Hero Section -->
     <section class="text-center py-28 bg-cover bg-center bg-no-repeat" style="background-image: url('/img/profile.jpg');">
         <div class="max-w-2xl mx-auto px-4 animate-fade-in-up">
-            <img src="img/logo-pin-edit.png" alt="" class="mx-auto profile-company shadow"
-                style="width: 180px; border-radius:50%">
+            <img src="{{ asset('img/logo-pin-edit.png') }}?v={{ filemtime(public_path('img/logo-pin-edit.png')) }}"
+                alt="" class="mx-auto profile-company shadow" style="width: 180px; border-radius:50%">
             <h2 class="text-4xl md:text-5xl font-extrabold mb-4 text-[#F7941D]"
                 style="text-shadow: 0 2px 6px rgba(0,0,0,0.2)">RSUD <span class="text-[#0FA36B]"
                     style="text-shadow: 0 2px 6px rgba(0,0,0,0.2)">AR ROZY</span>
@@ -857,8 +857,7 @@
 
                     <!-- Foto Dokter -->
                     <div class="absolute -top-16 right-6 z-20">
-                        <img src="/img/instfar.png" alt="Foto Dokter"
-                            class="w-36 h-36 object-contain drop-shadow-2xl">
+                        <img src="/img/instfar.png" alt="Foto Dokter" class="w-36 h-36 object-contain drop-shadow-2xl">
                     </div>
 
                     <!-- Content -->

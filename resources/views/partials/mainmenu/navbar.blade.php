@@ -12,7 +12,8 @@
 
         <!-- KIRI -->
         <div class="flex items-center gap-2">
-            <img src="/img/logo-pin-edit.png" class="header-icon">
+            <img src="{{ asset('img/logo-pin-edit.png') }}?v={{ filemtime(public_path('img/logo-pin-edit.png')) }}"
+                class="header-icon">
             <span class="text-xl font-bold tracking-wide">DgArrozy</span>
             <span>|</span>
         </div>

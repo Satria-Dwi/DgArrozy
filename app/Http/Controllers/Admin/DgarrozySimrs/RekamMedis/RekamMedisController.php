@@ -323,7 +323,6 @@ class RekamMedisController extends Controller
             ->leftJoin('kamar as k', 'ki.kd_kamar', '=', 'k.kd_kamar')
             ->leftJoin('bangsal as b', 'k.kd_bangsal', '=', 'b.kd_bangsal')
             ->leftJoin('pasien as ps', 'rp.no_rkm_medis', '=', 'ps.no_rkm_medis')
-
             ->leftJoin('penyakit as p', function ($join) {
                 $join->on('p.kd_penyakit', '=', DB::raw("
                 COALESCE(

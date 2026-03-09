@@ -50,7 +50,7 @@
 
     /* =========================
    ACTIVE PARENT (Soft)
-========================= */
+    ========================= */
     .menu-parent-active {
         background: rgba(99, 102, 241, 0.08);
         color: #4f46e5 !important;
@@ -59,7 +59,7 @@
 
     /* =========================
    SUBMENU BASE (ANTI SHIFT)
-========================= */
+    ========================= */
     .submenu-item {
         color: #64748b;
         padding-left: 10px;
@@ -71,7 +71,7 @@
 
     /* =========================
    ACTIVE SUBMENU (NO ZOOM)
-========================= */
+    ========================= */
     .submenu-active {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
         color: #ffffff !important;
@@ -84,6 +84,14 @@
 
         border-radius: 10px;
         font-weight: 500 !important;
+    }
+
+    /* Hover submenu yang aktif */
+    .submenu-active:hover {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        /* tetap gradient */
+        color: #e0e7ff !important;
+        /* putih lembut (light indigo) supaya kontras di gradient tapi tidak terlalu menyilaukan */
     }
 
     /* ===== FOOTER ===== */
@@ -214,29 +222,30 @@
                     session('simrs_dept') === 'TEKNOLOGI INFORMASI')
                 {{-- MANAJEMEN --}}
                 <div x-data="{ openMenu: {{ request()->is('manajemen*') ? 'true' : 'false' }} }">
-
                     <button @click="openMenu = !openMenu"
                         class="menu-item w-full justify-between {{ request()->is('manajemen*') ? 'menu-parent-active' : '' }}">
-
                         <div class="flex items-center gap-2">
                             <i class="fas fa-layer-group"></i>
                             <span x-show="!collapse" x-transition>Manajemen</span>
                         </div>
-
                         <i x-show="!collapse" class="fas fa-chevron-down transition-transform duration-300"
-                            :class="{ 'rotate-180': openMenu }">
-                        </i>
+                            :class="{ 'rotate-180': openMenu }"></i>
                     </button>
 
                     <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1 ">
-
-                        <a href="{{ url('/manajemen') }}"
-                            class="submenu-item {{ request()->is('manajemen*') ? 'submenu-active' : '' }}">
-
+                        <!-- Submenu Dokter -->
+                        <a href="{{ route('manajemen.index') }}"
+                            class="submenu-item {{ request()->routeIs('manajemen.index') ? 'submenu-active' : '' }}">
                             <i class="fas fa-users-cog"></i>
                             <span x-show="!collapse" x-transition>Dokter</span>
                         </a>
 
+                        <!-- Submenu Detail Tindakan -->
+                        <a href="{{ route('manajemen.detailtindakan.index') }}"
+                            class="submenu-item {{ request()->routeIs('manajemen.detailtindakan.index', 'manajemen.detailtindakan') ? 'submenu-active' : '' }}">
+                            <i class="fas fa-notes-medical"></i>
+                            <span x-show="!collapse" x-transition>Detail Tindakan</span>
+                        </a>
                     </div>
                 </div>
             @endif
