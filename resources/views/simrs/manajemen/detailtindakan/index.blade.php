@@ -224,5 +224,5 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     {{-- Custom JS --}}
-    <script src="{{ asset('js/simrs/manajemen/detailtindakan/detailtindakan.js') }}"></script>
+    <script src="{{ asset('js/simrs/manajemen/detailtindakan/detailtindakan.js') }}?v={{ filemtime(public_path('js/simrs/manajemen/detailtindakan/detailtindakan.js')) }}"></script>
 @endsection
