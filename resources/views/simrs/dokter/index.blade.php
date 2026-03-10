@@ -1,86 +1,7 @@
 @extends('simrs.layouts.app')
 
 @section('content')
-    <div class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-200">
-        {{-- USER INFO --}}
-        {{-- <div
-            class="rounded-2xl bg-white/5 backdrop-blur-md border border-white/10
-           shadow-lg shadow-black/20
-           p-5 sm:p-6 mb-2">
-
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-5">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="h-10 w-10 rounded-xl
-                       bg-indigo-500/15 text-indigo-400
-                       flex items-center justify-center">
-                        <i class="fa-solid fa-user-shield text-lg"></i>
-                    </div>
-
-                    <div>
-                        <h2 class="text-sm font-semibold text-white">
-                            Informasi User
-                        </h2>
-                        <p class="text-xs text-slate-400">
-                            Data akun yang sedang login
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
-               gap-4 text-sm">
-
-                <!-- NIK -->
-                <div class="rounded-xl bg-black/20 p-4 border border-white/5">
-                    <span class="text-xs text-slate-400">NIK</span>
-                    <div class="mt-1 font-semibold text-white truncate">
-                        {{ $user['nik'] ?? '-' }}
-                    </div>
-                </div>
-
-                <!-- Nama -->
-                <div class="rounded-xl bg-black/20 p-4 border border-white/5">
-                    <span class="text-xs text-slate-400">Nama</span>
-                    <div class="mt-1 font-semibold text-white truncate">
-                        {{ $user['nama'] ?? '-' }}
-                    </div>
-                </div>
-
-                <!-- Jabatan -->
-                <div class="rounded-xl bg-black/20 p-4 border border-white/5">
-                    <span class="text-xs text-slate-400">Jabatan</span>
-                    <div class="mt-1 font-semibold text-white truncate">
-                        {{ $user['jabatan'] ?? '-' }}
-                    </div>
-                </div>
-
-                <!-- Departemen -->
-                <div class="rounded-xl bg-black/20 p-4 border border-white/5">
-                    <span class="text-xs text-slate-400">Departemen</span>
-                    <div class="mt-1 font-semibold text-white truncate">
-                        {{ $user['departemen'] ?? '-' }}
-                    </div>
-                </div>
-
-                @if (!empty($user['spesialis']))
-                    <!-- Spesialis -->
-                    <div
-                        class="rounded-xl bg-emerald-500/10 p-4
-                       border border-emerald-500/20
-                       sm:col-span-2 lg:col-span-1">
-                        <span class="text-xs text-emerald-400">Spesialis</span>
-                        <div class="mt-1 font-semibold text-white flex items-center gap-2">
-                            <span>🩺</span>
-                            <span class="truncate">{{ $user['spesialis'] }}</span>
-                        </div>
-                    </div>
-                @endif
-
-            </div>
-        </div> --}}
+    {{-- <div class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-200"> --}}
 
         @role(['admin', 'dokter'])
             {{-- CARD TOTAL PASIEN DOKTER --}}
@@ -585,7 +506,7 @@
                 @endif
             @endif
         @endrole
-    </div>
+    {{-- </div> --}}
 @endsection
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

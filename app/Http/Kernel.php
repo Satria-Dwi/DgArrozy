@@ -65,5 +65,9 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'dgarrozy.auth' => \App\Http\Middleware\DgarrozyAuth::class,
         'simrs.login' => \App\Http\Middleware\DgarrozySimrs::class,
-    ];
+        'simrs.detailtindakan' => \App\Http\Middleware\SimrsRoleDetailTindakan::class,
+        'simrs.it' => \App\Http\Middleware\SimrsRoleIT::class,
+        'simrs.rm' => \App\Http\Middleware\SimrsRoleRM::class,
+        'simrs.manajemen' => \App\Http\Middleware\SimrsRoleManajemen::class,
+        ];
 }

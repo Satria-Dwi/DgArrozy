@@ -104,26 +104,80 @@ $(function () {
                 response.forEach(function (row) {
                     let dataRow;
 
+                    /* ===========================
+                       OPERASI
+                    ============================ */
                     if (jenis === "operasi") {
                         dataRow = [
-                            "", // no urut
+                            "",
                             row.no_rawat ?? "-",
                             row.no_rkm_medis ?? "-",
                             row.nm_pasien ?? "-",
-                            "-", // kode perawatan kosong
+                            row.kode_paket ?? "-",
                             row.nm_perawatan ?? "-",
-                            "-", // kode dokter kosong
+                            "-",
                             row.operator1 ?? "-",
                             row.tgl_operasi ?? "-",
                             row.jam_operasi ?? "-",
                             row.png_jawab ?? "-",
-                            row.operator1 ?? "-", // kolom terakhir
-                            row.dokter_anestesi ?? "-", // kolom tambahan
+                            row.operator1 ?? "-",
+                            row.dokter_anestesi ?? "-",
                         ];
-                    } else {
-                        // ralan / ranap: tambahkan dummy kolom anestesi supaya row sama panjang (13 kolom)
+                    }
+
+                    /* ===========================
+                       RADIOLOGI
+                    ============================ */
+                    else if (jenis === "radiologi") {
+
+                        dataRow = [
+                            "",
+                            row.no_rawat ?? "-",
+                            row.no_rkm_medis ?? "-",
+                            row.nm_pasien ?? "-",
+                            row.kd_jenis_prw ?? "-",
+                            row.nm_perawatan ?? "-",
+                            row.kd_dokter ?? "-",
+                            row.nm_dokter ?? "-",
+                            row.tgl_periksa ?? "-",
+                            row.jam ?? "-",
+                            row.png_jawab ?? "-",
+                            row.ruangan ?? "-",     // bangsal / poli
+                            "-",                 // dummy anestesi
+                        ];
+                    }
+
+                    /* ===========================
+                       RADIOLOGI
+                    ============================ */
+                    else if (jenis === "laboratorium") {
+
+                        dataRow = [
+                            "",
+                            row.no_rawat ?? "-",
+                            row.no_rkm_medis ?? "-",
+                            row.nm_pasien ?? "-",
+                            row.kd_jenis_prw ?? "-",
+                            row.nm_perawatan ?? "-",
+                            row.kd_dokter ?? "-",
+                            row.nm_dokter ?? "-",
+                            row.tgl_periksa ?? "-",
+                            row.jam ?? "-",
+                            row.png_jawab ?? "-",
+                            row.ruangan ?? "-",     // bangsal / poli
+                            "-",                 // dummy anestesi
+                        ];
+                    }
+
+                    /* ===========================
+                       RANAP / RALAN
+                    ============================ */
+                    else {
+
                         const kolomTerakhir =
-                            jenis === "ranap" ? row.nm_bangsal ?? "-" : row.nm_poli ?? "-";
+                            jenis === "ranap"
+                                ? row.nm_bangsal ?? "-"
+                                : row.nm_poli ?? "-";
 
                         dataRow = [
                             "",
@@ -138,7 +192,7 @@ $(function () {
                             row.jam_rawat ?? "-",
                             row.png_jawab ?? "-",
                             kolomTerakhir,
-                            "-", // dummy dokter anestesi
+                            "-",
                         ];
                     }
 
@@ -192,6 +246,12 @@ $(function () {
         } else if (jenis === "operasi") {
             $("#kolomTerakhirHeader").text("Operator");
             colAnestesi.visible(true);
+        } else if (jenis === "radiologi") {
+            $("#kolomTerakhirHeader").text("Ruangan");
+            colAnestesi.visible(false);
+        } else if (jenis === "laboratorium") {
+            $("#kolomTerakhirHeader").text("Ruangan");
+            colAnestesi.visible(false);
         }
 
         // reload data
@@ -204,4 +264,21 @@ $(function () {
             table.clear().draw();
         }
     });
+});
+
+$("#exportBtn").on("click", function () {
+
+    const start = $("#start").val();
+    const end = $("#end").val();
+    const jenis = $("#jenisRawat").val();
+
+    if (!start || !end) {
+        alert("Pilih tanggal dulu");
+        return;
+    }
+
+    window.open(
+        "/manajemen/detailtindakan/export/" + jenis + "?start=" + start + "&end=" + end,
+        "_blank"
+    );
 });

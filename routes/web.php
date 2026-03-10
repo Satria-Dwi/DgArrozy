@@ -61,28 +61,23 @@ Route::middleware(['dgarrozy.auth:admin'])->group(function () {});
 Route::get('/login', [LoginController::class, 'index']);
 Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
 Route::get('/dashboard/pasien-harian', [DokterController::class, 'pasienHarian']);
 
 
 // AREA TERPROTEKSI
 Route::middleware(['simrs.login'])->group(function () {
-    Route::get('/marrozy', [DashboardSimrsController::class, 'index'])
-        ->name('marrozy.dashboard');
-
+    Route::get('/marrozy', [DashboardSimrsController::class, 'index'])->name('marrozy.dashboard');
     Route::get('/dashboard/kunjungan-poli-hari-ini', [DashboardSimrsController::class, 'chartKunjunganPoliHariIni']);
-
     Route::get('/mainadmin/pasien-summary', [MainAdminController::class, 'pasienSummary']);
     Route::get('/mainadmin/manajemendata', [MainAdminController::class, 'manajemendata']);
-
     Route::get('/mainadmin/tempat-tidur-bangsal', [MainAdminController::class, 'tempatTidurPerBangsal']);
     Route::get('/mainadmin/top-penyakit-bulan-ini', [MainAdminController::class, 'topPenyakitBulanIni']);
     Route::get('/mainadmin/kunjungan-poli', [MainAdminController::class, 'updatepoli']);
 });
 
-Route::middleware(['simrs.login:admin,dokter'])->group(function () {
-    Route::get('/dokter', [DokterController::class, 'index'])
-        ->name('marrozy.dokter');
+Route::middleware(['simrs.login:dokter'])->group(function () {
+    Route::get('/dokter', [DokterController::class, 'index'])->name('marrozy.dokter');
+
     Route::get('/dokter/total-pasien', [DokterController::class, 'totalPasienDokterHariIni']);
     Route::get('/dokter/total-rawat-inap', [DokterController::class, 'totalPasienRawatInapDokterHariIni']);
     Route::get('/dokter/total-rawat-jalan', [DokterController::class, 'totalPasienRawatJalanDokterHariIni']);
@@ -95,21 +90,27 @@ Route::middleware(['simrs.login:admin,dokter'])->group(function () {
     Route::get('/dokter/total-operasi-hari-ini', [DokterController::class, 'operasiDokter'])->name('dashboard.dokter.total-operasi');
 });
 
-Route::middleware(['simrs.login:petugas'])->group(function () {
+Route::middleware(['simrs.login:petugas', 'simrs.manajemen'])->group(function () {
     Route::get('/manajemen', [ManajemenController::class, 'index'])->name('manajemen.index');
+    Route::get('/dashboard/laporan-dokter-realtime', [ManajemenController::class, 'laporanDokterRealtime']);
+});
+
+Route::middleware(['simrs.login:petugas', 'simrs.detailtindakan'])->group(function () {
     Route::get('/manajemen/detailtindakan', [DetailTindakanController::class, 'index'])->name('manajemen.detailtindakan.index');
     Route::get('/manajemen/detailtindakan/{jenis}', [DetailTindakanController::class, 'detailtindakan'])->name('manajemen.detailtindakan');
-    
-    Route::get('/dashboard/laporan-dokter-realtime', [ManajemenController::class, 'laporanDokterRealtime']);
+    Route::get('/manajemen/detailtindakan/export/{jenis}', [DetailTindakanController::class, 'exportDetailTindakan'])->name('manajemen.detailtindakan.export');
+});
 
-
+Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
     Route::get('/rm', [RekamMedisController::class, 'index'])->name('marrozy.rekammedis');
     Route::get('/rm/pasien/ralan', [RekamMedisController::class, 'getDataPasienRalan']);
     Route::get('/rm/pasien/ranap', [RekamMedisController::class, 'getDataPasienRanap']);
     Route::get('/rm/penyakit/list', [RekamMedisController::class, 'getPenyakitList']);
     Route::get('/rm/pasien/ralan/export', [RekamMedisController::class, 'exportRalan']);
     Route::get('/rm/pasien/ranap/export', [RekamMedisController::class, 'exportRanap']);
+});
 
+Route::middleware(['simrs.login:petugas', 'simrs.it'])->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('simrs.user');
     Route::get('/user/table', [UserController::class, 'table'])->name('simrs.user.table');
 });

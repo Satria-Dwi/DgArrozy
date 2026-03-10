@@ -66,67 +66,110 @@
                 Jenis Layanan
             </label>
 
-            <div class="inline-flex bg-slate-100 rounded-xl p-1 shadow-inner">
+            <div class="w-full overflow-x-auto">
 
-                <!-- RAWAT JALAN -->
-                <button type="button"
-                    class="tabJenis px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 bg-white text-blue-600 shadow-sm"
-                    data-jenis="ralan">
-                    Rawat Jalan
-                </button>
+                <div class="inline-flex bg-slate-100 rounded-xl p-1 shadow-inner
+               min-w-max gap-1">
 
-                <!-- RAWAT INAP -->
-                <button type="button"
-                    class="tabJenis px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-blue-600"
-                    data-jenis="ranap">
-                    Rawat Inap
-                </button>
+                    <!-- RAWAT JALAN -->
+                    <button type="button"
+                        class="tabJenis px-3 md:px-5 py-2 text-xs md:text-sm font-semibold
+                   rounded-lg transition-all duration-200
+                   bg-white text-blue-600 shadow-sm whitespace-nowrap"
+                        data-jenis="ralan">
+                        Rawat Jalan
+                    </button>
 
-                <!-- OPERASI -->
-                <button type="button"
-                    class="tabJenis px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-blue-600"
-                    data-jenis="operasi">
-                    Operasi
-                </button>
+                    <!-- RAWAT INAP -->
+                    <button type="button"
+                        class="tabJenis px-3 md:px-5 py-2 text-xs md:text-sm font-semibold
+                   rounded-lg transition-all duration-200
+                   text-slate-600 hover:text-blue-600 whitespace-nowrap"
+                        data-jenis="ranap">
+                        Rawat Inap
+                    </button>
+
+                    <!-- OPERASI -->
+                    <button type="button"
+                        class="tabJenis px-3 md:px-5 py-2 text-xs md:text-sm font-semibold
+                   rounded-lg transition-all duration-200
+                   text-slate-600 hover:text-blue-600 whitespace-nowrap"
+                        data-jenis="operasi">
+                        Operasi
+                    </button>
+
+                    <!-- RADIOLOGI -->
+                    <button type="button"
+                        class="tabJenis px-3 md:px-5 py-2 text-xs md:text-sm font-semibold
+                   rounded-lg transition-all duration-200
+                   text-slate-600 hover:text-blue-600 whitespace-nowrap"
+                        data-jenis="radiologi">
+                        Radiologi
+                    </button>
+
+                    <!-- LABORATORIUM -->
+                    <button type="button"
+                        class="tabJenis px-3 md:px-5 py-2 text-xs md:text-sm font-semibold
+                   rounded-lg transition-all duration-200
+                   text-slate-600 hover:text-blue-600 whitespace-nowrap"
+                        data-jenis="laboratorium">
+                        Laboratorium
+                    </button>
+
+                </div>
 
             </div>
-
             <!-- hidden input untuk tetap dipakai JS -->
             <input type="hidden" id="jenisRawat" value="ralan">
         </div>
         {{-- FILTER CARD --}}
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mt-4">
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 mt-6">
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
 
                 {{-- Tanggal Mulai --}}
                 <div>
-                    <label for="start" class="block text-sm font-semibold text-slate-600 mb-1 cursor-pointer">
+                    <label for="start" class="block text-sm font-semibold text-slate-600 mb-2">
                         Tanggal Mulai
                     </label>
                     <input type="date" id="start"
-                        class="cursor-pointer w-full rounded-lg border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm">
+                        class="w-full rounded-xl border-slate-300 
+                focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                shadow-sm transition">
                 </div>
 
                 {{-- Tanggal Akhir --}}
                 <div>
-                    <label for="end" class="block text-sm font-semibold text-slate-600 mb-1 cursor-pointer">
+                    <label for="end" class="block text-sm font-semibold text-slate-600 mb-2">
                         Tanggal Akhir
                     </label>
                     <input type="date" id="end"
-                        class="cursor-pointer w-full rounded-lg border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-sm">
+                        class="w-full rounded-xl border-slate-300 
+                focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                shadow-sm transition">
                 </div>
 
-                {{-- Spacer kosong supaya tombol rata kanan --}}
-                <div class="hidden md:block"></div>
-
-                {{-- Tombol --}}
-                <div class="flex items-end">
+                {{-- Tombol Filter --}}
+                <div>
                     <button id="filterBtn"
-                        class="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 
-                       text-white font-semibold rounded-lg py-2.5 
-                       transition duration-200 shadow-md">
-                        Tampilkan Data
+                        class="w-full flex items-center justify-center gap-2
+                bg-blue-600 hover:bg-blue-700 active:scale-95
+                text-white font-semibold rounded-xl py-2.5
+                transition duration-200 shadow-md">
+
+                        🔍 Tampilkan Data
+                    </button>
+                </div>
+
+                {{-- Tombol Export --}}
+                <div>
+                    <button id="exportBtn"
+                        class="w-full flex items-center justify-center gap-2
+                bg-emerald-600 hover:bg-emerald-700 active:scale-95
+                text-white font-semibold rounded-xl py-2.5
+                transition duration-200 shadow-md">
+
+                        📊 Export Excel
                     </button>
                 </div>
 

@@ -2,49 +2,58 @@
 
 @section('content')
     <!-- HEADER -->
-    <div class="rounded-3xl bg-gradient-to-r from-indigo-600 to-blue-600 shadow-2xl p-8 mb-10">
+    <div class="rounded-2xl md:rounded-3xl bg-gradient-to-r from-indigo-600 to-blue-600 shadow-2xl p-5 md:p-8 mb-8 md:mb-10">
 
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
 
+            <!-- TITLE -->
             <div>
-                <h2 class="text-4xl font-bold tracking-tight flex items-center gap-3">
-                    <span class="bg-white/20 p-3 rounded-xl">👨‍⚕️</span>
+                <h2 class="text-2xl md:text-4xl font-bold tracking-tight flex items-center gap-3">
+                    <span class="bg-white/20 p-2 md:p-3 rounded-xl text-lg md:text-xl">👨‍⚕️</span>
                     Account SIMRS
                 </h2>
-                <p class="text-indigo-100 mt-2">
+
+                <p class="text-indigo-100 mt-1 md:mt-2 text-sm md:text-base">
                     Daftar seluruh Account SIMRS terdaftar
                 </p>
             </div>
 
-            <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-6 py-4 shadow-lg">
-                <p class="text-sm text-indigo-100">Total Account</p>
-                <h3 class="text-2xl font-bold mt-1">
+            <!-- TOTAL CARD -->
+            <div
+                class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 shadow-lg w-full md:w-auto">
+
+                <p class="text-xs md:text-sm text-indigo-100">Total Account</p>
+
+                <h3 class="text-xl md:text-2xl font-bold mt-1">
+
                     <span class="text-white" id="total-user">
                         {{ $totalUser }}
                     </span>
-                    <span class="text-indigo-200 text-base font-medium">
+
+                    <span class="text-indigo-200 text-sm md:text-base font-medium">
                         /
                         <span id="total-user-pegawai">
                             {{ $totalUserPegawai }}
                         </span>
                         Pegawai
                     </span>
+
                 </h3>
             </div>
 
         </div>
 
         <!-- FILTER -->
-        <div class="grid md:grid-cols-3 gap-4 mt-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mt-6 md:mt-8">
 
             <input type="text" id="filterNama" placeholder="Cari Nama..."
-                class="w-full px-4 py-3 rounded-2xl bg-white text-gray-800 shadow">
+                class="w-full px-4 py-3 rounded-xl md:rounded-2xl bg-white text-gray-800 shadow text-sm md:text-base">
 
             <input type="text" id="filterJabatan" placeholder="Cari Jabatan..."
-                class="w-full px-4 py-3 rounded-2xl bg-white text-gray-800 shadow">
+                class="w-full px-4 py-3 rounded-xl md:rounded-2xl bg-white text-gray-800 shadow text-sm md:text-base">
 
             <input type="text" id="filterDepartemen" placeholder="Cari Departemen..."
-                class="w-full px-4 py-3 rounded-2xl bg-white text-gray-800 shadow">
+                class="w-full px-4 py-3 rounded-xl md:rounded-2xl bg-white text-gray-800 shadow text-sm md:text-base">
 
         </div>
 

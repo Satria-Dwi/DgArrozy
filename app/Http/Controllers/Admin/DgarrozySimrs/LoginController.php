@@ -75,7 +75,25 @@ class LoginController extends Controller
 
         RateLimiter::clear($key);
 
-        return redirect('/marrozy')->with('success', 'Login berhasil');
+        // ================= REDIRECT BERDASARKAN ROLE =================
+        switch ($tipe_user) {
+
+            case 'dokter':
+                return redirect('/dokter')
+                    ->with('success', 'Login berhasil sebagai dokter');
+
+            case 'petugas':
+                return redirect('/marrozy')
+                    ->with('success', 'Login berhasil sebagai petugas');
+
+            case 'pegawai':
+                return redirect('/marrozy')
+                    ->with('success', 'Login berhasil');
+
+            default:
+                return redirect('/marrozy')
+                    ->with('success', 'Login berhasil');
+        }
     }
 
     // ====================== PRIVATE HELPERS ======================

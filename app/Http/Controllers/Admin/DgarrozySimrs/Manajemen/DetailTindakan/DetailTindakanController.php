@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\DetailTindakan;
 
+use App\Exports\DetailTindakanExport;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DetailTindakanController extends Controller
 {
@@ -104,6 +106,7 @@ class DetailTindakanController extends Controller
                     'reg_periksa.no_rawat',
                     'pasien.no_rkm_medis',
                     'pasien.nm_pasien',
+                    'operasi.kode_paket',
                     'paket_operasi.nm_perawatan',
                     DB::raw('DATE(laporan_operasi.tanggal) as tgl_operasi'),
                     DB::raw('TIME(laporan_operasi.tanggal) as jam_operasi'),
@@ -115,6 +118,82 @@ class DetailTindakanController extends Controller
             if ($start && $end) {
                 $query->whereBetween(DB::raw('DATE(laporan_operasi.tanggal)'), [$start, $end]);
             }
+        } elseif ($jenis === 'radiologi') {
+            $query = DB::table('periksa_radiologi')
+                ->join('reg_periksa', 'periksa_radiologi.no_rawat', '=', 'reg_periksa.no_rawat')
+                ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+                ->join('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', '=', 'jns_perawatan_radiologi.kd_jenis_prw')
+                ->join('dokter', 'periksa_radiologi.kd_dokter', '=', 'dokter.kd_dokter')
+                ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+
+                ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+
+                ->leftJoin('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
+                ->leftJoin('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+                ->leftJoin('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+
+                ->select(
+                    'reg_periksa.no_rawat',
+                    'pasien.no_rkm_medis',
+                    'pasien.nm_pasien',
+                    'periksa_radiologi.kd_jenis_prw',
+                    'jns_perawatan_radiologi.nm_perawatan',
+                    'dokter.kd_dokter',
+                    'dokter.nm_dokter',
+                    'periksa_radiologi.tgl_periksa',
+                    'periksa_radiologi.jam',
+                    'penjab.png_jawab',
+                    'reg_periksa.status_lanjut',
+
+                    DB::raw("
+                            CASE
+                                WHEN reg_periksa.status_lanjut = 'Ralan' THEN poliklinik.nm_poli
+                                WHEN reg_periksa.status_lanjut = 'Ranap' THEN bangsal.nm_bangsal
+                            END AS ruangan
+                        ")
+                );
+
+            if ($start && $end) {
+                $query->whereBetween('periksa_radiologi.tgl_periksa', [$start, $end]);
+            }
+        } elseif ($jenis === 'laboratorium') {
+            $query = DB::table('periksa_lab')
+                ->join('reg_periksa', 'periksa_lab.no_rawat', '=', 'reg_periksa.no_rawat')
+                ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+                ->join('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
+                ->join('dokter', 'periksa_lab.kd_dokter', '=', 'dokter.kd_dokter')
+                ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+
+                ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+
+                ->leftJoin('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
+                ->leftJoin('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+                ->leftJoin('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+
+                ->select(
+                    'reg_periksa.no_rawat',
+                    'pasien.no_rkm_medis',
+                    'pasien.nm_pasien',
+                    'periksa_lab.kd_jenis_prw',
+                    'jns_perawatan_lab.nm_perawatan',
+                    'dokter.kd_dokter',
+                    'dokter.nm_dokter',
+                    'periksa_lab.tgl_periksa',
+                    'periksa_lab.jam',
+                    'penjab.png_jawab',
+                    'reg_periksa.status_lanjut',
+
+                    DB::raw("
+                                CASE
+                                    WHEN reg_periksa.status_lanjut = 'Ralan' THEN poliklinik.nm_poli
+                                    WHEN reg_periksa.status_lanjut = 'Ranap' THEN bangsal.nm_bangsal
+                                END AS ruangan
+                            ")
+                );
+
+            if ($start && $end) {
+                $query->whereBetween('periksa_lab.tgl_periksa', [$start, $end]);
+            }
         }
 
         return response()->json(
@@ -122,38 +201,133 @@ class DetailTindakanController extends Controller
         );
     }
 
-    public function operasi(Request $request)
+    public function exportDetailTindakan(Request $request, $jenis)
     {
-        $data = DB::table('reg_periksa as rp')
-            ->join('pasien as ps', 'rp.no_rkm_medis', '=', 'ps.no_rkm_medis')
-            ->join('laporan_operasi as lo', 'rp.no_rawat', '=', 'lo.no_rawat') // WAJIB ADA
-            ->leftjoin('booking_operasi as bo', 'rp.no_rawat', '=', 'bo.no_rawat')
-            ->leftjoin('penjab as pj', 'rp.kd_pj', '=', 'pj.kd_pj')
+        $start = $request->start;
+        $end   = $request->end;
 
-            ->leftjoin('operasi as opr',  'rp.no_rawat', '=', 'opr.no_rawat')
-            ->leftjoin('paket_operasi as po', 'opr.kode_paket', '=', 'po.kode_paket')
-
-            ->leftJoin('dokter as d1', 'opr.operator1', '=', 'd1.kd_dokter')
-            ->leftJoin('dokter as d2', 'opr.dokter_anestesi', '=', 'd2.kd_dokter')
-
-            ->select(
-                'rp.no_rawat',
-                'ps.no_rkm_medis',
-                'ps.nm_pasien',
-                'po.nm_perawatan',
-                'lo.tanggal as tanggal_operasi',
-                'pj.png_jawab',
-                'd1.nm_dokter as operator1',
-                'd2.nm_dokter as dokter_anestesi'
-            )
-            ->orderBy('lo.tanggal', 'desc')
-            ->limit(50)
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'total' => $data->count(),
-            'data' => $data
-        ]);
+        return Excel::download(
+            new DetailTindakanExport($start, $end, $jenis),
+            'detail_tindakan_' . $jenis . '.xlsx'
+        );
     }
+
+    // public function operasi(Request $request)
+    // {
+    //     $data = DB::table('reg_periksa as rp')
+    //         ->join('pasien as ps', 'rp.no_rkm_medis', '=', 'ps.no_rkm_medis')
+    //         ->join('laporan_operasi as lo', 'rp.no_rawat', '=', 'lo.no_rawat') // WAJIB ADA
+    //         ->leftjoin('booking_operasi as bo', 'rp.no_rawat', '=', 'bo.no_rawat')
+    //         ->leftjoin('penjab as pj', 'rp.kd_pj', '=', 'pj.kd_pj')
+
+    //         ->leftjoin('operasi as opr',  'rp.no_rawat', '=', 'opr.no_rawat')
+    //         ->leftjoin('paket_operasi as po', 'opr.kode_paket', '=', 'po.kode_paket')
+
+    //         ->leftJoin('dokter as d1', 'opr.operator1', '=', 'd1.kd_dokter')
+    //         ->leftJoin('dokter as d2', 'opr.dokter_anestesi', '=', 'd2.kd_dokter')
+
+    //         ->select(
+    //             'rp.no_rawat',
+    //             'ps.no_rkm_medis',
+    //             'ps.nm_pasien',
+    //             'po.nm_perawatan',
+    //             'lo.tanggal as tanggal_operasi',
+    //             'pj.png_jawab',
+    //             'd1.nm_dokter as operator1',
+    //             'd2.nm_dokter as dokter_anestesi'
+    //         )
+    //         ->orderBy('lo.tanggal', 'desc')
+    //         ->limit(50)
+    //         ->get();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'total' => $data->count(),
+    //         'data' => $data
+    //     ]);
+    // }
+
+    // public function radiologi()
+    // {
+    //     $data = DB::table('periksa_radiologi')
+    //         ->join('reg_periksa', 'periksa_radiologi.no_rawat', '=', 'reg_periksa.no_rawat')
+    //         ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+    //         ->join('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', '=', 'jns_perawatan_radiologi.kd_jenis_prw')
+    //         ->join('dokter', 'periksa_radiologi.kd_dokter', '=', 'dokter.kd_dokter')
+    //         ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+
+    //         ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+
+    //         ->leftJoin('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
+    //         ->leftJoin('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+    //         ->leftJoin('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+
+    //         ->select(
+    //             'reg_periksa.no_rawat',
+    //             'pasien.no_rkm_medis',
+    //             'pasien.nm_pasien',
+    //             'periksa_radiologi.kd_jenis_prw',
+    //             'jns_perawatan_radiologi.nm_perawatan',
+    //             'dokter.kd_dokter',
+    //             'dokter.nm_dokter',
+    //             'periksa_radiologi.tgl_periksa',
+    //             'periksa_radiologi.jam',
+    //             'penjab.png_jawab',
+    //             'reg_periksa.status_lanjut',
+
+    //             DB::raw("
+    //         CASE
+    //             WHEN reg_periksa.status_lanjut = 'Ralan' THEN poliklinik.nm_poli
+    //             WHEN reg_periksa.status_lanjut = 'Ranap' THEN bangsal.nm_bangsal
+    //         END AS unit
+    //     ")
+    //         )
+    //         ->orderBy('periksa_radiologi.tgl_periksa', 'desc')
+    //         ->orderBy('reg_periksa.no_rawat', 'ASC')
+    //         ->get();
+
+    //     return response()->json($data);
+    // }
+
+    // public function lab()
+    // {
+    //     $data = DB::table('periksa_lab')
+    //         ->join('reg_periksa', 'periksa_lab.no_rawat', '=', 'reg_periksa.no_rawat')
+    //         ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+    //         ->join('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
+    //         ->join('dokter', 'periksa_lab.kd_dokter', '=', 'dokter.kd_dokter')
+    //         ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+
+    //         ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+
+    //         ->leftJoin('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
+    //         ->leftJoin('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+    //         ->leftJoin('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+
+    //         ->select(
+    //             'reg_periksa.no_rawat',
+    //             'pasien.no_rkm_medis',
+    //             'pasien.nm_pasien',
+    //             'periksa_lab.kd_jenis_prw',
+    //             'jns_perawatan_lab.nm_perawatan',
+    //             'dokter.kd_dokter',
+    //             'dokter.nm_dokter',
+    //             'periksa_lab.tgl_periksa',
+    //             'periksa_lab.jam',
+    //             'penjab.png_jawab',
+    //             'reg_periksa.status_lanjut',
+
+    //             DB::raw("
+    //         CASE
+    //             WHEN reg_periksa.status_lanjut = 'Ralan' THEN poliklinik.nm_poli
+    //             WHEN reg_periksa.status_lanjut = 'Ranap' THEN bangsal.nm_bangsal
+    //         END AS unit
+    //     ")
+    //         )
+    //         ->orderBy('periksa_lab.tgl_periksa', 'desc')
+    //         ->orderBy('reg_periksa.no_rawat', 'ASC')
+    //         ->get();
+
+    //     return response()->json($data);
+    // }
 }

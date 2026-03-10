@@ -179,19 +179,21 @@
     <nav class="flex-1 px-3  overflow-y-auto">
 
         {{-- BERANDA --}}
-        <a href="{{ route('marrozy.dashboard') }}" @click="open=false"
-            class="menu-item {{ request()->routeIs('marrozy.dashboard') ? 'menu-parent-active' : '' }}">
 
-            <i class="fa-solid fa-chart-line"></i>
-            <span x-show="!collapse" x-transition>Beranda</span>
-        </a>
+        @if (session('simrs_tipe') === 'petugas')
+            <a href="{{ route('marrozy.dashboard') }}" @click="open=false"
+                class="menu-item {{ request()->routeIs('marrozy.dashboard') ? 'menu-parent-active' : '' }}">
+
+                <i class="fa-solid fa-chart-line"></i>
+                <span x-show="!collapse" x-transition>Dashboard</span>
+            </a>
+        @endif
 
         @if (session('simrs_tipe') === 'dokter')
-            {{-- REKAM MEDIS --}}
-            <div x-data="{ openMenu: {{ request()->is('dokter*') ? 'true' : 'false' }} }">
+            <div x-data="{ openMenu: {{ request()->routeIs('marrozy.dokter') ? 'true' : 'false' }} }">
 
                 <button @click="openMenu = !openMenu"
-                    class="menu-item w-full justify-between {{ request()->is('dokter*') ? 'active' : '' }}">
+                    class="menu-item w-full justify-between {{ request()->is('dokter*') ? 'menu-parent-active' : '' }}">
 
                     <div class="flex items-center gap-2">
                         <i class="fas fa-user-md"></i>
@@ -201,20 +203,23 @@
                     <i x-show="!collapse" class="fas fa-chevron-down transition-transform duration-300"
                         :class="{ 'rotate-180': openMenu }">
                     </i>
+
                 </button>
 
-                <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1 ">
+                <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1">
 
-                    <a href="{{ url('/dokter') }}" class="submenu-item {{ request()->is('dokter*') ? 'active' : '' }}">
+                    <a href="{{ route('marrozy.dokter') }}"
+                        class="submenu-item {{ request()->routeIs('marrozy.dokter') ? 'submenu-active' : '' }}">
 
                         <i class="fas fa-users"></i>
                         <span x-show="!collapse" x-transition>Pasien</span>
+
                     </a>
 
                 </div>
+
             </div>
         @endif
-
         @if (session('simrs_tipe') === 'petugas')
             @if (session('simrs_dep_id') === '06' ||
                     session('simrs_dept') === 'MANAJEMEN' ||
@@ -240,12 +245,16 @@
                             <span x-show="!collapse" x-transition>Dokter</span>
                         </a>
 
-                        <!-- Submenu Detail Tindakan -->
-                        <a href="{{ route('manajemen.detailtindakan.index') }}"
-                            class="submenu-item {{ request()->routeIs('manajemen.detailtindakan.index', 'manajemen.detailtindakan') ? 'submenu-active' : '' }}">
-                            <i class="fas fa-notes-medical"></i>
-                            <span x-show="!collapse" x-transition>Detail Tindakan</span>
-                        </a>
+                        @if (session('simrs_nik') === '198611172005012002' ||
+                                session('simrs_dept_id') === 'IT' ||
+                                session('simrs_dept') === 'TEKNOLOGI INFORMASI')
+                            <!-- Submenu Detail Tindakan -->
+                            <a href="{{ route('manajemen.detailtindakan.index') }}"
+                                class="submenu-item {{ request()->routeIs('manajemen.detailtindakan.index', 'manajemen.detailtindakan') ? 'submenu-active' : '' }}">
+                                <i class="fas fa-notes-medical"></i>
+                                <span x-show="!collapse" x-transition>Detail Tindakan</span>
+                            </a>
+                        @endif
                     </div>
                 </div>
             @endif
