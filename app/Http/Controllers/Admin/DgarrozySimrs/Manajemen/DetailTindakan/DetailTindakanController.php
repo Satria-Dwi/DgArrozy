@@ -111,6 +111,7 @@ class DetailTindakanController extends Controller
                     DB::raw('DATE(laporan_operasi.tanggal) as tgl_operasi'),
                     DB::raw('TIME(laporan_operasi.tanggal) as jam_operasi'),
                     'penjab.png_jawab',
+                    'operasi.operator1 as kd_operator1',
                     'd1.nm_dokter as operator1',
                     'd2.nm_dokter as dokter_anestesi'
                 );

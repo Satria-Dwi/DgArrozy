@@ -50,7 +50,11 @@ $(function () {
 
     // Simpan kolom dokter anestesi (kolom ke-12 / index 12)
     const colAnestesi = table.column(12);
+    const colkodedokter = table.column(6);
+    const colnamadokter = table.column(7);
     colAnestesi.visible(false); // default hide
+    colkodedokter.visible(true); // default hide
+    colnamadokter.visible(true); // default hide
 
     /* ===========================
        NOMOR URUT OTOMATIS
@@ -95,12 +99,6 @@ $(function () {
                     return;
                 }
 
-                const maxData = 1000;
-                if (response.length > maxData) {
-                    alert("Data terlalu banyak, maksimal 1000 baris ditampilkan.");
-                    response = response.slice(0, maxData);
-                }
-
                 response.forEach(function (row) {
                     let dataRow;
 
@@ -116,12 +114,13 @@ $(function () {
                             row.kode_paket ?? "-",
                             row.nm_perawatan ?? "-",
                             "-",
-                            row.operator1 ?? "-",
+                            "-",
                             row.tgl_operasi ?? "-",
                             row.jam_operasi ?? "-",
                             row.png_jawab ?? "-",
                             row.operator1 ?? "-",
                             row.dokter_anestesi ?? "-",
+                            "-"
                         ];
                     }
 
@@ -239,18 +238,28 @@ $(function () {
         // header kolom terakhir & visibilitas kolom anestesi
         if (jenis === "ranap") {
             $("#kolomTerakhirHeader").text("Bangsal");
+            colkodedokter.visible(true);
+            colnamadokter.visible(true); 
             colAnestesi.visible(false);
         } else if (jenis === "ralan") {
             $("#kolomTerakhirHeader").text("Poliklinik");
+            colkodedokter.visible(true); 
+            colnamadokter.visible(true); 
             colAnestesi.visible(false);
         } else if (jenis === "operasi") {
             $("#kolomTerakhirHeader").text("Operator");
             colAnestesi.visible(true);
+            colkodedokter.visible(false);
+            colnamadokter.visible(false);
         } else if (jenis === "radiologi") {
             $("#kolomTerakhirHeader").text("Ruangan");
+            colkodedokter.visible(true); 
+            colnamadokter.visible(true); 
             colAnestesi.visible(false);
         } else if (jenis === "laboratorium") {
             $("#kolomTerakhirHeader").text("Ruangan");
+            colkodedokter.visible(true); 
+            colnamadokter.visible(true); 
             colAnestesi.visible(false);
         }
 
