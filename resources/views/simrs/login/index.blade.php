@@ -19,10 +19,10 @@
         <!-- Header -->
         <div class="text-center mb-6 sm:mb-8">
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">
-                Digital SIMRS Login
+                Login Dashboard
             </h1>
             <p class="text-gray-500 text-sm mt-1">
-                Masuk menggunakan akun SIMRS
+                Masuk menggunakan akun 
             </p>
         </div>
 
@@ -83,7 +83,7 @@
 
         <!-- Footer -->
         <div class="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-400">
-            © {{ date('Y') }} MarRozy • SIMRS
+            © {{ date('Y') }} MarRozy • All rights reserved.
         </div>
     </div>
 

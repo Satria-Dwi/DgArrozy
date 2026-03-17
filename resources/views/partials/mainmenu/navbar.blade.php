@@ -111,7 +111,7 @@
                         {{-- PROFIL / DASHBOARD --}}
                         <li>
                             <a href="/marrozy" class="block px-4 py-3 hover:bg-white/10">
-                                SIMRS
+                                Dashbord
                             </a>
                         </li>
 

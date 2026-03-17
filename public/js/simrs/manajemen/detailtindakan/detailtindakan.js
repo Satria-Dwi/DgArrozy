@@ -49,12 +49,32 @@ $(function () {
     });
 
     // Simpan kolom dokter anestesi (kolom ke-12 / index 12)
-    const colAnestesi = table.column(12);
+
+    const colkdPerawatan = table.column(4);
+    const colnmperawatan = table.column(5);
     const colkodedokter = table.column(6);
     const colnamadokter = table.column(7);
+    const coljam = table.column(9);
+    const colpoly = table.column(11);
+    const colAnestesi = table.column(12);
+    const colpngJawab = table.column(10);
+    const colLab = table.column(13);
+    const coldokterLab = table.column(14);
+    const colradio = table.column(15);
+    const coldokterRadiologi = table.column(16);
+
     colAnestesi.visible(false); // default hide
-    colkodedokter.visible(true); // default hide
-    colnamadokter.visible(true); // default hide
+    colkodedokter.visible(true);
+    colnamadokter.visible(true);
+    colkdPerawatan.visible(true);
+    colnmperawatan.visible(true);
+    coljam.visible(true);
+    colpoly.visible(true);
+    colpngJawab.visible(true);
+    colLab.visible(false);
+    coldokterLab.visible(false);
+    colradio.visible(false);
+    coldokterRadiologi.visible(false);
 
     /* ===========================
        NOMOR URUT OTOMATIS
@@ -120,6 +140,10 @@ $(function () {
                             row.png_jawab ?? "-",
                             row.operator1 ?? "-",
                             row.dokter_anestesi ?? "-",
+                            "-",
+                            "-",
+                            "-",
+                            "-",
                             "-"
                         ];
                     }
@@ -142,12 +166,16 @@ $(function () {
                             row.jam ?? "-",
                             row.png_jawab ?? "-",
                             row.ruangan ?? "-",     // bangsal / poli
-                            "-",                 // dummy anestesi
+                            "-",
+                            "-",
+                            "-",
+                            "-",
+                            "-",// dummy anestesi
                         ];
                     }
 
                     /* ===========================
-                       RADIOLOGI
+                       Laboratorium
                     ============================ */
                     else if (jenis === "laboratorium") {
 
@@ -164,7 +192,31 @@ $(function () {
                             row.jam ?? "-",
                             row.png_jawab ?? "-",
                             row.ruangan ?? "-",     // bangsal / poli
-                            "-",                 // dummy anestesi
+                            "-",
+                            "-",
+                            "-",
+                            "-",  
+                            "-",            // dummy anestesi
+                        ];
+                    } else if (jenis === "mcu") {
+                        dataRow = [
+                            "",                         // nomor urut otomatis
+                            row.no_rawat ?? "-",
+                            row.no_rkm_medis ?? "-",
+                            row.nm_pasien ?? "-",
+                            "-",  
+                            "-",      
+                            "-",                        // nm_perawatan / dummy
+                            row.dokter_mcu ?? "-",                        // dokter Lab / dummy
+                            row.tgl_registrasi ?? "-",                        // jam / dummy
+                            "-",                        // poliklinik / bangsal / ruangan
+                            "-",                        // penjab
+                            "-",                        // operator / dummy
+                            "-",                        // anestesi / dummy
+                            row.ada_lab ?? "Tidak",    // Laboratorium Ya/Tidak
+                            row.dokter_lab ?? "-",     // dokter Lab
+                            row.ada_radiologi ?? "Tidak", // Radiologi Ya/Tidak
+                            row.dokter_radiologi ?? "-",  // dokter Radiologi
                         ];
                     }
 
@@ -191,6 +243,10 @@ $(function () {
                             row.jam_rawat ?? "-",
                             row.png_jawab ?? "-",
                             kolomTerakhir,
+                            "-",
+                            "-",
+                            "-",
+                            "-",
                             "-",
                         ];
                     }
@@ -239,29 +295,88 @@ $(function () {
         if (jenis === "ranap") {
             $("#kolomTerakhirHeader").text("Bangsal");
             colkodedokter.visible(true);
-            colnamadokter.visible(true); 
+            colnamadokter.visible(true);
             colAnestesi.visible(false);
+            colkdPerawatan.visible(true);  // kolom kode perawatan tidak dipakai
+            colnmperawatan.visible(true);  // kolom nama perawatan tidak dipakai
+            coljam.visible(true);           // kolom jam tidak dipakai
+            colpoly.visible(true);         // kolom poli/bangsal tidak dipakai
+            colpngJawab.visible(true);     // kolom penjab tidak dipakai
+            colLab.visible(false);          // kolom lab tidak dipakai
+            coldokterLab.visible(false);    // kolom dokter lab tidak dipakai
+            colradio.visible(false);        // kolom radiologi tidak dipakai
+            coldokterRadiologi.visible(false); 
         } else if (jenis === "ralan") {
             $("#kolomTerakhirHeader").text("Poliklinik");
-            colkodedokter.visible(true); 
-            colnamadokter.visible(true); 
+            colkodedokter.visible(true);
+            colnamadokter.visible(true);
             colAnestesi.visible(false);
+            colkdPerawatan.visible(true);  // kolom kode perawatan tidak dipakai
+            colnmperawatan.visible(true);  // kolom nama perawatan tidak dipakai
+            coljam.visible(true);           // kolom jam tidak dipakai
+            colpoly.visible(true);         // kolom poli/bangsal tidak dipakai
+            colpngJawab.visible(true);     // kolom penjab tidak dipakai
+            colLab.visible(false);          // kolom lab tidak dipakai
+            coldokterLab.visible(false);    // kolom dokter lab tidak dipakai
+            colradio.visible(false);        // kolom radiologi tidak dipakai
+            coldokterRadiologi.visible(false); 
         } else if (jenis === "operasi") {
             $("#kolomTerakhirHeader").text("Operator");
             colAnestesi.visible(true);
             colkodedokter.visible(false);
             colnamadokter.visible(false);
+            colkdPerawatan.visible(true);  // kolom kode perawatan tidak dipakai
+            colnmperawatan.visible(true);  // kolom nama perawatan tidak dipakai
+            coljam.visible(true);           // kolom jam tidak dipakai
+            colpoly.visible(true);         // kolom poli/bangsal tidak dipakai
+            colpngJawab.visible(true);     // kolom penjab tidak dipakai
+            colLab.visible(false);          // kolom lab tidak dipakai
+            coldokterLab.visible(false);    // kolom dokter lab tidak dipakai
+            colradio.visible(false);        // kolom radiologi tidak dipakai
+            coldokterRadiologi.visible(false); 
         } else if (jenis === "radiologi") {
             $("#kolomTerakhirHeader").text("Ruangan");
-            colkodedokter.visible(true); 
-            colnamadokter.visible(true); 
+            colkodedokter.visible(true);
+            colnamadokter.visible(true);
             colAnestesi.visible(false);
+            colkdPerawatan.visible(true);  // kolom kode perawatan tidak dipakai
+            colnmperawatan.visible(true);  // kolom nama perawatan tidak dipakai
+            coljam.visible(true);           // kolom jam tidak dipakai
+            colpoly.visible(true);         // kolom poli/bangsal tidak dipakai
+            colpngJawab.visible(true);     // kolom penjab tidak dipakai
+            colLab.visible(false);          // kolom lab tidak dipakai
+            coldokterLab.visible(false);    // kolom dokter lab tidak dipakai
+            colradio.visible(false);        // kolom radiologi tidak dipakai
+            coldokterRadiologi.visible(false); 
         } else if (jenis === "laboratorium") {
             $("#kolomTerakhirHeader").text("Ruangan");
-            colkodedokter.visible(true); 
-            colnamadokter.visible(true); 
+            colkodedokter.visible(true);
+            colnamadokter.visible(true);
             colAnestesi.visible(false);
+            colkdPerawatan.visible(true);  // kolom kode perawatan tidak dipakai
+            colnmperawatan.visible(true);  // kolom nama perawatan tidak dipakai
+            coljam.visible(true);           // kolom jam tidak dipakai
+            colpoly.visible(true);         // kolom poli/bangsal tidak dipakai
+            colpngJawab.visible(true);     // kolom penjab tidak dipakai
+            colLab.visible(false);          // kolom lab tidak dipakai
+            coldokterLab.visible(false);    // kolom dokter lab tidak dipakai
+            colradio.visible(false);        // kolom radiologi tidak dipakai
+            coldokterRadiologi.visible(false); 
+        } else if (jenis === "mcu") {
+            colkodedokter.visible(false);   // kode dokter MCU
+            colnamadokter.visible(true);   // nama dokter MCU
+            colAnestesi.visible(false);    // kolom anestesi tidak dipakai
+            colkdPerawatan.visible(false);  // kolom kode perawatan tidak dipakai
+            colnmperawatan.visible(false);  // kolom nama perawatan tidak dipakai
+            coljam.visible(false);           // kolom jam tidak dipakai
+            colpoly.visible(false);         // kolom poli/bangsal tidak dipakai
+            colpngJawab.visible(false);     // kolom penjab tidak dipakai
+            colLab.visible(true);          // kolom lab tidak dipakai
+            coldokterLab.visible(true);    // kolom dokter lab tidak dipakai
+            colradio.visible(true);        // kolom radiologi tidak dipakai
+            coldokterRadiologi.visible(true); // kolom dokter radiologi tidak dipakai
         }
+
 
         // reload data
         const start = $("#start").val();

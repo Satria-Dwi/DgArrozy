@@ -12,7 +12,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class DetailTindakanExport implements 
+class DetailTindakanExport implements
     FromCollection,
     WithHeadings,
     ShouldAutoSize,
@@ -23,12 +23,87 @@ class DetailTindakanExport implements
     protected $start;
     protected $end;
     protected $jenis;
+    protected $columns = [];
 
     public function __construct($start, $end, $jenis)
     {
         $this->start = $start;
         $this->end = $end;
         $this->jenis = $jenis;
+
+        // Set columns sesuai jenis di sini
+        switch ($jenis) {
+            case 'ranap':
+                $this->columns = [
+                    'No Rawat',
+                    'No RM',
+                    'Nama Pasien',
+                    'Kode',
+                    'Perawatan',
+                    'Dokter',
+                    'Tanggal',
+                    'Jam',
+                    'Penjamin',
+                    'Ruangan'
+                ];
+                break;
+            case 'ralan':
+                $this->columns = [
+                    'No Rawat',
+                    'No RM',
+                    'Nama Pasien',
+                    'Kode',
+                    'Perawatan',
+                    'Dokter',
+                    'Tanggal',
+                    'Jam',
+                    'Penjamin',
+                    'Poli'
+                ];
+                break;
+            case 'operasi':
+                $this->columns = [
+                    'No Rawat',
+                    'No RM',
+                    'Nama Pasien',
+                    'Kode Paket',
+                    'Nama Paket',
+                    'Operator',
+                    'Tanggal',
+                    'Jam',
+                    'Penjamin',
+                    'Ruangan'
+                ];
+                break;
+            case 'radiologi':
+            case 'lab':
+                $this->columns = [
+                    'No Rawat',
+                    'No RM',
+                    'Nama Pasien',
+                    'Kode',
+                    'Perawatan',
+                    'Dokter',
+                    'Tanggal',
+                    'Jam',
+                    'Penjamin',
+                    'Ruangan'
+                ];
+                break;
+            case 'mcu':
+                $this->columns = [
+                    'No Rawat',
+                    'No RM',
+                    'Tanggal Registrasi',
+                    'Nama Pasien',
+                    'Dokter MCU',
+                    'Ada Lab?',
+                    'Dokter Lab',
+                    'Ada Radiologi?',
+                    'Dokter Radiologi'
+                ];
+                break;
+        }
     }
 
     public function collection()
@@ -43,14 +118,14 @@ class DetailTindakanExport implements
         if ($jenis === 'ranap') {
 
             $query = DB::table('rawat_inap_dr')
-                ->join('reg_periksa','rawat_inap_dr.no_rawat','=','reg_periksa.no_rawat')
-                ->join('pasien','reg_periksa.no_rkm_medis','=','pasien.no_rkm_medis')
-                ->join('jns_perawatan_inap','rawat_inap_dr.kd_jenis_prw','=','jns_perawatan_inap.kd_jenis_prw')
-                ->join('dokter','rawat_inap_dr.kd_dokter','=','dokter.kd_dokter')
-                ->join('penjab','reg_periksa.kd_pj','=','penjab.kd_pj')
-                ->join('kamar_inap','rawat_inap_dr.no_rawat','=','kamar_inap.no_rawat')
-                ->join('kamar','kamar_inap.kd_kamar','=','kamar.kd_kamar')
-                ->join('bangsal','kamar.kd_bangsal','=','bangsal.kd_bangsal')
+                ->join('reg_periksa', 'rawat_inap_dr.no_rawat', '=', 'reg_periksa.no_rawat')
+                ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+                ->join('jns_perawatan_inap', 'rawat_inap_dr.kd_jenis_prw', '=', 'jns_perawatan_inap.kd_jenis_prw')
+                ->join('dokter', 'rawat_inap_dr.kd_dokter', '=', 'dokter.kd_dokter')
+                ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+                ->join('kamar_inap', 'rawat_inap_dr.no_rawat', '=', 'kamar_inap.no_rawat')
+                ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+                ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
                 ->select(
                     'reg_periksa.no_rawat',
                     'pasien.no_rkm_medis',
@@ -65,22 +140,35 @@ class DetailTindakanExport implements
                 );
 
             if ($start && $end) {
-                $query->whereBetween('rawat_inap_dr.tgl_perawatan',[$start,$end]);
+                $query->whereBetween('rawat_inap_dr.tgl_perawatan', [$start, $end]);
             }
+
+            $this->columns = [
+                'No Rawat',
+                'No RM',
+                'Nama Pasien',
+                'Kode',
+                'Perawatan',
+                'Dokter',
+                'Tanggal',
+                'Jam',
+                'Penjamin',
+                'Ruangan'
+            ];
+            $query->orderBy('reg_periksa.no_rawat', 'desc');
         }
 
         /* ===============================
            RAWAT JALAN
-        =============================== */
-        elseif ($jenis === 'ralan') {
+        =============================== */ elseif ($jenis === 'ralan') {
 
             $query = DB::table('rawat_jl_dr')
-                ->join('reg_periksa','rawat_jl_dr.no_rawat','=','reg_periksa.no_rawat')
-                ->join('pasien','reg_periksa.no_rkm_medis','=','pasien.no_rkm_medis')
-                ->join('jns_perawatan','rawat_jl_dr.kd_jenis_prw','=','jns_perawatan.kd_jenis_prw')
-                ->join('dokter','rawat_jl_dr.kd_dokter','=','dokter.kd_dokter')
-                ->join('penjab','reg_periksa.kd_pj','=','penjab.kd_pj')
-                ->join('poliklinik','reg_periksa.kd_poli','=','poliklinik.kd_poli')
+                ->join('reg_periksa', 'rawat_jl_dr.no_rawat', '=', 'reg_periksa.no_rawat')
+                ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+                ->join('jns_perawatan', 'rawat_jl_dr.kd_jenis_prw', '=', 'jns_perawatan.kd_jenis_prw')
+                ->join('dokter', 'rawat_jl_dr.kd_dokter', '=', 'dokter.kd_dokter')
+                ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+                ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
                 ->select(
                     'reg_periksa.no_rawat',
                     'pasien.no_rkm_medis',
@@ -95,22 +183,35 @@ class DetailTindakanExport implements
                 );
 
             if ($start && $end) {
-                $query->whereBetween('rawat_jl_dr.tgl_perawatan',[$start,$end]);
+                $query->whereBetween('rawat_jl_dr.tgl_perawatan', [$start, $end]);
             }
+
+            $this->columns = [
+                'No Rawat',
+                'No RM',
+                'Nama Pasien',
+                'Kode',
+                'Perawatan',
+                'Dokter',
+                'Tanggal',
+                'Jam',
+                'Penjamin',
+                'Poli'
+            ];
+            $query->orderBy('reg_periksa.no_rawat', 'desc');
         }
 
         /* ===============================
            OPERASI
-        =============================== */
-        elseif ($jenis === 'operasi') {
+        =============================== */ elseif ($jenis === 'operasi') {
 
             $query = DB::table('reg_periksa')
-                ->join('pasien','reg_periksa.no_rkm_medis','=','pasien.no_rkm_medis')
-                ->join('laporan_operasi','reg_periksa.no_rawat','=','laporan_operasi.no_rawat')
-                ->leftJoin('penjab','reg_periksa.kd_pj','=','penjab.kd_pj')
-                ->leftJoin('operasi','reg_periksa.no_rawat','=','operasi.no_rawat')
-                ->leftJoin('paket_operasi','operasi.kode_paket','=','paket_operasi.kode_paket')
-                ->leftJoin('dokter as d1','operasi.operator1','=','d1.kd_dokter')
+                ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+                ->join('laporan_operasi', 'reg_periksa.no_rawat', '=', 'laporan_operasi.no_rawat')
+                ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+                ->leftJoin('operasi', 'reg_periksa.no_rawat', '=', 'operasi.no_rawat')
+                ->leftJoin('paket_operasi', 'operasi.kode_paket', '=', 'paket_operasi.kode_paket')
+                ->leftJoin('dokter as d1', 'operasi.operator1', '=', 'd1.kd_dokter')
                 ->select(
                     'reg_periksa.no_rawat',
                     'pasien.no_rkm_medis',
@@ -125,25 +226,38 @@ class DetailTindakanExport implements
                 );
 
             if ($start && $end) {
-                $query->whereBetween(DB::raw('DATE(laporan_operasi.tanggal)'),[$start,$end]);
+                $query->whereBetween(DB::raw('DATE(laporan_operasi.tanggal)'), [$start, $end]);
             }
+
+            $this->columns = [
+                'No Rawat',
+                'No RM',
+                'Nama Pasien',
+                'Kode Paket',
+                'Nama Paket',
+                'Operator',
+                'Tanggal',
+                'Jam',
+                'Penjamin',
+                'Ruangan'
+            ];
+            $query->orderBy('reg_periksa.no_rawat', 'desc');
         }
 
         /* ===============================
            RADIOLOGI
-        =============================== */
-        elseif ($jenis === 'radiologi') {
+        =============================== */ elseif ($jenis === 'radiologi') {
 
             $query = DB::table('periksa_radiologi')
-                ->join('reg_periksa','periksa_radiologi.no_rawat','=','reg_periksa.no_rawat')
-                ->join('pasien','reg_periksa.no_rkm_medis','=','pasien.no_rkm_medis')
-                ->join('jns_perawatan_radiologi','periksa_radiologi.kd_jenis_prw','=','jns_perawatan_radiologi.kd_jenis_prw')
-                ->join('dokter','periksa_radiologi.kd_dokter','=','dokter.kd_dokter')
-                ->join('penjab','reg_periksa.kd_pj','=','penjab.kd_pj')
-                ->leftJoin('poliklinik','reg_periksa.kd_poli','=','poliklinik.kd_poli')
-                ->leftJoin('kamar_inap','reg_periksa.no_rawat','=','kamar_inap.no_rawat')
-                ->leftJoin('kamar','kamar_inap.kd_kamar','=','kamar.kd_kamar')
-                ->leftJoin('bangsal','kamar.kd_bangsal','=','bangsal.kd_bangsal')
+                ->join('reg_periksa', 'periksa_radiologi.no_rawat', '=', 'reg_periksa.no_rawat')
+                ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+                ->join('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', '=', 'jns_perawatan_radiologi.kd_jenis_prw')
+                ->join('dokter', 'periksa_radiologi.kd_dokter', '=', 'dokter.kd_dokter')
+                ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+                ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+                ->leftJoin('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
+                ->leftJoin('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+                ->leftJoin('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
                 ->select(
                     'reg_periksa.no_rawat',
                     'pasien.no_rkm_medis',
@@ -163,25 +277,37 @@ class DetailTindakanExport implements
                 );
 
             if ($start && $end) {
-                $query->whereBetween('periksa_radiologi.tgl_periksa',[$start,$end]);
+                $query->whereBetween('periksa_radiologi.tgl_periksa', [$start, $end]);
             }
+            $this->columns = [
+                'No Rawat',
+                'No RM',
+                'Nama Pasien',
+                'Kode',
+                'Perawatan',
+                'Dokter',
+                'Tanggal',
+                'Jam',
+                'Penjamin',
+                'Ruangan'
+            ];
+            $query->orderBy('reg_periksa.no_rawat', 'desc');
         }
 
         /* ===============================
            LAB
-        =============================== */
-        else {
+        =============================== */ elseif ($jenis === 'lab') {
 
             $query = DB::table('periksa_lab')
-                ->join('reg_periksa','periksa_lab.no_rawat','=','reg_periksa.no_rawat')
-                ->join('pasien','reg_periksa.no_rkm_medis','=','pasien.no_rkm_medis')
-                ->join('jns_perawatan_lab','periksa_lab.kd_jenis_prw','=','jns_perawatan_lab.kd_jenis_prw')
-                ->join('dokter','periksa_lab.kd_dokter','=','dokter.kd_dokter')
-                ->join('penjab','reg_periksa.kd_pj','=','penjab.kd_pj')
-                ->leftJoin('poliklinik','reg_periksa.kd_poli','=','poliklinik.kd_poli')
-                ->leftJoin('kamar_inap','reg_periksa.no_rawat','=','kamar_inap.no_rawat')
-                ->leftJoin('kamar','kamar_inap.kd_kamar','=','kamar.kd_kamar')
-                ->leftJoin('bangsal','kamar.kd_bangsal','=','bangsal.kd_bangsal')
+                ->join('reg_periksa', 'periksa_lab.no_rawat', '=', 'reg_periksa.no_rawat')
+                ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+                ->join('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
+                ->join('dokter', 'periksa_lab.kd_dokter', '=', 'dokter.kd_dokter')
+                ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+                ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+                ->leftJoin('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
+                ->leftJoin('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+                ->leftJoin('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
                 ->select(
                     'reg_periksa.no_rawat',
                     'pasien.no_rkm_medis',
@@ -201,27 +327,92 @@ class DetailTindakanExport implements
                 );
 
             if ($start && $end) {
-                $query->whereBetween('periksa_lab.tgl_periksa',[$start,$end]);
+                $query->whereBetween('periksa_lab.tgl_periksa', [$start, $end]);
             }
+            $this->columns = [
+                'No Rawat',
+                'No RM',
+                'Nama Pasien',
+                'Kode',
+                'Perawatan',
+                'Dokter',
+                'Tanggal',
+                'Jam',
+                'Penjamin',
+                'Ruangan'
+            ];
+            $query->orderBy('reg_periksa.no_rawat', 'desc');
+        } elseif ($jenis === 'mcu') {
+            $query = DB::table('reg_periksa')
+                ->join('penilaian_mcu', 'reg_periksa.no_rawat', '=', 'penilaian_mcu.no_rawat')
+                ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+                ->leftJoin('dokter as dokter_mcu', 'penilaian_mcu.kd_dokter', '=', 'dokter_mcu.kd_dokter')
+                ->leftJoin('periksa_lab', 'reg_periksa.no_rawat', '=', 'periksa_lab.no_rawat')
+                ->leftJoin('dokter as dokter_lab', 'periksa_lab.kd_dokter', '=', 'dokter_lab.kd_dokter')
+                ->leftJoin('periksa_radiologi', 'reg_periksa.no_rawat', '=', 'periksa_radiologi.no_rawat')
+                ->leftJoin('dokter as dokter_radio', 'periksa_radiologi.kd_dokter', '=', 'dokter_radio.kd_dokter')
+                ->select(
+                    'reg_periksa.no_rawat',
+                    'reg_periksa.no_rkm_medis',
+                    'reg_periksa.tgl_registrasi',
+                    'pasien.nm_pasien',
+                    DB::raw('MAX(dokter_mcu.nm_dokter) as dokter_mcu'),
+                    DB::raw('CASE WHEN COUNT(periksa_lab.no_rawat) > 0 THEN "Ya" ELSE "Tidak" END as ada_lab'),
+                    DB::raw('MAX(dokter_lab.nm_dokter) as dokter_lab'),
+                    DB::raw('CASE WHEN COUNT(periksa_radiologi.no_rawat) > 0 THEN "Ya" ELSE "Tidak" END as ada_radiologi'),
+                    DB::raw('MAX(dokter_radio.nm_dokter) as dokter_radiologi')
+                );
+
+            if ($start && $end) {
+                $query->whereBetween('reg_periksa.tgl_registrasi', [$start, $end]);
+            }
+            $this->columns = [
+                'No Rawat',
+                'No RM',
+                'Tanggal Registrasi',
+                'Nama Pasien',
+                'Dokter MCU',
+                'Ada Lab?',
+                'Dokter Lab',
+                'Ada Radiologi?',
+                'Dokter Radiologi'
+            ];
+
+            // Tambahkan GROUP BY semua kolom non-aggregat
+            $query->groupBy(
+                'reg_periksa.no_rawat',
+                'reg_periksa.no_rkm_medis',
+                'reg_periksa.tgl_registrasi',
+                'pasien.nm_pasien'
+            )->orderBy('reg_periksa.no_rawat', 'desc');
         }
+
 
         return $query->get();
     }
 
     public function headings(): array
     {
-        return [
-            'No Rawat',
-            'No RM',
-            'Nama Pasien',
-            'Kode',
-            'Perawatan',
-            'Dokter',
-            'Tanggal',
-            'Jam',
-            'Penjamin',
-            'Ruangan'
-        ];
+        return $this->getColumns();
+    }
+
+    protected function getColumns(): array
+    {
+        switch ($this->jenis) {
+            case 'ranap':
+                return ['No Rawat', 'No RM', 'Nama Pasien', 'Kode', 'Perawatan', 'Dokter', 'Tanggal', 'Jam', 'Penjamin', 'Ruangan'];
+            case 'ralan':
+                return ['No Rawat', 'No RM', 'Nama Pasien', 'Kode', 'Perawatan', 'Dokter', 'Tanggal', 'Jam', 'Penjamin', 'Poli'];
+            case 'operasi':
+                return ['No Rawat', 'No RM', 'Nama Pasien', 'Kode Paket', 'Nama Paket', 'Operator', 'Tanggal', 'Jam', 'Penjamin', 'Ruangan'];
+            case 'radiologi':
+            case 'lab':
+                return ['No Rawat', 'No RM', 'Nama Pasien', 'Kode', 'Perawatan', 'Dokter', 'Tanggal', 'Jam', 'Penjamin', 'Ruangan'];
+            case 'mcu':
+                return ['No Rawat', 'No RM', 'Tanggal Registrasi', 'Nama Pasien', 'Dokter MCU', 'Ada Lab?', 'Dokter Lab', 'Ada Radiologi?', 'Dokter Radiologi'];
+            default:
+                return [];
+        }
     }
 
     public function styles(Worksheet $sheet)
@@ -235,20 +426,22 @@ class DetailTindakanExport implements
     {
         return [
 
-            AfterSheet::class => function(AfterSheet $event) {
-
+            AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 $highestRow = $sheet->getHighestRow();
-                $highestColumn = $sheet->getHighestColumn();
+
+                // Hitung kolom terakhir berdasarkan jumlah heading
+                $colCount = count($this->columns);
+                $lastColumn = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colCount);
 
                 /* Freeze header */
                 $sheet->freezePane('A2');
 
                 /* Auto filter */
-                $sheet->setAutoFilter("A1:{$highestColumn}1");
+                $sheet->setAutoFilter("A1:{$lastColumn}1");
 
-                /* Header background */
-                $sheet->getStyle('A1:L1')->applyFromArray([
+                /* Header background sesuai jumlah heading */
+                $sheet->getStyle("A1:{$lastColumn}1")->applyFromArray([
                     'fill' => [
                         'fillType' => 'solid',
                         'startColor' => [
@@ -258,7 +451,7 @@ class DetailTindakanExport implements
                 ]);
 
                 /* Border tabel */
-                $sheet->getStyle("A1:{$highestColumn}{$highestRow}")
+                $sheet->getStyle("A1:{$lastColumn}{$highestRow}")
                     ->applyFromArray([
                         'borders' => [
                             'allBorders' => [
@@ -266,9 +459,7 @@ class DetailTindakanExport implements
                             ]
                         ]
                     ]);
-
             }
         ];
     }
-
 }

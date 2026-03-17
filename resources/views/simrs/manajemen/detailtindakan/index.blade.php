@@ -116,6 +116,14 @@
                         Laboratorium
                     </button>
 
+                    <button type="button"
+                        class="tabJenis px-3 md:px-5 py-2 text-xs md:text-sm font-semibold
+                   rounded-lg transition-all duration-200
+                   text-slate-600 hover:text-blue-600 whitespace-nowrap"
+                        data-jenis="mcu">
+                        MCU
+                    </button>
+
                 </div>
 
             </div>
@@ -197,6 +205,10 @@
                             <th class="px-4 py-3">Penanggung Jawab</th>
                             <th class="px-4 py-3" id="kolomTerakhirHeader">Poliklinik</th>
                             <th class="border px-2 py-1" id="dokterAnestesiHeader">Dokter Anestesi</th>
+                            <th class="px-4 py-3">Lab</th>
+                            <th class="px-4 py-3">Dokter Lab</th>
+                            <th class="px-4 py-3">Radiologi</th>
+                            <th class="px-4 py-3">Dokter Radiologi</th>
                         </tr>
                     </thead>
 
@@ -224,5 +236,7 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     {{-- Custom JS --}}
-    <script src="{{ asset('js/simrs/manajemen/detailtindakan/detailtindakan.js') }}?v={{ filemtime(public_path('js/simrs/manajemen/detailtindakan/detailtindakan.js')) }}"></script>
+    <script
+        src="{{ asset('js/simrs/manajemen/detailtindakan/detailtindakan.js') }}?v={{ filemtime(public_path('js/simrs/manajemen/detailtindakan/detailtindakan.js')) }}">
+    </script>
 @endsection
