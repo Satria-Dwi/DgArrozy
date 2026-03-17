@@ -63,6 +63,8 @@ Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/dashboard/pasien-harian', [DokterController::class, 'pasienHarian']);
 
+Route::get('/epasien', function () {include base_path('epasien/index.php');});
+
 
 // AREA TERPROTEKSI
 Route::middleware(['simrs.login'])->group(function () {

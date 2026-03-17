@@ -33,6 +33,7 @@
             <ul class="flex gap-6 font-medium">
                 <li><a href="/" class="{{ $active === 'home' ? 'active' : '' }}">Home</a></li>
                 <li><a href="/dashboard" class="{{ $active === 'dashboard' ? 'active' : '' }}">Dashboard</a></li>
+                <li><a href="/epasien" class="{{ $active === 'epasien' ? 'active' : '' }}">E-Pasien</a></li>
                 {{-- <li><a href="/stream" class="{{ $active === 'stream' ? 'active' : '' }}">Stream</a></li>
                 <li><a href="/login">SIMRS-IT</a></li> --}}
 
