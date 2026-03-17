@@ -157,6 +157,7 @@
         <ul class="flex flex-col gap-4 font-medium">
             <li><a href="/">Home</a></li>
             <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/epasien">Epasien</a></li>
             {{-- <li><a href="/stream">Stream</a></li>
             <li><a href="/login">SIMRS-IT</a></li> --}}
 
