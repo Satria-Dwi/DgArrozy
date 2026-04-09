@@ -122,8 +122,8 @@ class LoginController extends Controller
     private function checkUser($idUser, $password)
     {
         return DB::table('user as u')
-            ->whereRaw("AES_DECRYPT(u.id_user,'nur') = ?", [$idUser])
-            ->whereRaw("AES_DECRYPT(u.password,'windi') = ?", [$password])
+            ->whereRaw("CAST(AES_DECRYPT(u.id_user,'nur') AS CHAR) = ?", [$idUser])
+            ->whereRaw("CAST(AES_DECRYPT(u.password,'windi') AS CHAR) = ?", [$password])
             ->selectRaw("CAST(AES_DECRYPT(u.id_user,'nur') AS CHAR(20)) AS nik")
             ->first();
     }

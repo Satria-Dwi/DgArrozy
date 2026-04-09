@@ -296,7 +296,7 @@ class DetailTindakanExport implements
 
         /* ===============================
            LAB
-        =============================== */ elseif ($jenis === 'lab') {
+        =============================== */ elseif ($jenis === 'laboratorium') {
 
             $query = DB::table('periksa_lab')
                 ->join('reg_periksa', 'periksa_lab.no_rawat', '=', 'reg_periksa.no_rawat')
