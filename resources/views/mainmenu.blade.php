@@ -838,6 +838,49 @@
                         </div> --}}
                     </div>
                 </div>
+
+                <div
+                    class="relative bg-white rounded-2xl shadow-lg 
+                            hover:shadow-2xl transition duration-300 
+                            transform hover:-translate-y-2 
+                            pt-24 pb-8 px-8 overflow-visible">
+
+                    <!-- Gradient Header -->
+                    <div
+                        class="absolute top-0 left-0 w-full h-20
+                            bg-gradient-to-r from-indigo-600 to-purple-600 
+                            rounded-t-2xl flex items-center px-6 pr-40">
+
+                        <span class="text-white font-semibold text-sm tracking-wide leading-snug">
+                            dr. Pandu Suprobo Sp.An.TI
+                        </span>
+                    </div>
+
+                    <!-- Foto Dokter -->
+                    <div class="absolute -top-16 right-6 z-20">
+                        <img src="/img/dokter/dr pandu.png" alt="Foto Dokter"
+                            class="w-36 h-36 object-contain drop-shadow-2xl">
+                    </div>
+
+                    <!-- Content -->
+                    <div class="text-center mt-4">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">
+                            Penata Anestesi
+                        </h3>
+
+                        <div class="w-12 h-1 bg-indigo-500 mx-auto rounded-full mb-4"></div>
+
+                        {{-- <p class="text-sm text-gray-500 mb-2">
+                            Jadwal Praktik
+                        </p>
+
+                        <div class="space-y-1 text-gray-700 font-medium">
+                            <p>Selasa & Kamis, 09:00 - 13:00 WIB</p>
+                        </div> --}}
+                    </div>
+                </div>
+                <div>
+                </div>
                 <div
                     class="relative bg-white rounded-2xl shadow-lg 
                             hover:shadow-2xl transition duration-300 
@@ -877,6 +920,7 @@
                         </div> --}}
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
