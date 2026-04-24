@@ -865,7 +865,7 @@
                     <!-- Content -->
                     <div class="text-center mt-4">
                         <h3 class="text-xl font-bold text-gray-800 mb-2">
-                            Penata Anestesi
+                            Dokter Anestesi
                         </h3>
 
                         <div class="w-12 h-1 bg-indigo-500 mx-auto rounded-full mb-4"></div>
