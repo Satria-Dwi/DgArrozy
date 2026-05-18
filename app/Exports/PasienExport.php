@@ -52,6 +52,7 @@ class PasienExport implements
                 ? ($row->nm_poli ?? '-')
                 : ($row->nm_kamar ?? '-'),
 
+            $row->nm_dokter ?? '-',
             $row->kode_penyakit ?? '-',
 
             $row->diagnosa_final
@@ -73,6 +74,7 @@ class PasienExport implements
             'Status',
             'Kasus',
             'Poli/Kamar',
+            'Dokter',
             'Kode Penyakit',
             'Diagnosa',
         ];

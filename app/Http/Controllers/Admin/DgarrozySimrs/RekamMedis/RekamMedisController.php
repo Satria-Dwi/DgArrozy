@@ -36,6 +36,7 @@ class RekamMedisController extends Controller
             ->join('reg_periksa as rp', 'res.no_rawat', '=', 'rp.no_rawat')
             ->leftJoin('pasien as ps', 'rp.no_rkm_medis', '=', 'ps.no_rkm_medis')
             ->leftJoin('poliklinik as poli', 'rp.kd_poli', '=', 'poli.kd_poli')
+            ->leftJoin('dokter as d', 'rp.kd_dokter', '=', 'd.kd_dokter')
             ->join('penyakit as p', function ($join) {
                 $join->on('p.kd_penyakit', '=', DB::raw("
                 COALESCE(NULLIF(res.kd_diagnosa_sekunder, ''), res.kd_diagnosa_utama)
@@ -47,6 +48,8 @@ class RekamMedisController extends Controller
                 'rp.no_rawat',
                 'rp.no_rkm_medis',
                 'ps.nm_pasien',
+                'd.kd_dokter',
+                'd.nm_dokter',
                 DB::raw("COALESCE(NULLIF(res.kd_diagnosa_sekunder, ''), res.kd_diagnosa_utama) as kode_penyakit"),
                 'p.nm_penyakit as nama_penyakit',
                 'rp.status_lanjut as status',
@@ -79,13 +82,13 @@ class RekamMedisController extends Controller
             ]);
         }
 
-        // FILTER UMUR TAHUN
-        if ($request->filled('umur_operator') && $request->filled('umur_tahun')) {
-            // Contoh: umur_operator = '<', umur_tahun = 10
-            $operator = $request->umur_operator; // <, <=, >, >=, =, !=
-            $tahun = (int) $request->umur_tahun;
+        // FILTER RANGE UMUR TAHUN (Fleksibel, tidak wajib isi keduanya)
+        if ($request->filled('umur_dari')) {
+            $query->whereRaw("TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) >= ?", [(int) $request->umur_dari]);
+        }
 
-            $query->whereRaw("TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) $operator ?", [$tahun]);
+        if ($request->filled('umur_sampai')) {
+            $query->whereRaw("TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) <= ?", [(int) $request->umur_sampai]);
         }
 
         // FILTER JENIS KELAMIN
@@ -119,6 +122,9 @@ class RekamMedisController extends Controller
             ->leftJoin('kamar as k', 'ki.kd_kamar', '=', 'k.kd_kamar')
             ->leftJoin('bangsal as b', 'k.kd_bangsal', '=', 'b.kd_bangsal')
             ->leftJoin('pasien as ps', 'rp.no_rkm_medis', '=', 'ps.no_rkm_medis')
+            ->leftJoin('dpjp_ranap as dpjp', 'dpjp.no_rawat', '=', 'rp.no_rawat')
+            ->leftJoin('dokter as d', 'd.kd_dokter', '=', 'dpjp.kd_dokter')
+            ->leftJoin('poliklinik as poli', 'poli.kd_poli', '=', 'rp.kd_poli')
 
             ->leftJoin('penyakit as p', function ($join) {
                 $join->on('p.kd_penyakit', '=', DB::raw("
@@ -143,6 +149,9 @@ class RekamMedisController extends Controller
                 'rp.no_rawat',
                 'rp.no_rkm_medis',
                 'ps.nm_pasien',
+                'dpjp.kd_dokter',
+                'd.nm_dokter',
+                'poli.nm_poli',
 
                 DB::raw("
                 COALESCE(
@@ -238,6 +247,7 @@ class RekamMedisController extends Controller
             ->join('reg_periksa as rp', 'res.no_rawat', '=', 'rp.no_rawat')
             ->leftJoin('pasien as ps', 'rp.no_rkm_medis', '=', 'ps.no_rkm_medis')
             ->leftJoin('poliklinik as poli', 'rp.kd_poli', '=', 'poli.kd_poli')
+            ->leftJoin('dokter as d', 'rp.kd_dokter', '=', 'd.kd_dokter')
             ->join('penyakit as p', function ($join) {
                 $join->on('p.kd_penyakit', '=', DB::raw("
                 COALESCE(NULLIF(res.kd_diagnosa_sekunder, ''), res.kd_diagnosa_utama)
@@ -250,6 +260,8 @@ class RekamMedisController extends Controller
                 'rp.no_rawat',
                 'rp.no_rkm_medis',
                 'ps.nm_pasien',
+                'd.kd_dokter',
+                'd.nm_dokter',
                 'ps.jk',
                 'ps.no_ktp as nik',
 
@@ -323,6 +335,9 @@ class RekamMedisController extends Controller
             ->leftJoin('kamar as k', 'ki.kd_kamar', '=', 'k.kd_kamar')
             ->leftJoin('bangsal as b', 'k.kd_bangsal', '=', 'b.kd_bangsal')
             ->leftJoin('pasien as ps', 'rp.no_rkm_medis', '=', 'ps.no_rkm_medis')
+            ->leftJoin('dpjp_ranap as dpjp', 'dpjp.no_rawat', '=', 'rp.no_rawat')
+            ->leftJoin('dokter as d', 'd.kd_dokter', '=', 'dpjp.kd_dokter')
+            ->leftJoin('poliklinik as poli', 'poli.kd_poli', '=', 'rp.kd_poli')
             ->leftJoin('penyakit as p', function ($join) {
                 $join->on('p.kd_penyakit', '=', DB::raw("
                 COALESCE(
@@ -347,6 +362,9 @@ class RekamMedisController extends Controller
                 'rp.no_rawat',
                 'rp.no_rkm_medis',
                 'ps.nm_pasien',
+                'dpjp.kd_dokter',
+                'd.nm_dokter',
+                'poli.nm_poli',
                 'ps.jk',
                 'ps.no_ktp as nik',
 

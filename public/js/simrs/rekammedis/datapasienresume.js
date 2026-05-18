@@ -37,7 +37,21 @@ function updateTabUI() {
 
 function updateHeader() {
     const extraHeader = document.getElementById("extraHeader");
-    extraHeader.textContent = currentTab === "Ralan" ? "Poli" : "Kamar";
+    const asalPoliHeader = document.getElementById("asalPoliHeader");
+
+    if (currentTab === "Ralan") {
+        extraHeader.textContent = "Poli";
+
+        if (asalPoliHeader) {
+            asalPoliHeader.style.display = "none";
+        }
+    } else {
+        extraHeader.textContent = "Kamar";
+
+        if (asalPoliHeader) {
+            asalPoliHeader.style.display = "";
+        }
+    }
 }
 
 // =======================
@@ -61,14 +75,15 @@ function toggleDiagnosaFilter() {
 // Cek minimal 1 filter diisi
 // =======================
 function hasFilter() {
+    // Menggunakan optional chaining (?.) untuk menghindari error jika elemen tidak ditemukan di halaman
     return (
-        document.getElementById("tanggal_awal").value !== "" ||
-        document.getElementById("tanggal_akhir").value !== "" ||
-        document.getElementById("umur_tahun").value !== "" ||
-        document.getElementById("jk").value !== "" ||
-        document.getElementById("kode_penyakit").value !== "" ||
-        (currentTab === "Ranap" &&
-            document.getElementById("diagnosa_final")?.value !== "")
+        (document.getElementById("tanggal_awal")?.value || "") !== "" ||
+        (document.getElementById("tanggal_akhir")?.value || "") !== "" ||
+        (document.getElementById("umur_dari")?.value || "") !== "" ||
+        (document.getElementById("umur_sampai")?.value || "") !== "" ||
+        (document.getElementById("jk")?.value || "") !== "" ||
+        (document.getElementById("kode_penyakit")?.value || "") !== "" ||
+        (currentTab === "Ranap" && (document.getElementById("diagnosa_final")?.value || "") !== "")
     );
 }
 
@@ -83,29 +98,27 @@ function loadData(page = 1) {
 
     let url = currentTab === "Ralan" ? "/rm/pasien/ralan" : "/rm/pasien/ranap";
 
+    // Pengambilan data tanggal yang aman dari null pointer
     let params = new URLSearchParams({
         page: page,
-        tanggal_awal: document.getElementById("tanggal_awal").value,
-        tanggal_akhir: document.getElementById("tanggal_akhir").value,
+        tanggal_awal: document.getElementById("tanggal_awal")?.value || '',
+        tanggal_akhir: document.getElementById("tanggal_akhir")?.value || '',
         per_page: 20,
     });
 
-    // Filter umur
-    const umurVal = document.getElementById("umur_tahun").value;
-    if (umurVal) {
-        params.append(
-            "umur_operator",
-            document.getElementById("umur_operator").value,
-        );
-        params.append("umur_tahun", umurVal);
-    }
+    // Perbaikan Filter Umur Range (Dari - Sampai)
+    const umurDari = document.getElementById("umur_dari")?.value;
+    const umurSampai = document.getElementById("umur_sampai")?.value;
+
+    if (umurDari) params.append("umur_dari", umurDari);
+    if (umurSampai) params.append("umur_sampai", umurSampai);
 
     // Filter jenis kelamin
-    const jkVal = document.getElementById("jk").value;
+    const jkVal = document.getElementById("jk")?.value;
     if (jkVal) params.append("jk", jkVal);
 
     // Filter kode/penyakit
-    const kodePenyakitVal = document.getElementById("kode_penyakit").value;
+    const kodePenyakitVal = document.getElementById("kode_penyakit")?.value;
     if (kodePenyakitVal) params.append("kode_penyakit", kodePenyakitVal);
 
     // Filter diagnosa akhir hanya untuk Ranap
@@ -131,6 +144,7 @@ function loadData(page = 1) {
 // =======================
 function renderTable(res) {
     let tbody = document.getElementById("tableBody");
+    if (!tbody) return;
     tbody.innerHTML = "";
 
     const totalEl = document.getElementById("totalPasien");
@@ -140,7 +154,7 @@ function renderTable(res) {
     }
 
     if (!res.data || res.data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="12" class="text-center py-6 text-gray-400">Tidak ada data ditemukan</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="13" class="text-center py-6 text-gray-400">Tidak ada data ditemukan</td></tr>`;
         return;
     }
 
@@ -152,9 +166,9 @@ function renderTable(res) {
 
         let diagnosa = "-";
         if (
-            row.diagnosa_final &&
-            row.diagnosa_final !== "-" &&
-            row.diagnosa_final.trim() !== ""
+            typeof row.diagnosa_final === "string" &&
+            row.diagnosa_final.trim() !== "" &&
+            row.diagnosa_final !== "-"
         ) {
             diagnosa = row.diagnosa_final;
         } else if (row.nama_penyakit && row.nama_penyakit !== "-") {
@@ -178,6 +192,11 @@ function renderTable(res) {
             <td class="px-4 py-3 whitespace-nowrap">${row.status ?? "-"}</td>
             <td class="px-4 py-3 whitespace-nowrap">${row.kasus ?? "-"}</td>
             <td class="px-4 py-3 whitespace-nowrap">${extraCell}</td>
+            ${currentTab === "Ranap"
+                ? `<td class="px-4 py-3 whitespace-nowrap">${row.nm_poli ?? "-"}</td>`
+                : `<td style="display:none;"></td>`
+            }
+            <td class="px-4 py-3 whitespace-nowrap">${row.nm_dokter ?? "-"}</td>
             <td class="px-4 py-3 whitespace-nowrap">${row.kode_penyakit ?? "-"}</td>
             <td class="px-4 py-3 whitespace-nowrap">${diagnosa}</td>
         </tr>`;
@@ -186,6 +205,9 @@ function renderTable(res) {
     renderPagination(res);
 }
 
+// =======================
+// Export Excel
+// =======================
 function exportExcel() {
     if (!hasFilter()) {
         alert("Silakan isi minimal satu filter terlebih dahulu.");
@@ -198,23 +220,21 @@ function exportExcel() {
             : "/rm/pasien/ranap/export";
 
     let params = new URLSearchParams({
-        tanggal_awal: document.getElementById("tanggal_awal").value,
-        tanggal_akhir: document.getElementById("tanggal_akhir").value,
+        tanggal_awal: document.getElementById("tanggal_awal")?.value || '',
+        tanggal_akhir: document.getElementById("tanggal_akhir")?.value || '',
     });
 
-    const umurVal = document.getElementById("umur_tahun").value;
-    if (umurVal) {
-        params.append(
-            "umur_operator",
-            document.getElementById("umur_operator").value,
-        );
-        params.append("umur_tahun", umurVal);
-    }
+    // Perbaikan Export untuk Umur Range
+    const umurDari = document.getElementById("umur_dari")?.value;
+    const umurSampai = document.getElementById("umur_sampai")?.value;
 
-    const jkVal = document.getElementById("jk").value;
+    if (umurDari) params.append("umur_dari", umurDari);
+    if (umurSampai) params.append("umur_sampai", umurSampai);
+
+    const jkVal = document.getElementById("jk")?.value;
     if (jkVal) params.append("jk", jkVal);
 
-    const kodePenyakitVal = document.getElementById("kode_penyakit").value;
+    const kodePenyakitVal = document.getElementById("kode_penyakit")?.value;
     if (kodePenyakitVal) params.append("kode_penyakit", kodePenyakitVal);
 
     if (currentTab === "Ranap") {
@@ -230,6 +250,7 @@ function exportExcel() {
 // =======================
 function renderPagination(res) {
     const pagination = document.getElementById("pagination");
+    if (!pagination) return;
     pagination.innerHTML = "";
     if (!res.last_page || res.last_page <= 1) return;
 

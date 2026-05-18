@@ -40,27 +40,27 @@
             <div class="md:col-span-2 p-3 border border-gray-200 rounded-lg">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
                 <div class="flex flex-col sm:flex-row gap-2">
-                    <input type="date" id="tanggal_awal"
+                    <input type="date" id="tanggal_awal" onclick="this.showPicker()"
                         class="w-full sm:w-1/2 px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                    <input type="date" id="tanggal_akhir"
+                    <input type="date" id="tanggal_akhir" onclick="this.showPicker()"
                         class="w-full sm:w-1/2 px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
             </div>
 
             <!-- Filter Umur -->
             <div class="md:col-span-1 p-3 border border-gray-200 rounded-lg">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Umur</label>
-                <div class="flex gap-2">
-                    <select id="umur_operator"
-                        class="w-13 px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="<">
-                            < </option>
-                        <option value="=">=</option>
-                        <option value=">">></option>
-                    </select>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Rentang Umur (Tahun)</label>
+                <div class="flex items-center gap-2">
+                    <!-- Input Umur Minimal -->
+                    <input type="number" id="umur_dari" name="umur_dari" placeholder="Min" min="0"
+                        class="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-                    <input type="number" id="umur_tahun" placeholder="Tahun"
-                        class="flex-1 px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 w-full" />
+                    <!-- Strip Pemisah -->
+                    <span class="text-gray-400 text-sm">s/d</span>
+
+                    <!-- Input Umur Maksimal -->
+                    <input type="number" id="umur_sampai" name="umur_sampai" placeholder="Max" min="0"
+                        class="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
             </div>
 
@@ -133,13 +133,17 @@
                             <th class="px-4 py-3 whitespace-nowrap">Status</th>
                             <th class="px-4 py-3 whitespace-nowrap">Kasus</th>
                             <th class="px-4 py-3 whitespace-nowrap" id="extraHeader">Poli</th>
+                            <th class="px-4 py-3 whitespace-nowrap" id="asalPoliHeader" style="display:none;">
+                                Asal Poli
+                            </th>
+                            <th class="px-4 py-3 whitespace-nowrap">Dokter</th>
                             <th class="px-4 py-3 whitespace-nowrap">Kode</th>
                             <th class="px-4 py-3 whitespace-nowrap">Diagnosa</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y">
                         <tr>
-                            <td colspan="12" class="text-center py-8 text-gray-400">
+                            <td colspan="13" class="text-center py-8 text-gray-400">
                                 Silakan gunakan filter terlebih dahulu
                             </td>
                         </tr>
