@@ -83,12 +83,19 @@ class RekamMedisController extends Controller
         }
 
         // FILTER RANGE UMUR TAHUN (Fleksibel, tidak wajib isi keduanya)
+        // FILTER RANGE UMUR
         if ($request->filled('umur_dari')) {
-            $query->whereRaw("TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) >= ?", [(int) $request->umur_dari]);
+            $query->whereRaw(
+                "TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) >= ?",
+                [(int) $request->umur_dari]
+            );
         }
 
         if ($request->filled('umur_sampai')) {
-            $query->whereRaw("TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) <= ?", [(int) $request->umur_sampai]);
+            $query->whereRaw(
+                "TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) <= ?",
+                [(int) $request->umur_sampai]
+            );
         }
 
         // FILTER JENIS KELAMIN
@@ -204,13 +211,19 @@ class RekamMedisController extends Controller
             $query->where('rp.tgl_registrasi', '<=', $request->tanggal_akhir);
         }
 
-        // FILTER UMUR TAHUN
-        if ($request->filled('umur_operator') && $request->filled('umur_tahun')) {
-            // Contoh: umur_operator = '<', umur_tahun = 10
-            $operator = $request->umur_operator; // <, <=, >, >=, =, !=
-            $tahun = (int) $request->umur_tahun;
+        // FILTER RANGE UMUR
+        if ($request->filled('umur_dari')) {
+            $query->whereRaw(
+                "TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) >= ?",
+                [(int) $request->umur_dari]
+            );
+        }
 
-            $query->whereRaw("TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) $operator ?", [$tahun]);
+        if ($request->filled('umur_sampai')) {
+            $query->whereRaw(
+                "TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) <= ?",
+                [(int) $request->umur_sampai]
+            );
         }
 
         // FILTER JENIS KELAMIN
@@ -297,14 +310,18 @@ class RekamMedisController extends Controller
             ]);
         }
 
-        // FILTER UMUR
-        if ($request->filled('umur_operator') && $request->filled('umur_tahun')) {
-            $operator = $request->umur_operator;
-            $tahun = (int) $request->umur_tahun;
-
+        // FILTER RANGE UMUR
+        if ($request->filled('umur_dari')) {
             $query->whereRaw(
-                "TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) $operator ?",
-                [$tahun]
+                "TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) >= ?",
+                [(int) $request->umur_dari]
+            );
+        }
+
+        if ($request->filled('umur_sampai')) {
+            $query->whereRaw(
+                "TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) <= ?",
+                [(int) $request->umur_sampai]
             );
         }
 
@@ -413,14 +430,18 @@ class RekamMedisController extends Controller
             ]);
         }
 
-        // FILTER UMUR
-        if ($request->filled('umur_operator') && $request->filled('umur_tahun')) {
-            $operator = $request->umur_operator;
-            $tahun = (int) $request->umur_tahun;
-
+        // FILTER RANGE UMUR
+        if ($request->filled('umur_dari')) {
             $query->whereRaw(
-                "TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) $operator ?",
-                [$tahun]
+                "TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) >= ?",
+                [(int) $request->umur_dari]
+            );
+        }
+
+        if ($request->filled('umur_sampai')) {
+            $query->whereRaw(
+                "TIMESTAMPDIFF(YEAR, ps.tgl_lahir, CURDATE()) <= ?",
+                [(int) $request->umur_sampai]
             );
         }
 

@@ -34,6 +34,45 @@ class PasienExport implements
 
     public function map($row): array
     {
+        // =========================
+        // EXPORT RALAN
+        // =========================
+        if ($this->type === 'Ralan') {
+
+            $diagnosa =
+                $row->nama_penyakit
+                ?? '-';
+
+            return [
+                $row->tanggal_rawat ?? '-',
+                $row->no_rawat ?? '-',
+                $row->no_rkm_medis ?? '-',
+                $row->nm_pasien ?? '-',
+                $row->jk ?? '-',
+                $row->umur ?? '-',
+
+                // biar NIK tidak jadi scientific notation
+                $row->nik ?? '',
+
+                $row->status ?? '-',
+                $row->kasus ?? '-',
+
+                $row->nm_poli ?? '-',
+
+                $row->nm_dokter ?? '-',
+                $row->kode_penyakit ?? '-',
+                $diagnosa,
+            ];
+        }
+
+        // =========================
+        // EXPORT RANAP
+        // =========================
+        $diagnosa =
+            $row->diagnosa_final
+            ?? $row->nm_penyakit
+            ?? '-';
+
         return [
             $row->tanggal_rawat ?? '-',
             $row->no_rawat ?? '-',
@@ -42,27 +81,47 @@ class PasienExport implements
             $row->jk ?? '-',
             $row->umur ?? '-',
 
-            // ✅ jangan cast ke integer
-            $row->nik ?? 0,
+            $row->nik ?? '',
 
             $row->status ?? '-',
             $row->kasus ?? '-',
 
-            $this->type === 'Ralan'
-                ? ($row->nm_poli ?? '-')
-                : ($row->nm_kamar ?? '-'),
+            $row->nm_kamar ?? '-',
+            $row->nm_poli ?? '-',
 
             $row->nm_dokter ?? '-',
             $row->kode_penyakit ?? '-',
-
-            $row->diagnosa_final
-                ?? $row->nama_penyakit
-                ?? '-',
+            $diagnosa,
         ];
     }
 
     public function headings(): array
     {
+        // =========================
+        // HEADER RALAN
+        // =========================
+        if ($this->type === 'Ralan') {
+
+            return [
+                'Tanggal',
+                'No Rawat',
+                'No RM',
+                'Nama',
+                'JK',
+                'Umur',
+                'NIK',
+                'Status',
+                'Kasus',
+                'Poli',
+                'Dokter',
+                'Kode Penyakit',
+                'Diagnosa',
+            ];
+        }
+
+        // =========================
+        // HEADER RANAP
+        // =========================
         return [
             'Tanggal',
             'No Rawat',
@@ -73,25 +132,30 @@ class PasienExport implements
             'NIK',
             'Status',
             'Kasus',
-            'Poli/Kamar',
+            'Kamar',
+            'Asal Poli',
             'Dokter',
             'Kode Penyakit',
             'Diagnosa',
         ];
     }
 
-    // 🔥 Format 16 digit number
     public function columnFormats(): array
     {
         return [
-            'G' => '0000000000000000',
+            // kolom G = NIK
+            'G' => '0',
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
         return [
-            1 => ['font' => ['bold' => true]],
+            1 => [
+                'font' => [
+                    'bold' => true
+                ],
+            ],
         ];
     }
 }
