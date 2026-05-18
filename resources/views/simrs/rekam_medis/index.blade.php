@@ -167,7 +167,7 @@
                 session('simrs_dept') === 'REKAM MEDIK' ||
                 session('simrs_dept') === 'IT' ||
                 session('simrs_dept') === 'TEKNOLOGI INFORMASI')
-            <script src="{{ asset('js/simrs/rekammedis/datapasien.js') }}"></script>
+            <script src="{{ asset('js/simrs/rekammedis/datapasienrm.js') }}"></script>
         @endif
     @endif
 @endsection
