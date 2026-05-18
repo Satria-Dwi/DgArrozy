@@ -312,10 +312,10 @@ function renderTable(res) {
 
                 ${currentTab === "Ranap"
                 ? `
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                ${row.nm_poli ?? "-"}
-                            </td>
-                        `
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        ${row.nm_poli ?? "-"}
+                    </td>
+                `
                 : ``
             }
 
@@ -335,73 +335,105 @@ function renderTable(res) {
         `;
     });
 
-    function renderPagination(res) {
-        const pagination = document.getElementById("pagination");
+    // PENTING
+    renderPagination(res);
+}
 
-        if (!pagination) return;
+// =======================
+// Pagination
+// =======================
+function renderPagination(res) {
 
-        pagination.innerHTML = "";
+    const pagination = document.getElementById("pagination");
 
-        if (!res.last_page || res.last_page <= 1) return;
+    if (!pagination) return;
 
-        const current = res.current_page;
-        const last = res.last_page;
+    pagination.innerHTML = "";
 
-        let html = `<div class="flex items-center space-x-1">`;
+    if (!res.last_page || res.last_page <= 1) return;
 
-        // tombol prev
-        html += `
+    const current = res.current_page;
+    const last = res.last_page;
+
+    let html = `<div class="flex items-center space-x-1">`;
+
+    // tombol prev
+    html += `
         <button
             onclick="loadData(${current - 1})"
             ${current === 1 ? "disabled" : ""}
             class="px-3 py-1.5 rounded-lg border text-sm transition ${current === 1
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-white text-black hover:bg-blue-50 hover:text-blue-600"
-            }"
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "bg-white text-black hover:bg-blue-50 hover:text-blue-600"
+        }"
         >
             ‹
         </button>
     `;
 
-        let start = Math.max(1, current - 2);
-        let end = Math.min(last, current + 2);
+    let start = Math.max(1, current - 2);
+    let end = Math.min(last, current + 2);
 
-        if (start > 1) {
-            html += pageButton(1, current);
+    if (start > 1) {
 
-            if (start > 2) {
-                html += ellipsis();
-            }
+        html += pageButton(1, current);
+
+        if (start > 2) {
+            html += ellipsis();
+        }
+    }
+
+    for (let i = start; i <= end; i++) {
+        html += pageButton(i, current);
+    }
+
+    if (end < last) {
+
+        if (end < last - 1) {
+            html += ellipsis();
         }
 
-        for (let i = start; i <= end; i++) {
-            html += pageButton(i, current);
-        }
+        html += pageButton(last, current);
+    }
 
-        if (end < last) {
-            if (end < last - 1) {
-                html += ellipsis();
-            }
-
-            html += pageButton(last, current);
-        }
-
-        // tombol next
-        html += `
+    // tombol next
+    html += `
         <button
             onclick="loadData(${current + 1})"
             ${current === last ? "disabled" : ""}
             class="px-3 py-1.5 rounded-lg border text-sm transition ${current === last
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-white text-black hover:bg-blue-50 hover:text-blue-600"
-            }"
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+            : "bg-white text-black hover:bg-blue-50 hover:text-blue-600"
+        }"
         >
             ›
         </button>
     `;
 
-        html += `</div>`;
+    html += `</div>`;
 
-        pagination.innerHTML = html;
-    }
+    pagination.innerHTML = html;
+}
+
+function pageButton(page, current) {
+
+    return `
+        <button
+            onclick="loadData(${page})"
+            class="px-3 py-1.5 rounded-lg border text-sm transition ${page === current
+            ? "bg-blue-600 text-white shadow-md scale-105"
+            : "bg-white text-black hover:bg-blue-50 hover:text-blue-600"
+        }"
+        >
+            ${page}
+        </button>
+    `;
+}
+
+function ellipsis() {
+    return `
+        <span class="px-2 text-gray-400 select-none">
+            ...
+        </span>
+    `;
 }
