@@ -143,7 +143,7 @@
                     </thead>
                     <tbody id="tableBody" class="divide-y">
                         <tr>
-                            <td colspan="13" class="text-center py-8 text-gray-400">
+                            <td colspan="14" class="text-center py-8 text-gray-400">
                                 Silakan gunakan filter terlebih dahulu
                             </td>
                         </tr>

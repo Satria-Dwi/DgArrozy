@@ -14,7 +14,11 @@ function setTab(tab) {
     updateTabUI();
     updateHeader();
     toggleDiagnosaFilter();
-    loadData(1);
+
+    // hanya load jika filter ada
+    if (hasFilter()) {
+        loadData(1);
+    }
 }
 
 function updateTabUI() {
@@ -154,7 +158,7 @@ function renderTable(res) {
     }
 
     if (!res.data || res.data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="13" class="text-center py-6 text-gray-400">Tidak ada data ditemukan</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="14" class="text-center py-6 text-gray-400">Tidak ada data ditemukan</td></tr>`;
         return;
     }
 
