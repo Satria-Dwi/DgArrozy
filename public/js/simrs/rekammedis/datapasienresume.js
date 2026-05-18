@@ -181,25 +181,27 @@ function renderTable(res) {
                 : "bg-gray-50 hover:bg-gray-100 text-black";
 
         tbody.innerHTML += `
-        <tr class="${rowClass}">
-            <td class="px-4 py-3 whitespace-nowrap">${row.tanggal_rawat ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.no_rawat ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.no_rkm_medis ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap font-medium">${row.nm_pasien ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.jk ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.umur ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.nik ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.status ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.kasus ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${extraCell}</td>
-            ${currentTab === "Ranap"
-                ? `<td class="px-4 py-3 whitespace-nowrap">${row.nm_poli ?? "-"}</td>`
-                : `<td style="display:none;"></td>`
-            }
-            <td class="px-4 py-3 whitespace-nowrap">${row.nm_dokter ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.kode_penyakit ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${diagnosa}</td>
-        </tr>`;
+            <tr class="${rowClass}">
+                <td class="px-4 py-3 whitespace-nowrap">${row.tanggal_rawat ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${row.no_rawat ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${row.no_rkm_medis ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap font-medium">${row.nm_pasien ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${row.jk ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${row.umur ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${row.nik ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${row.status ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${row.kasus ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${extraCell}</td>
+
+                ${currentTab === "Ranap"
+                            ? `<td class="px-4 py-3 whitespace-nowrap">${row.nm_poli ?? "-"}</td>`
+                            : ``
+                        }
+
+                <td class="px-4 py-3 whitespace-nowrap">${row.nm_dokter ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${row.kode_penyakit ?? "-"}</td>
+                <td class="px-4 py-3 whitespace-nowrap">${diagnosa}</td>
+            </tr>`;
     });
 
     renderPagination(res);
