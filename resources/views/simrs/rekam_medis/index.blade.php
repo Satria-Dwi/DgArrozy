@@ -217,7 +217,7 @@
                 session('simrs_dept') === 'IT' ||
                 session('simrs_dept') === 'TEKNOLOGI INFORMASI' ||
                 session('simrs_nik') === '3513196706930001')
-            <script src="{{ asset('js/simrs/rekammedis/datapasienrm.js') }}"></script>
+            <script src="{{ asset('js/simrs/rekammedis/dataresumepasien.js') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         @endif
     @endif
