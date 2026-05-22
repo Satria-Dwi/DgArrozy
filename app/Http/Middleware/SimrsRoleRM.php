@@ -18,9 +18,11 @@ class SimrsRoleRM
     {
         $dept_id = session('simrs_dept_id');
         $dept = session('simrs_dept');
+        $nik = session('simrs_nik');
 
         if (
-             $dept_id === '07' ||
+            $nik === '3513196706930001' ||
+            $dept_id === '07' ||
             $dept === 'REKAM MEDIK' ||
             $dept_id === 'IT' ||
             $dept === 'TEKNOLOGI INFORMASI'

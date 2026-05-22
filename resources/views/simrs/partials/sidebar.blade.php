@@ -261,7 +261,9 @@
             @if (session('simrs_dep_id') === '07' ||
                     session('simrs_dept') === 'REKAM MEDIK' ||
                     session('simrs_dept') === 'IT' ||
-                    session('simrs_dept') === 'TEKNOLOGI INFORMASI')
+                    session('simrs_dept') === 'TEKNOLOGI INFORMASI' ||
+                    session('simrs_nik') === '3513196706930001' )
+                    
                 {{-- REKAM MEDIS --}}
                 <div x-data="{ openMenu: {{ request()->is('rm*') ? 'true' : 'false' }} }">
 

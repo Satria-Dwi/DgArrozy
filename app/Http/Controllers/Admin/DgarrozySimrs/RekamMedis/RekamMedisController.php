@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\DgarrozyVerifyResumeRanap;
 
 class RekamMedisController extends Controller
 {
@@ -113,6 +114,16 @@ class RekamMedisController extends Controller
             });
         }
 
+        if ($request->filled('keyword')) {
+            $keyword = trim($request->keyword);
+
+            $query->where(function ($q) use ($keyword) {
+                $q->where('rp.no_rawat', 'like', "%{$keyword}%")
+                    ->orWhere('rp.no_rkm_medis', 'like', "%{$keyword}%")
+                    ->orWhere('ps.nm_pasien', 'like', "%{$keyword}%");
+            });
+        }
+
         $query->orderBy('rp.tgl_registrasi', 'desc');
 
         return response()->json(
@@ -132,7 +143,13 @@ class RekamMedisController extends Controller
             ->leftJoin('dpjp_ranap as dpjp', 'dpjp.no_rawat', '=', 'rp.no_rawat')
             ->leftJoin('dokter as d', 'd.kd_dokter', '=', 'dpjp.kd_dokter')
             ->leftJoin('poliklinik as poli', 'poli.kd_poli', '=', 'rp.kd_poli')
-
+            ->leftJoin('dgarrozy_verify_resume_ranap as vr', function ($join) {
+                $join->on('vr.no_rawat', '=', 'rp.no_rawat');
+            })
+            ->where(function ($q) {
+                $q->whereNull('ki.stts_pulang')
+                    ->orWhere('ki.stts_pulang', '!=', 'Pindah Kamar');
+            })
             ->leftJoin('penyakit as p', function ($join) {
                 $join->on('p.kd_penyakit', '=', DB::raw("
                 COALESCE(
@@ -159,6 +176,21 @@ class RekamMedisController extends Controller
                 'dpjp.kd_dokter',
                 'd.nm_dokter',
                 'poli.nm_poli',
+                'vr.verify_date',
+                'vr.verified_by',
+                'vr.comment',
+
+                DB::raw("COALESCE(vr.verified, 0) as verified"),
+
+                DB::raw("
+                        CASE
+                            WHEN res.kd_diagnosa_utama IS NOT NULL
+                                AND TRIM(res.kd_diagnosa_utama) != ''
+                                AND TRIM(res.kd_diagnosa_utama) != '-'
+                            THEN 1
+                            ELSE 0
+                        END as verified_resume
+                        "),
 
                 DB::raw("
                 COALESCE(
@@ -245,6 +277,17 @@ class RekamMedisController extends Controller
         if ($request->filled('diagnosa_final')) {
             $keyword = $request->diagnosa_final;
             $query->where('ki.diagnosa_akhir', 'like', "%{$keyword}%");
+        }
+
+        // FILTER KEYWORD (No Rawat / No RM / Nama Pasien)
+        if ($request->filled('keyword')) {
+            $keyword = trim($request->keyword);
+
+            $query->where(function ($q) use ($keyword) {
+                $q->where('rp.no_rawat', 'like', "%{$keyword}%")
+                    ->orWhere('rp.no_rkm_medis', 'like', "%{$keyword}%")
+                    ->orWhere('ps.nm_pasien', 'like', "%{$keyword}%");
+            });
         }
 
         $query->orderBy('rp.tgl_registrasi', 'desc');
@@ -340,6 +383,16 @@ class RekamMedisController extends Controller
             });
         }
 
+        if ($request->filled('keyword')) {
+            $keyword = trim($request->keyword);
+
+            $query->where(function ($q) use ($keyword) {
+                $q->where('rp.no_rawat', 'like', "%{$keyword}%")
+                    ->orWhere('rp.no_rkm_medis', 'like', "%{$keyword}%")
+                    ->orWhere('ps.nm_pasien', 'like', "%{$keyword}%");
+            });
+        }
+
         return $query->orderBy('rp.tgl_registrasi', 'desc');
     }
 
@@ -355,6 +408,13 @@ class RekamMedisController extends Controller
             ->leftJoin('dpjp_ranap as dpjp', 'dpjp.no_rawat', '=', 'rp.no_rawat')
             ->leftJoin('dokter as d', 'd.kd_dokter', '=', 'dpjp.kd_dokter')
             ->leftJoin('poliklinik as poli', 'poli.kd_poli', '=', 'rp.kd_poli')
+            ->leftJoin('dgarrozy_verify_resume_ranap as vr', function ($join) {
+                $join->on('vr.no_rawat', '=', 'rp.no_rawat');
+            })
+            ->where(function ($q) {
+                $q->whereNull('ki.stts_pulang')
+                    ->orWhere('ki.stts_pulang', '!=', 'Pindah Kamar');
+            })
             ->leftJoin('penyakit as p', function ($join) {
                 $join->on('p.kd_penyakit', '=', DB::raw("
                 COALESCE(
@@ -384,6 +444,21 @@ class RekamMedisController extends Controller
                 'poli.nm_poli',
                 'ps.jk',
                 'ps.no_ktp as nik',
+                'vr.verify_date',
+                'vr.verified_by',
+                'vr.comment',
+
+                DB::raw("COALESCE(vr.verified, 0) as verified"),
+
+                DB::raw("
+                        CASE
+                            WHEN res.kd_diagnosa_utama IS NOT NULL
+                                AND TRIM(res.kd_diagnosa_utama) != ''
+                                AND TRIM(res.kd_diagnosa_utama) != '-'
+                            THEN 1
+                            ELSE 0
+                        END as verified_resume
+                        "),
 
                 DB::raw("
                 COALESCE(
@@ -460,7 +535,90 @@ class RekamMedisController extends Controller
             });
         }
 
+        // FILTER KEYWORD (No Rawat / No RM / Nama Pasien)
+        if ($request->filled('keyword')) {
+            $keyword = trim($request->keyword);
+
+            $query->where(function ($q) use ($keyword) {
+                $q->where('rp.no_rawat', 'like', "%{$keyword}%")
+                    ->orWhere('rp.no_rkm_medis', 'like', "%{$keyword}%")
+                    ->orWhere('ps.nm_pasien', 'like', "%{$keyword}%");
+            });
+        }
+
         return $query->orderBy('rp.tgl_registrasi', 'desc');
+    }
+
+    public function saveVerifyRanap(Request $request)
+    {
+        try {
+            $verifyDate = $request->verified ? now() : null;
+
+            $existing = DB::table('dgarrozy_verify_resume_ranap')
+                ->where('no_rawat', $request->no_rawat)
+                ->first();
+
+            if ($existing) {
+                DB::table('dgarrozy_verify_resume_ranap')
+                    ->where('no_rawat', $request->no_rawat)
+                    ->update([
+                        'no_rm' => $request->no_rm,
+                        'verified' => (int) $request->verified,
+                        'verify_date' => $request->verified ? now() : null,
+                        'verified_by' => $request->verified ? session('simrs_nama') : null,
+                        'comment' => $request->comment,
+                        'updated_at' => now(),
+                    ]);
+            } else {
+                DB::table('dgarrozy_verify_resume_ranap')
+                    ->insert([
+                        'no_rawat' => $request->no_rawat,
+                        'no_rm' => $request->no_rm,
+                        'verified' => (int) $request->verified,
+                        'verify_date' => $request->verified ? now() : null,
+                        'verified_by' => $request->verified ? session('simrs_nama') : null,
+                        'comment' => $request->comment,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Berhasil',
+                'data' => [
+                    'verify_date' => now()->format('Y-m-d H:i:s'),
+                    'verified_by' => session('simrs_nama')
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateComment(Request $request)
+    {
+        try {
+            DB::table('dgarrozy_verify_resume_ranap')
+                ->where('no_rawat', $request->no_rawat)
+                ->update([
+                    'comment' => $request->comment,
+                    'updated_at' => now(),
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Comment updated',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function exportRalan(Request $request)

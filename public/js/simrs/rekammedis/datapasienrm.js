@@ -1,16 +1,65 @@
-let currentTab = "Ralan";
+const state = {
+    tab: "Ralan",
+    data: [],
+    page: 1,
+};
+
+// let state.tab = "Ralan";
 
 document.addEventListener("DOMContentLoaded", function () {
+    state.tab = localStorage.getItem("rm_tab") || "Ralan";
+
     updateTabUI();
     updateHeader();
     toggleDiagnosaFilter();
+    loadData(1);
+
+    initAutoSearch();
 });
+
+let searchTimer = null;
+
+function initAutoSearch() {
+    const filterIds = [
+        "keyword",
+        "kode_penyakit",
+        "diagnosa_final",
+        "tanggal_awal",
+        "tanggal_akhir",
+        "umur_dari",
+        "umur_sampai",
+        "jk"
+    ];
+
+    filterIds.forEach(id => {
+        const el = document.getElementById(id);
+
+        if (!el) return;
+
+        const eventType =
+            el.tagName === "SELECT" ||
+                el.type === "date"
+                ? "change"
+                : "input";
+
+        el.addEventListener(eventType, () => {
+            clearTimeout(searchTimer);
+
+            searchTimer = setTimeout(() => {
+                loadData(1);
+            }, 500); // delay 500ms
+        });
+    });
+}
 
 // =======================
 // Tab handling
 // =======================
 function setTab(tab) {
-    currentTab = tab;
+    state.tab = tab;
+    localStorage.setItem("rm_tab", tab);
+
+    state.page = 1;
     updateTabUI();
     updateHeader();
     toggleDiagnosaFilter();
@@ -28,7 +77,7 @@ function updateTabUI() {
         "tabJenis px-5 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-blue-600";
 
     // Tambahkan class aktif sesuai tab
-    if (currentTab === "Ralan") {
+    if (state.tab === "Ralan") {
         tabRalan.classList.add("bg-white", "text-blue-600", "shadow-sm");
     } else {
         tabRanap.classList.add("bg-white", "text-blue-600", "shadow-sm");
@@ -36,22 +85,64 @@ function updateTabUI() {
 }
 
 function updateHeader() {
-    const extraHeader = document.getElementById("extraHeader");
-    const asalPoliHeader = document.getElementById("asalPoliHeader");
 
-    if (currentTab === "Ralan") {
-        extraHeader.textContent = "Poli";
+    const extraHeader =
+        document.getElementById("extraHeader");
 
-        if (asalPoliHeader) {
-            asalPoliHeader.style.display = "none";
-        }
-    } else {
-        extraHeader.textContent = "Kamar";
+    const asalPoliHeader =
+        document.getElementById("asalPoliHeader");
 
-        if (asalPoliHeader) {
-            asalPoliHeader.style.display = "";
-        }
+    const verifyHeader =
+        document.getElementById("verifyHeader");
+
+    const commentHeader =
+        document.getElementById("commentHeader");
+
+    const verifyDateHeader =
+        document.getElementById("verifyDateHeader");
+
+    const verifiedByHeader =
+        document.getElementById("verifiedByHeader");
+
+    const isRanap = state.tab === "Ranap";
+
+    const sumberHeader =
+        document.getElementById("sumberHeader");
+
+    if (extraHeader) {
+        extraHeader.textContent = isRanap ? "Kamar" : "Poli";
     }
+
+    if (asalPoliHeader) {
+        asalPoliHeader.style.display =
+            isRanap ? "" : "none";
+    }
+
+    if (verifyHeader) {
+        verifyHeader.style.display =
+            isRanap ? "" : "none";
+    }
+
+    if (commentHeader) {
+        commentHeader.style.display =
+            isRanap ? "" : "none";
+    }
+
+    if (verifyDateHeader) {
+        verifyDateHeader.style.display =
+            isRanap ? "" : "none";
+    }
+
+    if (verifiedByHeader) {
+        verifiedByHeader.style.display =
+            isRanap ? "" : "none";
+    }
+
+    if (sumberHeader) {
+        sumberHeader.style.display =
+            isRanap ? "" : "none";
+    }
+    // console.log("TAB:", state.tab);
 }
 
 // =======================
@@ -61,7 +152,7 @@ function toggleDiagnosaFilter() {
     const diagDiv = document.getElementById("filterDiagnosaFinal");
     if (!diagDiv) return;
 
-    if (currentTab === "Ranap") {
+    if (state.tab === "Ranap") {
         diagDiv.style.display = "block";
     } else {
         diagDiv.style.display = "none";
@@ -83,139 +174,277 @@ function hasFilter() {
         (document.getElementById("umur_sampai")?.value || "") !== "" ||
         (document.getElementById("jk")?.value || "") !== "" ||
         (document.getElementById("kode_penyakit")?.value || "") !== "" ||
-        (currentTab === "Ranap" && (document.getElementById("diagnosa_final")?.value || "") !== "")
+        (state.tab === "Ranap" && (document.getElementById("diagnosa_final")?.value || "") !== "")
     );
 }
 
 // =======================
 // Load Data Pasien
 // =======================
-function loadData(page = 1) {
-    if (!hasFilter()) {
-        alert("Silakan isi minimal satu filter terlebih dahulu.");
-        return;
-    }
+async function loadData(page = 1) {
+    state.page = page;
 
-    let url = currentTab === "Ralan" ? "/rm/pasien/ralan" : "/rm/pasien/ranap";
+    const url = state.tab === "Ralan"
+        ? "/rm/pasien/ralan"
+        : "/rm/pasien/ranap";
 
-    // Pengambilan data tanggal yang aman dari null pointer
-    let params = new URLSearchParams({
-        page: page,
-        tanggal_awal: document.getElementById("tanggal_awal")?.value || '',
-        tanggal_akhir: document.getElementById("tanggal_akhir")?.value || '',
+    const params = new URLSearchParams({
+        page,
         per_page: 20,
+        keyword: val("keyword"),
+        tanggal_awal: val("tanggal_awal"),
+        tanggal_akhir: val("tanggal_akhir"),
+        umur_dari: val("umur_dari"),
+        umur_sampai: val("umur_sampai"),
+        jk: val("jk"),
+        kode_penyakit: val("kode_penyakit"),
+        diagnosa_final: state.tab === "Ranap"
+            ? val("diagnosa_final")
+            : ""
     });
 
-    // Perbaikan Filter Umur Range (Dari - Sampai)
-    const umurDari = document.getElementById("umur_dari")?.value;
-    const umurSampai = document.getElementById("umur_sampai")?.value;
+    try {
+        const res = await fetch(`${url}?${params}`);
+        if (!res.ok) throw new Error("Server error");
 
-    if (umurDari) params.append("umur_dari", umurDari);
-    if (umurSampai) params.append("umur_sampai", umurSampai);
+        const json = await res.json();
 
-    // Filter jenis kelamin
-    const jkVal = document.getElementById("jk")?.value;
-    if (jkVal) params.append("jk", jkVal);
+        state.data = json.data;
 
-    // Filter kode/penyakit
-    const kodePenyakitVal = document.getElementById("kode_penyakit")?.value;
-    if (kodePenyakitVal) params.append("kode_penyakit", kodePenyakitVal);
-
-    // Filter diagnosa akhir hanya untuk Ranap
-    if (currentTab === "Ranap") {
-        const diagVal = document.getElementById("diagnosa_final")?.value;
-        if (diagVal) params.append("diagnosa_final", diagVal);
+        renderTable(json);
+    } catch (err) {
+        console.error(err);
+        alert("Gagal load data");
     }
+}
 
-    fetch(`${url}?${params.toString()}`)
-        .then((res) => {
-            if (!res.ok) throw new Error("Server error: " + res.status);
-            return res.json();
-        })
-        .then((res) => renderTable(res))
-        .catch((err) => {
-            alert("Terjadi kesalahan server.");
-            console.error(err);
-        });
+function val(id) {
+    return document.getElementById(id)?.value || "";
 }
 
 // =======================
 // Render Table
 // =======================
 function renderTable(res) {
-    let tbody = document.getElementById("tableBody");
+    const tbody = document.getElementById("tableBody");
     if (!tbody) return;
-    tbody.innerHTML = "";
-
-    const totalEl = document.getElementById("totalPasien");
-    if (totalEl) {
-        const total = res.total ?? res.data.length ?? 0;
-        totalEl.textContent = `Total pasien: ${total}`;
-    }
 
     if (!res.data || res.data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="13" class="text-center py-6 text-gray-400">Tidak ada data ditemukan</td></tr>`;
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="20" class="text-center py-6 text-gray-400">
+                    Tidak ada data
+                </td>
+            </tr>`;
         return;
     }
 
-    res.data.forEach((row, index) => {
-        let extraCell =
-            currentTab === "Ralan"
-                ? (row.nm_poli ?? "-")
-                : (row.nm_kamar ?? "-");
+    tbody.innerHTML = res.data.map((row, i) => {
+        const extra = state.tab === "Ralan" ? row.nm_poli : row.nm_kamar;
 
-        let diagnosa = "-";
-        if (
-            typeof row.diagnosa_final === "string" &&
-            row.diagnosa_final.trim() !== "" &&
-            row.diagnosa_final !== "-"
-        ) {
-            diagnosa = row.diagnosa_final;
-        } else if (row.nama_penyakit && row.nama_penyakit !== "-") {
-            diagnosa = row.nama_penyakit;
-        }
+        return `
+        <tr data-no-rawat="${row.no_rawat}"
+            class="${i % 2 ? 'bg-gray-50' : 'bg-white'}">
 
-        let rowClass =
-            index % 2 === 0
-                ? "bg-white hover:bg-gray-50 text-black"
-                : "bg-gray-50 hover:bg-gray-100 text-black";
+            <td>${row.tanggal_rawat ?? "-"}</td>
+            <td>${row.no_rawat ?? "-"}</td>
+            <td>${row.no_rkm_medis ?? "-"}</td>
+            <td class="font-medium">${row.nm_pasien ?? "-"}</td>
+            <td>${row.jk ?? "-"}</td>
+            <td>${row.umur ?? "-"}</td>
+            <td>${row.nik ?? "-"}</td>
+            <td>${row.status ?? "-"}</td>
+            <td>${row.kasus ?? "-"}</td>
+            <td>${extra ?? "-"}</td>
+            <td>${row.nm_dokter ?? "-"}</td>
+            <td>${row.kode_penyakit ?? "-"}</td>
+            <td>${row.diagnosa_final ?? row.nama_penyakit ?? "-"}</td>
 
-        tbody.innerHTML += `
-        <tr class="${rowClass}">
-            <td class="px-4 py-3 whitespace-nowrap">${row.tanggal_rawat ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.no_rawat ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.no_rkm_medis ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap font-medium">${row.nm_pasien ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.jk ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.umur ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.nik ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.status ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.kasus ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${extraCell}</td>
-            ${currentTab === "Ranap"
-                ? `<td class="px-4 py-3 whitespace-nowrap">${row.nm_poli ?? "-"}</td>`
-                : `<td style="display:none;"></td>`
-            }
-            <td class="px-4 py-3 whitespace-nowrap">${row.nm_dokter ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${row.kode_penyakit ?? "-"}</td>
-            <td class="px-4 py-3 whitespace-nowrap">${diagnosa}</td>
-        </tr>`;
+            ${state.tab === "Ranap" ? `
+                <td>${row.nm_poli ?? "-"}</td>
+                <td class="text-center">
+                    ${Number(row.verified_resume) === 1
+                    ? '<span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded">Resume</span>'
+                    : '<span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded">Kamar Inap</span>'
+                }
+                </td>
+
+                <td class="text-center">
+                    <input type="checkbox"
+                        data-action="verify"
+                        data-no-rawat="${row.no_rawat}"
+                        data-no-rm="${row.no_rkm_medis}"
+                        ${Number(row.verified) === 1 ? "checked" : ""}
+                        onchange="openVerifyModal(this)" />
+                </td>
+
+                <td class="comment">
+                    <span class="comment-text">${row.comment ?? "-"}</span>
+                    <button
+                        data-no-rawat="${row.no_rawat}"
+                        data-comment="${encodeURIComponent(row.comment ?? '')}"
+                        onclick="editComment(this)"
+                        class="ml-2 text-blue-500 text-xs">
+                        edit
+                    </button>
+                </td>
+                <td class="date">${row.verify_date ?? "-"}</td>
+                <td class="by">${row.verified_by ?? "-"}</td>
+            ` : ""}
+        </tr>
+        `;
+    }).join("");
+    // console.log("ROW SAMPLE:", res.data[0]);
+    renderPagination(res);
+}
+
+
+
+async function editComment(el) {
+    const no_rawat = el.dataset.noRawat;
+    const oldComment = decodeURIComponent(el.dataset.comment || "");
+
+    const { value: comment } = await Swal.fire({
+        title: 'Edit Comment',
+        input: 'text',
+        inputValue: oldComment,
+        showCancelButton: true,
+        confirmButtonText: 'Simpan'
     });
 
-    renderPagination(res);
+    if (comment === undefined) return;
+
+    try {
+        const res = await fetch("/rm/pasien/verify-ranap/comment", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                no_rawat,
+                comment
+            })
+        });
+
+        const json = await res.json();
+
+        if (!json.success) throw new Error(json.message);
+
+        const row = document.querySelector(`tr[data-no-rawat="${no_rawat}"]`);
+        if (row) {
+            row.querySelector(".comment-text").innerText = comment || "-";
+        }
+
+        // update dataset biar edit berikutnya update
+        el.dataset.comment = encodeURIComponent(comment || "");
+
+    } catch (err) {
+        console.error(err);
+        alert("Gagal update comment");
+    }
+}
+
+async function openVerifyModal(el) {
+    const { value: comment } = await Swal.fire({
+        title: 'Komentar',
+        input: 'text',
+        showCancelButton: true
+    });
+
+    if (comment === null) {
+        el.checked = !el.checked;
+        return;
+    }
+
+    await saveVerify(el, comment);
+}
+
+function formatDate(dateString) {
+    if (!dateString || dateString === "-") {
+        return "-";
+    }
+
+    return dateString;
+}
+
+async function saveVerify(el, comment) {
+    const payload = {
+        no_rawat: el.dataset.noRawat,
+        no_rm: el.dataset.noRm,
+        verified: el.checked ? 1 : 0,
+        comment: comment || ""
+    };
+
+    try {
+        const res = await fetch("/rm/pasien/verify-ranap", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN":
+                    document.querySelector(
+                        'meta[name="csrf-token"]'
+                    ).content
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+
+        if (!json.success) {
+            throw new Error(json.message);
+        }
+
+        const row = el.closest("tr");
+
+        // update comment text saja
+        const commentText =
+            row.querySelector(".comment-text");
+
+        if (commentText) {
+            commentText.innerText =
+                payload.comment || "-";
+        }
+
+        // update dataset tombol edit
+        const editBtn =
+            row.querySelector("button[data-no-rawat]");
+
+        if (editBtn) {
+            editBtn.dataset.comment =
+                encodeURIComponent(payload.comment || "");
+        }
+
+        // kalau uncheck -> langsung kosong
+        row.querySelector(".date").innerText =
+            el.checked
+                ? formatDate(json.data?.verify_date)
+                : "-";
+
+        row.querySelector(".by").innerText =
+            el.checked
+                ? (json.data?.verified_by || "-")
+                : "-";
+
+    } catch (err) {
+        console.error(err);
+        alert("Gagal simpan verifikasi");
+
+        el.checked = !el.checked;
+    }
 }
 
 // =======================
 // Export Excel
 // =======================
 function exportExcel() {
-    if (!hasFilter()) {
-        alert("Silakan isi minimal satu filter terlebih dahulu.");
-        return;
-    }
+    // if (!hasFilter()) {
+    //     alert("Silakan isi minimal satu filter terlebih dahulu.");
+    //     return;
+    // }
 
     let url =
-        currentTab === "Ralan"
+        state.tab === "Ralan"
             ? "/rm/pasien/ralan/export"
             : "/rm/pasien/ranap/export";
 
@@ -237,7 +466,7 @@ function exportExcel() {
     const kodePenyakitVal = document.getElementById("kode_penyakit")?.value;
     if (kodePenyakitVal) params.append("kode_penyakit", kodePenyakitVal);
 
-    if (currentTab === "Ranap") {
+    if (state.tab === "Ranap") {
         const diagVal = document.getElementById("diagnosa_final")?.value;
         if (diagVal) params.append("diagnosa_final", diagVal);
     }

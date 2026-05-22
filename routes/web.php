@@ -112,6 +112,8 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
     Route::get('/rm/penyakit/list', [RekamMedisController::class, 'getPenyakitList']);
     Route::get('/rm/pasien/ralan/export', [RekamMedisController::class, 'exportRalan']);
     Route::get('/rm/pasien/ranap/export', [RekamMedisController::class, 'exportRanap']);
+    Route::post('/rm/pasien/verify-ranap',[RekamMedisController::class, 'saveVerifyRanap'])->name('rekammedis.verify-ranap');
+    Route::post('/rm/pasien/verify-ranap/comment', [RekamMedisController::class, 'updateComment']);
 });
 
 Route::middleware(['simrs.login:petugas', 'simrs.it'])->group(function () {

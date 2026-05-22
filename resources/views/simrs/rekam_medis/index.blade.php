@@ -1,6 +1,7 @@
 @extends('simrs.layouts.app')
 
 @section('content')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <div class="p-6 transition-all duration-300" id="mainContent">
 
         <h1 class="text-2xl font-bold mb-6">Data Pasien Resume</h1>
@@ -89,6 +90,18 @@
                     class="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
 
+            <div class="md:col-span-2 p-3 border border-gray-200 rounded-lg">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Cari (No Rawat / No RM / Nama Pasien)
+                </label>
+
+                <input type="text" id="keyword" placeholder="No Rawat / No RM / Nama Pasien"
+                    onkeydown="if(event.key==='Enter') loadData(1)"
+                    class="w-full px-3 py-2 text-sm border rounded-md
+                    focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+
             <!-- Button Section -->
             <div class="md:col-span-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
 
@@ -123,6 +136,7 @@
                 <table class="min-w-full text-sm text-left whitespace-nowrap">
                     <thead class="bg-gray-100 text-black uppercase text-xs text-center" id="tableHead">
                         <tr>
+
                             <th class="px-4 py-3 whitespace-nowrap">Tanggal</th>
                             <th class="px-4 py-3 whitespace-nowrap">No Rawat</th>
                             <th class="px-4 py-3 whitespace-nowrap">No RM</th>
@@ -132,13 +146,48 @@
                             <th class="px-4 py-3 whitespace-nowrap">NIK</th>
                             <th class="px-4 py-3 whitespace-nowrap">Status</th>
                             <th class="px-4 py-3 whitespace-nowrap">Kasus</th>
-                            <th class="px-4 py-3 whitespace-nowrap" id="extraHeader">Poli</th>
+
+                            <th class="px-4 py-3 whitespace-nowrap" id="extraHeader">
+                                Poli
+                            </th>
+
+                            <th class="px-4 py-3 whitespace-nowrap">
+                                Dokter
+                            </th>
+
+                            <th class="px-4 py-3 whitespace-nowrap">
+                                Kode
+                            </th>
+
+                            <th class="px-4 py-3 whitespace-nowrap">
+                                Diagnosa
+                            </th>
+
+                            {{-- KHUSUS RANAP --}}
                             <th class="px-4 py-3 whitespace-nowrap" id="asalPoliHeader" style="display:none;">
                                 Asal Poli
                             </th>
-                            <th class="px-4 py-3 whitespace-nowrap">Dokter</th>
-                            <th class="px-4 py-3 whitespace-nowrap">Kode</th>
-                            <th class="px-4 py-3 whitespace-nowrap">Diagnosa</th>
+
+                            <th class="px-4 py-3 whitespace-nowrap" id="sumberHeader" style="display:none;">
+                                Verified Resume
+                            </th>
+
+                            <th class="px-4 py-3 whitespace-nowrap" id="verifyHeader" style="display:none;">
+                                Verify
+                            </th>
+
+                            <th class="px-4 py-3 whitespace-nowrap" id="commentHeader" style="display:none;">
+                                Comment
+                            </th>
+
+                            <th class="px-4 py-3 whitespace-nowrap" id="verifyDateHeader" style="display:none;">
+                                Verify Date
+                            </th>
+
+                            <th class="px-4 py-3 whitespace-nowrap" id="verifiedByHeader" style="display:none;">
+                                Verified By
+                            </th>
+
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y">
@@ -166,8 +215,10 @@
         @if (session('simrs_dep_id') === '07' ||
                 session('simrs_dept') === 'REKAM MEDIK' ||
                 session('simrs_dept') === 'IT' ||
-                session('simrs_dept') === 'TEKNOLOGI INFORMASI')
+                session('simrs_dept') === 'TEKNOLOGI INFORMASI' ||
+                session('simrs_nik') === '3513196706930001')
             <script src="{{ asset('js/simrs/rekammedis/datapasienrm.js') }}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         @endif
     @endif
 @endsection
