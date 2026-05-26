@@ -168,6 +168,19 @@ class RekamMedisController extends Controller
                 (ki.diagnosa_akhir IS NOT NULL AND TRIM(ki.diagnosa_akhir) != '' AND TRIM(ki.diagnosa_akhir) != '-')
             )
         ")
+            ->whereRaw("
+            (
+                res.no_rawat IS NOT NULL
+
+                OR
+
+                (
+                    ki.diagnosa_akhir IS NOT NULL
+                    AND TRIM(ki.diagnosa_akhir) != ''
+                    AND TRIM(ki.diagnosa_akhir) != '-'
+                )
+            )
+            ")
 
             ->select(
                 'rp.tgl_registrasi as tanggal_rawat',
@@ -185,9 +198,7 @@ class RekamMedisController extends Controller
 
                 DB::raw("
                         CASE
-                            WHEN res.kd_diagnosa_utama IS NOT NULL
-                                AND TRIM(res.kd_diagnosa_utama) != ''
-                                AND TRIM(res.kd_diagnosa_utama) != '-'
+                            WHEN res.no_rawat IS NOT NULL
                             THEN 1
                             ELSE 0
                         END as verified_resume
