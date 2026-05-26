@@ -724,7 +724,7 @@
 
                     <!-- Foto Dokter -->
                     <div class="absolute -top-16 right-6 z-20">
-                        <img src="/img/dokter/dr. Lilis Catur Setyawati, Sp.Rad.png" alt="Foto Dokter"
+                        <img src="/img/dokter/dr dwi agustina.png" alt="Foto Dokter"
                             class="w-36 h-36 object-contain drop-shadow-2xl">
                     </div>
 
