@@ -64,12 +64,32 @@
             </button>
         </form>
 
+        {{-- <div class="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-400">
+            <a href="/edokter" class="hover:underline">Masuk ke E-Dokter</a>
+        </div> --}}
+
         <!-- Back -->
-        <div class="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-400">
+        {{-- <div class="mt-6 sm:mt-8 text-center text-xs sm:text-sm text-gray-400">
             <a href="/" class="hover:underline">Back To Menu</a>
+            <a href="/edokter" class="hover:underline">Masuk ke E-Dokter</a>
+        </div> --}}
+
+        <div class="mt-6 sm:mt-8 flex justify-center items-center gap-6 text-sm text-gray-400">
+            <a href="/"
+                class="px-4 py-2 rounded-lg transition-all duration-200 hover:bg-gray-800 hover:text-white">
+                ← Back To Menu
+            </a>
+
+            {{-- <div class="w-px h-5 bg-gray-600"></div>
+
+            <a href="/edokter"
+                class="px-4 py-2 rounded-lg transition-all duration-200 hover:bg-blue-600 hover:text-white">
+                🩺 Masuk ke E-Dokter
+            </a> --}}
         </div>
 
-        <div class="mt-4 flex flex-col items-center scale-75 animate-bounce" style="animation: float 3s ease-in-out infinite;">
+        <div class="mt-4 flex flex-col items-center scale-75 animate-bounce"
+            style="animation: float 3s ease-in-out infinite;">
 
             <img id="pixelGuy" src="" class="w-20 h-20 pixel-art transition-all duration-300">
 

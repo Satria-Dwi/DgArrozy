@@ -67,6 +67,10 @@ Route::get('/epasien', function () {
     include base_path('epasien/index.php');
 });
 
+Route::get('/edokter', function () {
+    include base_path('edokter/index.php');
+});
+
 
 // AREA TERPROTEKSI
 Route::middleware(['simrs.login'])->group(function () {
@@ -81,6 +85,7 @@ Route::middleware(['simrs.login'])->group(function () {
 
 Route::middleware(['simrs.login:dokter'])->group(function () {
     Route::get('/dokter', [DokterController::class, 'index'])->name('marrozy.dokter');
+    Route::get('/dokter/konsultasi', [DokterController::class, 'konsultasiBelumDijawab'])->name('dokter.konsultasi');
 
     Route::get('/dokter/total-pasien', [DokterController::class, 'totalPasienDokterHariIni']);
     Route::get('/dokter/total-rawat-inap', [DokterController::class, 'totalPasienRawatInapDokterHariIni']);
@@ -112,7 +117,7 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
     Route::get('/rm/penyakit/list', [RekamMedisController::class, 'getPenyakitList']);
     Route::get('/rm/pasien/ralan/export', [RekamMedisController::class, 'exportRalan']);
     Route::get('/rm/pasien/ranap/export', [RekamMedisController::class, 'exportRanap']);
-    Route::post('/rm/pasien/verify-ranap',[RekamMedisController::class, 'saveVerifyRanap'])->name('rekammedis.verify-ranap');
+    Route::post('/rm/pasien/verify-ranap', [RekamMedisController::class, 'saveVerifyRanap'])->name('rekammedis.verify-ranap');
     Route::post('/rm/pasien/verify-ranap/comment', [RekamMedisController::class, 'updateComment']);
 });
 

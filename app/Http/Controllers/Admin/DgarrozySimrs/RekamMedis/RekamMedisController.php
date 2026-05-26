@@ -140,8 +140,9 @@ class RekamMedisController extends Controller
             ->leftJoin('kamar as k', 'ki.kd_kamar', '=', 'k.kd_kamar')
             ->leftJoin('bangsal as b', 'k.kd_bangsal', '=', 'b.kd_bangsal')
             ->leftJoin('pasien as ps', 'rp.no_rkm_medis', '=', 'ps.no_rkm_medis')
-            ->leftJoin('dpjp_ranap as dpjp', 'dpjp.no_rawat', '=', 'rp.no_rawat')
-            ->leftJoin('dokter as d', 'd.kd_dokter', '=', 'dpjp.kd_dokter')
+            // ->leftJoin('dpjp_ranap as dpjp', 'dpjp.no_rawat', '=', 'rp.no_rawat')
+            ->leftJoin('dokter as d', 'd.kd_dokter', '=', 'res.kd_dokter')
+            // ->leftJoin('dokter as d', 'd.kd_dokter', '=', 'dpjp.kd_dokter')
             ->leftJoin('poliklinik as poli', 'poli.kd_poli', '=', 'rp.kd_poli')
             ->leftJoin('dgarrozy_verify_resume_ranap as vr', function ($join) {
                 $join->on('vr.no_rawat', '=', 'rp.no_rawat');
@@ -173,7 +174,7 @@ class RekamMedisController extends Controller
                 'rp.no_rawat',
                 'rp.no_rkm_medis',
                 'ps.nm_pasien',
-                'dpjp.kd_dokter',
+                'res.kd_dokter',
                 'd.nm_dokter',
                 'poli.nm_poli',
                 'vr.verify_date',

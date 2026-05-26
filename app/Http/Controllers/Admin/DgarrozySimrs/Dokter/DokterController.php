@@ -667,4 +667,87 @@ class DokterController extends Controller
 
     //     return back()->with('success', 'Tiket berhasil dibuat!');
     // }
+
+    public function konsultasiBelumDijawab(Request $request)
+    {
+        try {
+
+            // hanya dokter
+            if (session('simrs_tipe') !== 'dokter') {
+                return response()->json([
+                    'error' => true,
+                    'msg'   => 'User bukan dokter'
+                ], 403);
+            }
+
+            $kdDokter = session('simrs_nik');
+
+            $query = DB::table('konsultasi_medik as km')
+                ->join(
+                    'reg_periksa as rp',
+                    'km.no_rawat',
+                    '=',
+                    'rp.no_rawat'
+                )
+                ->join(
+                    'pasien as p',
+                    'rp.no_rkm_medis',
+                    '=',
+                    'p.no_rkm_medis'
+                )
+                ->join(
+                    'dokter as dk',
+                    'km.kd_dokter',
+                    '=',
+                    'dk.kd_dokter'
+                )
+                ->select(
+                    DB::raw("
+                    DATE_FORMAT(
+                        km.tanggal,
+                        '%d/%m/%Y %H:%i:%s'
+                    ) as tanggalperiksa
+                "),
+                    'km.no_permintaan',
+                    'rp.no_rkm_medis',
+                    'p.nm_pasien',
+                    'dk.nm_dokter as dokterkonsul'
+                )
+
+                // hanya dokter login
+                ->where(
+                    'km.kd_dokter_dikonsuli',
+                    $kdDokter
+                )
+
+                // yang belum dijawab
+                ->whereNotExists(function ($q) {
+
+                    $q->select(DB::raw(1))
+                        ->from('jawaban_konsultasi_medik as jkm')
+                        ->whereColumn(
+                            'jkm.no_permintaan',
+                            'km.no_permintaan'
+                        );
+                });
+
+            // optional pagination
+            $perPage = $request->get('per_page', 10);
+
+            $data = $query
+                ->orderBy('km.tanggal', 'desc')
+                ->paginate($perPage);
+
+            return response()->json([
+                'error' => false,
+                'data'  => $data
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'error' => true,
+                'msg'   => $e->getMessage()
+            ], 500);
+        }
+    }
 }

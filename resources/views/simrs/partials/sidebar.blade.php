@@ -218,6 +218,18 @@
 
                 </div>
 
+                {{-- <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1">
+
+                    <a href="{{ route('dokter.konsultasi') }}"
+                        class="submenu-item {{ request()->routeIs('dokter.konsultasi') ? 'submenu-active' : '' }}">
+
+                        <i class="fas fa-users"></i>
+                        <span x-show="!collapse" x-transition>Konsultasi</span>
+
+                    </a>
+
+                </div> --}}
+
             </div>
         @endif
         @if (session('simrs_tipe') === 'petugas')
@@ -262,8 +274,7 @@
                     session('simrs_dept') === 'REKAM MEDIK' ||
                     session('simrs_dept') === 'IT' ||
                     session('simrs_dept') === 'TEKNOLOGI INFORMASI' ||
-                    session('simrs_nik') === '3513196706930001' )
-                    
+                    session('simrs_nik') === '3513196706930001')
                 {{-- REKAM MEDIS --}}
                 <div x-data="{ openMenu: {{ request()->is('rm*') ? 'true' : 'false' }} }">
 
