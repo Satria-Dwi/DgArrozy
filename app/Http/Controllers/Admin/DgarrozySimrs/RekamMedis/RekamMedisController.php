@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Models\DgarrozyVerifyResumeRanap;
+// use App\Models\DgarrozyVerifyResumeRanap;
 
 class RekamMedisController extends Controller
 {
@@ -133,6 +133,27 @@ class RekamMedisController extends Controller
 
     public function getDataPasienRanap(Request $request)
     {
+        $dpjpDokter = DB::table('dpjp_ranap as dp')
+            ->join('dokter as d2', 'd2.kd_dokter', '=', 'dp.kd_dokter')
+            ->select(
+                'dp.no_rawat',
+                DB::raw("
+            GROUP_CONCAT(
+                DISTINCT dp.kd_dokter
+                ORDER BY dp.kd_dokter
+                SEPARATOR ', '
+            ) as kd_dokter_dpjp
+        "),
+                DB::raw("
+            GROUP_CONCAT(
+                DISTINCT d2.nm_dokter
+                ORDER BY d2.nm_dokter
+                SEPARATOR ', '
+            ) as nm_dokter_dpjp
+        ")
+            )
+            ->groupBy('dp.no_rawat');
+
         $query = DB::table('reg_periksa as rp')
 
             ->leftJoin('resume_pasien_ranap as res', 'res.no_rawat', '=', 'rp.no_rawat')
@@ -140,9 +161,10 @@ class RekamMedisController extends Controller
             ->leftJoin('kamar as k', 'ki.kd_kamar', '=', 'k.kd_kamar')
             ->leftJoin('bangsal as b', 'k.kd_bangsal', '=', 'b.kd_bangsal')
             ->leftJoin('pasien as ps', 'rp.no_rkm_medis', '=', 'ps.no_rkm_medis')
-            // ->leftJoin('dpjp_ranap as dpjp', 'dpjp.no_rawat', '=', 'rp.no_rawat')
+            ->leftJoinSub($dpjpDokter, 'dpjp_doc', function ($join) {
+                $join->on('dpjp_doc.no_rawat', '=', 'rp.no_rawat');
+            })
             ->leftJoin('dokter as d', 'd.kd_dokter', '=', 'res.kd_dokter')
-            // ->leftJoin('dokter as d', 'd.kd_dokter', '=', 'dpjp.kd_dokter')
             ->leftJoin('poliklinik as poli', 'poli.kd_poli', '=', 'rp.kd_poli')
             ->leftJoin('dgarrozy_verify_resume_ranap as vr', function ($join) {
                 $join->on('vr.no_rawat', '=', 'rp.no_rawat');
@@ -187,8 +209,21 @@ class RekamMedisController extends Controller
                 'rp.no_rawat',
                 'rp.no_rkm_medis',
                 'ps.nm_pasien',
-                'res.kd_dokter',
-                'd.nm_dokter',
+                DB::raw("
+                    CASE
+                        WHEN res.no_rawat IS NOT NULL
+                        THEN res.kd_dokter
+                        ELSE dpjp_doc.kd_dokter_dpjp
+                    END as kd_dokter
+                "),
+
+                DB::raw("
+                    CASE
+                        WHEN res.no_rawat IS NOT NULL
+                        THEN d.nm_dokter
+                        ELSE dpjp_doc.nm_dokter_dpjp
+                    END as nm_dokter
+                "),
                 'poli.nm_poli',
                 'vr.verify_date',
                 'vr.verified_by',
