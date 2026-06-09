@@ -73,6 +73,13 @@ class LoginController extends Controller
             'simrs_tipe'  => $tipe_user, // admin | petugas | dokter | pegawai
         ]);
 
+        if ($tipe_user === 'dokter') {
+            session()->flash(
+                'cek_notif_konsultasi',
+                true
+            );
+        }
+
         RateLimiter::clear($key);
 
         // ================= REDIRECT BERDASARKAN ROLE =================

@@ -509,8 +509,13 @@
 @endsection
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @role(['admin', 'dokter'])
+        <script>
+            window.cekNotifKonsultasiSaatLogin =
+                @json(session()->has('cek_notif_konsultasi'));
+        </script>
         <script>
             function loadDashboardMedis() {
 
@@ -537,6 +542,35 @@
                 loadtableRawatInap();
             }
         </script>
+        <script>
+            function cekNotifKonsultasi() {
+
+                fetch('/dokter/notif-konsultasi')
+                    .then(response => response.json())
+                    .then(result => {
+
+                        if (result.error) return;
+
+                        if (result.total > 0) {
+
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Konsultasi Belum Dijawab',
+                                html: `
+                        Konsultasi Masuk : <b>${result.masuk}</b><br>
+                        Konsultasi Keluar : <b>${result.keluar}</b><br><br>
+                        Total : <b>${result.total}</b>
+                    `
+                            });
+
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
+        </script>
     @endrole
 
     <script>
@@ -548,6 +582,9 @@
             // 🔥 Khusus admin & dokter
             @role(['admin', 'dokter'])
                 loadDashboardMedis();
+                if (window.cekNotifKonsultasiSaatLogin) {
+                    cekNotifKonsultasi();
+                }
             @endrole
 
             // 🔥 Refresh tiap 1 menit

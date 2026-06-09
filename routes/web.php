@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DgarrozyOfficer\DgarrozyOfficerController;
 use App\Http\Controllers\Admin\DgarrozyRoleController;
 use App\Http\Controllers\Admin\DgarrozySimrs\DashboardSimrsController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Dokter\DokterController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Dokter\KonsultasiDokterController;
 use App\Http\Controllers\Admin\DgarrozySimrs\ITMaster\UserController;
 use App\Http\Controllers\Admin\DgarrozySimrs\LoginController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\DetailTindakan\DetailTindakanController;
@@ -85,7 +86,15 @@ Route::middleware(['simrs.login'])->group(function () {
 
 Route::middleware(['simrs.login:dokter'])->group(function () {
     Route::get('/dokter', [DokterController::class, 'index'])->name('marrozy.dokter');
-    Route::get('/dokter/konsultasi', [DokterController::class, 'konsultasiBelumDijawab'])->name('dokter.konsultasi');
+    Route::get('/dokter/konsultasi/data', [KonsultasiDokterController::class, 'KonsultasiDokter'])->name('marrozy.konsultasi.data');
+    Route::get('/dokter/konsultasi', function () {
+        return view('simrs.dokter.jawabkonsul.index', ['title' => 'Konsultasi']);
+    })->name('marrozy.konsultasi');
+    Route::get('/dokter/konsultasi/data/{nopermintaan}', [KonsultasiDokterController::class, 'DetilKonsultasiDokter'])->name('marrozy.konsultasi.detail');
+    Route::get('/dokter/konsultasi/history', [KonsultasiDokterController::class, 'KonsultasiDokterSelesai'])->name('marrozy.konsultasi.history');
+    Route::get('/dokter/konsultasi/history/{nopermintaan}', [KonsultasiDokterController::class, 'DetilHistoryKonsultasiDokter'])->name('marrozy.konsultasi.detail.history');
+    Route::get('/dokter/konsultasi/jawabanhistory/{nopermintaan}', [KonsultasiDokterController::class, 'DetilHistoryJawabanKonsultasiDokter'])->name('marrozy.jawaban.konsultasi.detail.history');
+    Route::get('/dokter/notif-konsultasi',[KonsultasiDokterController::class, 'NotifKonsultasiBelumDijawab']);
 
     Route::get('/dokter/total-pasien', [DokterController::class, 'totalPasienDokterHariIni']);
     Route::get('/dokter/total-rawat-inap', [DokterController::class, 'totalPasienRawatInapDokterHariIni']);
