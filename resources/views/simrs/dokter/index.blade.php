@@ -7,14 +7,14 @@
         {{-- CARD TOTAL PASIEN DOKTER --}}
         <div
             class="relative overflow-hidden rounded-2xl
-                        bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800
-                        border border-white/10
+                        bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950
+                        border border-slate-700/40
                         p-6 shadow-lg
                         transition-all duration-300
                         hover:-translate-y-1 hover:shadow-blue-500/20 mb-2">
 
             {{-- Glow Accent --}}
-            <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl"></div>
 
             <div class="relative flex items-center justify-between gap-4">
 
@@ -68,7 +68,7 @@
            text-2xl text-slate-400
            justify-center md:justify-start">
 
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-300" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 7V3m8 4V3M4 11h16M5 19h14a2 2 0 002-2v-6H3v6a2 2 0 002 2z" />
@@ -83,8 +83,9 @@
                 <div
                     class="flex items-center justify-center
                                 w-14 h-14 rounded-xl
-                                bg-gradient-to-br from-blue-500/20 to-cyan-500/20
-                                text-blue-400 shadow-inner">
+                                bg-gradient-to-br from-indigo-500/15 to-violet-500/15
+text-indigo-300
+border border-indigo-500/20 shadow-inner">
 
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
@@ -96,7 +97,7 @@
 
             {{-- FILTER DATE RANGE --}}
             <div
-                class="bg-white/5 backdrop-blur-md border border-white/10 
+                class="bg-slate-900/40 backdrop-blur-md border border-slate-700/40 
                             rounded-2xl p-4 mb-4 shadow-lg shadow-black/20 mt-4 text-center content-center">
 
                 <div class="flex flex-col md:flex-row gap-3 md:items-end justify-center">
@@ -105,7 +106,7 @@
                     <div class="relative">
                         <label class="text-sm text-slate-400 mb-1">Tanggal Awal</label>
                         <input type="date" id="tglAwal"
-                            class="w-full px-3 py-2 rounded-lg bg-white border border-white/10 
+                            class="w-full px-3 py-2 rounded-lg bg-white border border-slate-700/40 
                                              focus:ring-2 focus:ring-blue-500 outline-none text-black">
                     </div>
 
@@ -114,7 +115,7 @@
                     <div class="relative">
                         <label class="text-sm text-slate-400 mb-1">Tanggal Akhir</label>
                         <input type="date" id="tglAkhir"
-                            class="w-full px-3 py-2 rounded-lg bg-white border border-white/10 
+                            class="w-full px-3 py-2 rounded-lg bg-white border border-slate-700/40 
                                          focus:ring-2 focus:ring-blue-500 outline-none text-black">
                     </div>
 
@@ -122,13 +123,13 @@
                     <div class="flex gap-2 mt-2 md:mt-0">
 
                         <button onclick="applyFilterTanggal()"
-                            class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 
+                            class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 
                            transition text-white font-medium">
                             Apply
                         </button>
 
                         <button onclick="resetFilter()"
-                            class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 
+                            class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 
                            transition text-white font-medium">
                             Reset
                         </button>
@@ -142,8 +143,8 @@
                 {{-- Total Pasien rawat Jalan --}}
                 <div
                     class="relative overflow-hidden rounded-2xl
-                                bg-gradient-to-br from-emerald-600 via-teal-700 to-slate-900
-                                border border-white/10
+                                bg-gradient-to-br from-emerald-900 via-emerald-800 to-slate-950
+                                border border-slate-700/40
                                 p-5 md:p-6
                                 shadow-xl
                                 transition-all duration-300
@@ -156,7 +157,7 @@
                     </div>
 
                     <!-- Soft glow -->
-                    <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-emerald-400/20 rounded-full blur-3xl"></div>
+                    <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl"></div>
 
                     <!-- Content -->
                     <div class="relative">
@@ -191,8 +192,8 @@
                 {{-- Total pasien rawat inap --}}
                 <div
                     class="relative overflow-hidden rounded-2xl
-                                bg-gradient-to-br from-sky-600 via-blue-700 to-slate-900
-                                border border-white/10
+                                bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-950
+                                border border-slate-700/40
                                 p-5 md:p-6
                                 shadow-xl
                                 transition-all duration-300
@@ -205,7 +206,7 @@
                     </div>
 
                     <!-- Soft glow -->
-                    <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-emerald-400/20 rounded-full blur-3xl"></div>
+                    <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
 
                     <!-- Content -->
                     <div class="relative">
@@ -250,8 +251,8 @@
                             str_contains($spesialis, 'kebidanan'))
                         <div
                             class="relative overflow-hidden rounded-2xl
-                                    bg-gradient-to-br from-red-700 via-red-900 to-slate-900
-                                    border border-white/10
+                                    bg-gradient-to-br from-rose-900 via-rose-800 to-slate-950
+                                    border border-slate-700/40
                                     p-5 md:p-6
                                     shadow-xl
                                     transition-all duration-300
@@ -264,7 +265,7 @@
                             </div>
 
                             <!-- Soft glow -->
-                            <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-emerald-400/20 rounded-full blur-3xl">
+                            <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl">
                             </div>
 
                             <!-- Content -->
@@ -307,7 +308,7 @@
 
             <!-- Header -->
             <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800">
-                <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">
                     Pasien Rawat Jalan Hari Ini
                 </h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
@@ -375,7 +376,7 @@
 
             <!-- Header -->
             <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800">
-                <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">
                     Pasien Rawat Inap Hari Ini
                 </h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
@@ -463,7 +464,7 @@
                                 rounded-lg shadow-sm mb-2">
                     <!-- Header -->
                     <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800">
-                        <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                        <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">
                             Pasien Operasi
                         </h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">
@@ -554,13 +555,104 @@
                         if (result.total > 0) {
 
                             Swal.fire({
-                                icon: 'warning',
-                                title: 'Konsultasi Belum Dijawab',
+                                icon: 'info',
+                                title: '🔔 Notifikasi Konsultasi',
+                                width: 550,
+                                confirmButtonText: 'Lihat Sekarang',
+                                confirmButtonColor: '#4f46e5',
                                 html: `
-                        Konsultasi Masuk : <b>${result.masuk}</b><br>
-                        Konsultasi Keluar : <b>${result.keluar}</b><br><br>
-                        Total : <b>${result.total}</b>
-                    `
+                                        <div class="space-y-3 text-left">
+
+                                            <div style="
+                                                display:flex;
+                                                justify-content:space-between;
+                                                align-items:center;
+                                                padding:12px 16px;
+                                                background:#eff6ff;
+                                                border-radius:12px;
+                                                border-left:4px solid #2563eb;
+                                            ">
+                                                <span>
+                                                    📥 <b>Konsultasi Medik Masuk</b>
+                                                </span>
+                                                <span style="
+                                                    font-size:20px;
+                                                    font-weight:700;
+                                                    color:#2563eb;
+                                                ">
+                                                    ${result.masuk}
+                                                </span>
+                                            </div>
+
+                                            <div style="
+                                                display:flex;
+                                                justify-content:space-between;
+                                                align-items:center;
+                                                padding:12px 16px;
+                                                background:#ecfdf5;
+                                                border-radius:12px;
+                                                border-left:4px solid #10b981;
+                                            ">
+                                                <span>
+                                                    📤 <b>Konsultasi Medik Keluar</b>
+                                                </span>
+                                                <span style="
+                                                    font-size:20px;
+                                                    font-weight:700;
+                                                    color:#10b981;
+                                                ">
+                                                    ${result.keluar}
+                                                </span>
+                                            </div>
+
+                                            <div style="
+                                                display:flex;
+                                                justify-content:space-between;
+                                                align-items:center;
+                                                padding:12px 16px;
+                                                background:#fffbeb;
+                                                border-radius:12px;
+                                                border-left:4px solid #f59e0b;
+                                            ">
+                                                <span>
+                                                    👩‍⚕️ <b>Konsultasi Perawat</b>
+                                                </span>
+                                                <span style="
+                                                    font-size:20px;
+                                                    font-weight:700;
+                                                    color:#f59e0b;
+                                                ">
+                                                    ${result.perawat_masuk}
+                                                </span>
+                                            </div>
+
+                                            <div style="
+                                                margin-top:18px;
+                                                padding:18px;
+                                                background:linear-gradient(135deg,#4f46e5,#7c3aed);
+                                                border-radius:16px;
+                                                color:white;
+                                                text-align:center;
+                                            ">
+                                                <div style="
+                                                    font-size:13px;
+                                                    opacity:.9;
+                                                    letter-spacing:.5px;
+                                                ">
+                                                    TOTAL KONSULTASI BELUM DIJAWAB
+                                                </div>
+
+                                                <div style="
+                                                    font-size:42px;
+                                                    font-weight:800;
+                                                    margin-top:4px;
+                                                ">
+                                                    ${result.total}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    `
                             });
 
                         }

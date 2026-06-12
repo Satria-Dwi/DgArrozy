@@ -37,6 +37,135 @@
                 </div>
 
             </div>
+            <div
+                class="
+                    bg-white
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    shadow-sm
+                    p-4
+                    mb-4
+                ">
+
+                <div
+                    class="
+                        flex
+                        flex-col
+                        lg:flex-row
+                        gap-3
+                    ">
+
+                    <!-- Search -->
+                    <div class="relative flex-1">
+
+                        <div
+                            class="
+                                absolute
+                                inset-y-0
+                                left-0
+                                pl-4
+                                flex
+                                items-center
+                                pointer-events-none
+                            ">
+                            <i class="fas fa-search text-slate-400"></i>
+                        </div>
+
+                        <input type="text" id="searchKonsultasi"
+                            placeholder="Cari nama pasien, No. RM atau No. Permintaan..."
+                            class="
+                                w-full
+                                pl-11
+                                pr-4
+                                py-3
+                                rounded-xl
+                                border
+                                border-slate-200
+                                bg-slate-50
+                                focus:bg-white
+                                focus:border-blue-500
+                                focus:ring-4
+                                focus:ring-blue-100
+                                outline-none
+                                transition-all
+                            ">
+                    </div>
+
+                    <!-- Date -->
+                    <div class="relative min-w-[220px]">
+
+                        <input type="date" id="tanggalKonsultasi"
+                            class="
+                    w-full
+                    py-3
+                    px-4
+                    rounded-xl
+                    border
+                    border-slate-200
+                    bg-slate-50
+                    focus:bg-white
+                    focus:border-blue-500
+                    focus:ring-4
+                    focus:ring-blue-100
+                    outline-none
+                    transition-all
+                ">
+                    </div>
+
+                    <!-- Reset -->
+                    <button type="button"
+                        onclick="
+                        document.getElementById('searchKonsultasi').value='';
+                        document.getElementById('tanggalKonsultasi').value='';
+                        loadKonsultasi(1);
+                    "
+                        class="
+                            px-5
+                            py-3
+                            rounded-xl
+                            bg-slate-100
+                            hover:bg-slate-200
+                            text-slate-700
+                            font-medium
+                            transition-all
+                        ">
+                        <i class="fas fa-rotate-left mr-2"></i>
+                        Reset
+                    </button>
+
+                </div>
+
+            </div>
+            {{-- <div
+                class="
+                    flex
+                    items-center
+                    justify-between
+                    mb-4
+                ">
+
+                <h2
+                    class="
+                        text-lg
+                        font-bold
+                        text-slate-800
+                    ">
+                    Data Konsultasi
+                </h2>
+
+                <div id="infoKonsultasi"
+                    class="
+                        text-sm
+                        text-slate-500
+                        bg-slate-50
+                        px-4
+                        py-2
+                        rounded-full
+                    ">
+                </div>
+
+            </div> --}}
 
             <!-- Table -->
             <div class="overflow-x-auto">
@@ -175,17 +304,17 @@
         <div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50" id="modalKonsultasi" tabindex="-1"
             onclick="tutupModalKonsultasi()">
 
-            <div class="bg-white rounded-lg p-4 lg:p-6 w-[95%] max-w-6xl max-h-[90vh] overflow-y-auto"
+            <div class="bg-white rounded-lg p-4 lg:p-6 w-[98%] max-w-7xl max-h-[90vh] overflow-y-auto relative"
                 onclick="event.stopPropagation()">
 
-                <div class="flex flex-col lg:flex-row gap-6">
+                <div class="flex flex-col lg:flex-row gap-6 items-start">
                     <button onclick="tutupModalKonsultasi()"
                         class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow hover:bg-slate-100 text-slate-600">
 
                         ✕
 
                     </button>
-                    <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex flex-col lg:flex-row gap-6 items-start">
                         <!-- KIRI : DETAIL -->
                         <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
 
@@ -381,7 +510,7 @@
                         </div>
                     </div>
                     <!-- KANAN : TIMELINE -->
-                    <div class="w-full lg:w-4/12">
+                    <div class="w-full lg:w-[380px] shrink-0">
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-lg p-6">
 
                             <h5 class="text-xl font-bold text-slate-800 mb-6">
@@ -503,6 +632,106 @@
                         ">
                         ✅ Selesai
                     </div>
+
+                </div>
+
+            </div>
+            <div
+                class="
+                    bg-white
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    shadow-sm
+                    p-4
+                    mb-4
+                ">
+
+                <div
+                    class="
+                        flex
+                        flex-col
+                        lg:flex-row
+                        gap-3
+                    ">
+
+                    <!-- Search -->
+                    <div class="relative flex-1">
+
+                        <div
+                            class="
+                                absolute
+                                inset-y-0
+                                left-0
+                                pl-4
+                                flex
+                                items-center
+                                pointer-events-none
+                            ">
+                            <i class="fas fa-search text-slate-400"></i>
+                        </div>
+
+                        <input type="text" id="searchKonsultasiSelesai"
+                            placeholder="Cari nama pasien, No. RM atau No. Permintaan..."
+                            class="
+                                w-full
+                                pl-11
+                                pr-4
+                                py-3
+                                rounded-xl
+                                border
+                                border-slate-200
+                                bg-slate-50
+                                focus:bg-white
+                                focus:border-blue-500
+                                focus:ring-4
+                                focus:ring-blue-100
+                                outline-none
+                                transition-all
+                            ">
+                    </div>
+
+                    <!-- Date -->
+                    <div class="relative min-w-[220px]">
+
+                        <input type="date" id="tanggalKonsultasiSelesai"
+                            class="
+                    w-full
+                    py-3
+                    px-4
+                    rounded-xl
+                    border
+                    border-slate-200
+                    bg-slate-50
+                    focus:bg-white
+                    focus:border-blue-500
+                    focus:ring-4
+                    focus:ring-blue-100
+                    outline-none
+                    transition-all
+                ">
+                    </div>
+
+                    <!-- Reset -->
+                    <button type="button"
+                        onclick="
+                        document.getElementById('searchKonsultasiSelesai').value='';
+                        document.getElementById('tanggalKonsultasiSelesai').value='';
+                        loadKonsultasiSelesai(1);
+                    "
+                        class="
+                            px-5
+                            py-3
+                            rounded-xl
+                            bg-slate-100
+                            hover:bg-slate-200
+                            text-slate-700
+                            font-medium
+                            transition-all
+                        ">
+                        <i class="fas fa-rotate-left mr-2"></i>
+                        Reset
+                    </button>
 
                 </div>
 
@@ -646,7 +875,7 @@
         <div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50" id="modalKonsultasiHistory"
             tabindex="-1" onclick="tutupModalKonsultasiHistory()">
 
-            <div class="bg-white rounded-lg p-4 lg:p-6 w-[95%] max-w-6xl max-h-[90vh] overflow-y-auto"
+            <div class="bg-white rounded-lg p-4 lg:p-6 w-[98%] max-w-7xl max-h-[90vh] overflow-y-auto relative"
                 onclick="event.stopPropagation()">
 
                 <div class="flex flex-col lg:flex-row gap-6">
@@ -656,7 +885,7 @@
                         ✕
 
                     </button>
-                    <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex flex-col lg:flex-row gap-6 items-start">
                         <!-- KIRI : DETAIL -->
                         <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
 
@@ -852,7 +1081,7 @@
                         </div>
                     </div>
                     <!-- KANAN : TIMELINE -->
-                    <div class="w-full lg:w-4/12">
+                    <div class="w-full lg:w-[380px] shrink-0">
                         <div class="bg-white rounded-2xl border border-slate-200 shadow-lg p-6">
 
                             <h5 class="text-xl font-bold text-slate-800 mb-6">
@@ -954,17 +1183,17 @@
         <div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50" id="modalKonsultasiHistoryJawaban"
             tabindex="-1" onclick="tutupModalJawabanKonsultasiHistory()">
 
-            <div class="bg-white rounded-lg p-4 lg:p-6 w-[80%] max-w-3xl max-h-[90vh] overflow-y-auto"
+            <div class="bg-white rounded-lg p-4 lg:p-6 w-[80%] max-w-3xl max-h-[90vh] overflow-y-auto relative"
                 onclick="event.stopPropagation()">
 
-                <div class="flex flex-col lg:flex-row gap-6">
+                <div class="flex flex-col lg:flex-row gap-6 items-start">
                     <button onclick="tutupModalJawabanKonsultasiHistory()"
-                        class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow hover:bg-slate-100 text-slate-600">
+                        class="absolute top-4 right-4 z-[9999] w-10 h-10 rounded-full bg-white border border-slate-200 shadow-lg hover:bg-slate-100 text-slate-600 flex items-center justify-center">
 
                         ✕
 
                     </button>
-                    <div class="flex flex-col lg:flex-row gap-6">
+                    <div class="flex flex-col lg:flex-row gap-6 items-start">
                         <!-- KIRI : DETAIL -->
                         <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
 

@@ -141,10 +141,10 @@
     <div class="sidebar-brand flex items-center justify-between px-4 py-4">
 
         <!-- Logo / Brand -->
-        <div class="flex items-center gap-2">
+        <div x-show="!collapse" x-transition class="flex items-center gap-2">
 
             <!-- Icon Logo -->
-            <div
+            <div 
                 class="w-9 h-9 rounded-xl 
                     bg-gradient-to-br from-indigo-500 to-purple-600
                     flex items-center justify-center
@@ -153,7 +153,7 @@
             </div>
 
             <!-- Text Brand -->
-            <span x-show="!collapse" x-transition
+            <span 
                 class="text-lg font-extrabold tracking-wide 
                    bg-gradient-to-r from-indigo-600 to-purple-600 
                    bg-clip-text text-transparent">
@@ -171,7 +171,7 @@
                transition-all duration-300 transform"
             title="Toggle Sidebar">
 
-            <i class="fas transition-transform duration-300" :class="collapse ? 'fa-angle-right' : 'fa-angle-left'"></i>
+            <i class="fas fa-bars-staggered"></i>
         </button>
     </div>
 
@@ -234,12 +234,12 @@
         @endif --}}
         @if (session('simrs_tipe') === 'dokter')
             <div x-data="{
-                openMenu: {{ request()->routeIs('marrozy.dokter') || request()->routeIs('marrozy.konsultasi') ? 'true' : 'false' }}
+                openMenu: {{ request()->routeIs('marrozy.dokter') || request()->routeIs('marrozy.konsultasidokter') || request()->routeIs('marrozy.konsultasiperawat') ? 'true' : 'false' }}
             }">
 
                 <button @click="openMenu = !openMenu"
                     class="menu-item w-full justify-between
-        {{ request()->routeIs('marrozy.dokter') || request()->routeIs('marrozy.konsultasi') ? 'menu-parent-active' : '' }}">
+                    {{ request()->routeIs('marrozy.dokter') || request()->routeIs('marrozy.konsultasidokter') || request()->routeIs('marrozy.konsultasiperawat') ? 'menu-parent-active' : '' }}">
 
                     <div class="flex items-center gap-2">
                         <i class="fas fa-user-md"></i>
@@ -256,19 +256,28 @@
 
                     <a href="{{ route('marrozy.dokter') }}"
                         class="submenu-item
-            {{ request()->routeIs('marrozy.dokter') ? 'submenu-active' : '' }}">
+                         {{ request()->routeIs('marrozy.dokter') ? 'submenu-active' : '' }}">
 
                         <i class="fas fa-users"></i>
                         <span x-show="!collapse" x-transition>Pasien</span>
 
                     </a>
 
-                    <a href="{{ route('marrozy.konsultasi') }}"
+                    <a href="{{ route('marrozy.konsultasidokter') }}"
                         class="submenu-item
-            {{ request()->routeIs('marrozy.konsultasi') ? 'submenu-active' : '' }}">
+                        {{ request()->routeIs('marrozy.konsultasidokter') ? 'submenu-active' : '' }}">
 
-                        <i class="fas fa-comments"></i>
+                        <i class="fas fa-user-doctor"></i>
                         <span x-show="!collapse" x-transition>Konsultasi Dokter</span>
+
+                    </a>
+
+                    <a href="{{ route('marrozy.konsultasiperawat') }}"
+                        class="submenu-item
+                        {{ request()->routeIs('marrozy.konsultasiperawat') ? 'submenu-active' : '' }}">
+
+                        <i class="fas fa-user-nurse"></i>
+                        <span x-show="!collapse" x-transition>Konsultasi Perawat</span>
 
                     </a>
 

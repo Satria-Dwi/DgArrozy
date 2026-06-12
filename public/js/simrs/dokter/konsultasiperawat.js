@@ -1,83 +1,68 @@
-let currentPageKonsultasi = 1;
+let currentPageKonsultasiPerawat = 1;
 let currentPageKonsultasiSelesai = 1;
 
-function loadKonsultasi(page = 1) {
+function loadKonsultasiPerawat(page = 1) {
+    currentPageKonsultasiPerawat = page;
 
-    currentPageKonsultasi = page;
     const search =
         document.getElementById(
-            'searchKonsultasi'
+            'searchKonsultasiPerawat'
         )?.value || '';
 
     const tanggal =
         document.getElementById(
-            'tanggalKonsultasi'
+            'tanggalKonsultasiPerawat'
         )?.value || '';
-        
-    const tbody =
-        document.getElementById(
-            "tableKonsultasi"
-        );
 
-    const pagination =
-        document.getElementById(
-            "paginationKonsultasi"
-        );
+    const tbody = document.getElementById(
+        "tableKonsultasiPerawat"
+    );
 
-    const infoKonsultasi =
-        document.getElementById(
-            "infoKonsultasi"
-        );
+    const pagination = document.getElementById(
+        "paginationKonsultasiPerawat"
+    );
+
+    const infoKonsultasiPerawat = document.getElementById(
+        "infoKonsultasiPerawat"
+    );
 
     if (!tbody) return;
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="7"
-                class="text-center py-8 text-slate-400">
+            <td colspan="7" class="text-center py-8 text-slate-400">
                 <div class="flex flex-col items-center gap-2">
-                    <div class="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
-                    <span>Memuat data konsultasi...</span>
+                    <div class="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent">
+                    </div>
+                    <span> Memuat Data Konsultasi...</span>
                 </div>
             </td>
         </tr>
     `;
-
     const params = new URLSearchParams({
         page,
         search,
         tanggal
     });
 
-    fetch(
-        `/dokter/konsultasi/data?${params}`
-    )
+    fetch(`/dokter/konsultasiperawat/data?page=${params}`)
         .then(response => {
-
             if (!response.ok) {
                 throw new Error(
                     `HTTP ${response.status}`
                 );
             }
-
             return response.json();
         })
 
         .then(res => {
-
-            // console.log('Response:', res);
-
             tbody.innerHTML = '';
-
             const rows = res?.data?.data || [];
-
             if (rows.length === 0) {
-
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7"
-                            class="text-center py-8 text-slate-400">
-                            Tidak ada konsultasi
+                        <td colspan="6" class="text-center py-8 text-slate-400">
+                            Tidak Ada Konsultasi
                         </td>
                     </tr>
                 `;
@@ -85,71 +70,39 @@ function loadKonsultasi(page = 1) {
                 if (pagination)
                     pagination.innerHTML = '';
 
-                if (infoKonsultasi)
-                    infoKonsultasi.innerHTML = `
-                        <span class="font-medium">
-                            0
-                        </span>
-                        konsultasi ditemukan
-                    `;
+                if (infoKonsultasiPerawat)
+                    infoKonsultasiPerawat.innerHTML = `
+                    <span class="font-medium">
+                        0
+                    </span>
+                `;
 
                 return;
             }
 
             const html = rows.map((item, index) => {
-
                 const rowClass =
                     index % 2 === 0
                         ? 'bg-white dark:bg-slate-900'
                         : 'bg-slate-50 dark:bg-slate-800/50';
-
-                const badgeClass =
-                    item.jenis_konsultasi === 'Konsultasi Masuk'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-blue-100 text-blue-700';
-
                 return `
-                    <tr class="${rowClass}
-                        hover:bg-blue-50
-                        dark:hover:bg-slate-700/50
-                        transition-all
-                        duration-200">
+                    <tr class="${rowClass} hover:bg-blue-50 dark:hover:bg-slate-700/50 transition-al duration-200">
 
                         <td class="px-6 py-4 text-center whitespace-nowrap">
                             ${item.tanggalperiksa}
                         </td>
-
-                        <td class="px-6 py-4 text-center whitespace-nowrap font-medium">
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
                             ${item.no_permintaan}
                         </td>
-
                         <td class="px-6 py-4 text-center whitespace-nowrap">
                             ${item.no_rkm_medis}
                         </td>
-
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 text-left whitespace-nowrap">
                             ${item.nm_pasien}
                         </td>
-
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4 text-center whitespace-nowrap">
                             ${item.dokterkonsul}
                         </td>
-
-                        <td class="px-6 py-4 text-center">
-                            <span class="
-                                inline-flex
-                                items-center
-                                px-3
-                                py-1
-                                text-xs
-                                font-semibold
-                                rounded-full
-                                ${badgeClass}
-                            ">
-                                ${item.jenis_konsultasi}
-                            </span>
-                        </td>
-
                         <td class="px-6 py-4 text-center">
                             <button
                                 onclick="bukaKonsultasi('${item.no_permintaan}')"
@@ -172,20 +125,18 @@ function loadKonsultasi(page = 1) {
                                 👁️ Lihat
                             </button>
                         </td>
-
                     </tr>
                 `;
             }).join('');
 
             tbody.innerHTML = html;
 
-            renderPaginationKonsultasi(
+            renderPaginationKonsultasiPerawat(
                 res.data
             );
 
-            if (infoKonsultasi) {
-
-                infoKonsultasi.innerHTML = `
+            if (infoKonsultasiPerawat) {
+                infoKonsultasiPerawat.innerHTML = `
                     <span class="font-semibold text-blue-600">
                         ${res.data.total}
                     </span>
@@ -201,7 +152,6 @@ function loadKonsultasi(page = 1) {
                     </span>
                 `;
             }
-
         })
 
         .catch(err => {
@@ -223,32 +173,31 @@ function loadKonsultasi(page = 1) {
             if (pagination)
                 pagination.innerHTML = '';
 
-            if (infoKonsultasi)
-                infoKonsultasi.innerHTML = `
+            if (infoKonsultasiPerawat)
+                infoKonsultasiPerawat.innerHTML = `
                     <span class="text-red-500">
                         Gagal memuat data
                     </span>
                 `;
         });
-
 }
 
-function loadKonsultasiSelesai(page = 1) {
+function loadKonsultasiPerawatSelesai(page = 1) {
 
     currentPageKonsultasiSelesai = page;
     const search =
         document.getElementById(
-            'searchKonsultasiSelesai'
+            'searchKonsultasiSelesaiPerawat'
         )?.value || '';
 
     const tanggal =
         document.getElementById(
-            'tanggalKonsultasiSelesai'
+            'tanggalKonsultasiSelesaiPerawat'
         )?.value || '';
 
-    const tbody = document.getElementById("tableKonsultasiSelesai");
-    const info = document.getElementById("infoKonsultasiSelesai");
-    const pagination = document.getElementById("paginationKonsultasiSelesai");
+    const tbody = document.getElementById("tableKonsultasiPerawatSelesai");
+    const info = document.getElementById("infoKonsultasiPerawatSelesai");
+    const pagination = document.getElementById("paginationKonsultasiPerawatSelesai");
 
     tbody.innerHTML = `
         <tr>
@@ -261,13 +210,14 @@ function loadKonsultasiSelesai(page = 1) {
             </td>
         </tr>
     `;
+
     const params = new URLSearchParams({
         page,
         search,
         tanggal
     });
 
-    fetch(`/dokter/konsultasi/history?page=${params}`)
+    fetch(`/dokter/konsultasiperawat/history?page=${params}`)
         .then(res => res.json())
         .then(result => {
 
@@ -293,28 +243,6 @@ function loadKonsultasiSelesai(page = 1) {
             }
 
             data.data.forEach(item => {
-
-                let badgeJenis = item.jenis_konsultasi === "Konsultasi Masuk"
-                    ? `
-                        <span class="
-                            px-3 py-1 rounded-full
-                            bg-emerald-100
-                            text-emerald-700
-                            text-xs font-semibold
-                        ">
-                            ${item.jenis_konsultasi}
-                        </span>
-                    `
-                    : `
-                        <span class="
-                            px-3 py-1 rounded-full
-                            bg-blue-100
-                            text-blue-700
-                            text-xs font-semibold
-                        ">
-                            ${item.jenis_konsultasi}
-                        </span>
-                    `;
 
                 tbody.innerHTML += `
                     <tr class="
@@ -343,10 +271,6 @@ function loadKonsultasiSelesai(page = 1) {
 
                         <td class="px-4 py-3">
                             ${item.dokterkonsul}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            ${badgeJenis}
                         </td>
 
                         <td class="px-4 py-3 text-center">
@@ -395,7 +319,7 @@ function loadKonsultasiSelesai(page = 1) {
                     `;
             };
 
-            renderPaginationKonsultasiSelesai(data);
+            renderPaginationKonsultasiPerawatSelesai(data);
 
         })
         .catch(error => {
@@ -412,11 +336,10 @@ function loadKonsultasiSelesai(page = 1) {
         });
 }
 
-function renderPaginationKonsultasi(res) {
-
+function renderPaginationKonsultasiPerawat(res) {
     const pagination =
         document.getElementById(
-            'paginationKonsultasi'
+            'paginationKonsultasiPerawatSelesai'
         );
 
     if (!pagination) return;
@@ -452,7 +375,7 @@ function renderPaginationKonsultasi(res) {
     html += `
         <button
             type="button"
-            onclick="this.blur(); loadKonsultasi(${current - 1})"
+            onclick="this.blur(); loadKonsultasiPerawat(${current - 1})"
             ${current === 1 ? 'disabled' : ''}
             style="
                 width:44px;
@@ -530,7 +453,7 @@ function renderPaginationKonsultasi(res) {
     html += `
         <button
             type="button"
-            onclick="this.blur(); loadKonsultasi(${current + 1})"
+            onclick="this.blur(); loadKonsultasiPerawat(${current + 1})"
             ${current === last ? 'disabled' : ''}
             style="
                 width:44px;
@@ -552,13 +475,15 @@ function renderPaginationKonsultasi(res) {
         html;
 }
 
-function renderPaginationKonsultasiSelesai(res) {
-
+function renderPaginationKonsultasiPerawatSelesai(res) {
+    // console.log('renderPagination dipanggil');
     const pagination =
         document.getElementById(
-            'paginationKonsultasiSelesai'
+            'paginationKonsultasiPerawatSelesai'
         );
-
+    // console.log('pagination element:', pagination);
+    // console.log('current:', res.current_page);
+    // console.log('last:', res.last_page);
     if (!pagination) return;
 
     const current =
@@ -591,7 +516,7 @@ function renderPaginationKonsultasiSelesai(res) {
     // Prev
     html += `
         <button
-            onclick="loadKonsultasiSelesai(${current - 1})"
+            onclick="loadKonsultasiPerawatSelesai(${current - 1})"
             ${current === 1 ? 'disabled' : ''}
             style="
                 width:44px;
@@ -615,7 +540,7 @@ function renderPaginationKonsultasiSelesai(res) {
 
     if (start > 1) {
 
-        html += pageButtonKonsultasiSelesai(
+        html += pageButtonKonsultasiPerawatSelesai(
             1,
             current
         );
@@ -639,7 +564,7 @@ function renderPaginationKonsultasiSelesai(res) {
         i++
     ) {
 
-        html += pageButtonKonsultasiSelesai(
+        html += pageButtonKonsultasiPerawatSelesai(
             i,
             current
         );
@@ -659,7 +584,7 @@ function renderPaginationKonsultasiSelesai(res) {
             `;
         }
 
-        html += pageButtonKonsultasiSelesai(
+        html += pageButtonKonsultasiPerawatSelesai(
             last,
             current
         );
@@ -667,7 +592,7 @@ function renderPaginationKonsultasiSelesai(res) {
 
     html += `
         <button
-            onclick="loadKonsultasiSelesai(${current + 1})"
+            onclick="loadKonsultasiPerawatSelesai(${current + 1})"
             ${current === last ? 'disabled' : ''}
             style="
                 width:44px;
@@ -684,7 +609,9 @@ function renderPaginationKonsultasiSelesai(res) {
     `;
 
     html += `</div>`;
-
+    // console.log(html);
+    // pagination.innerHTML = html;
+    // console.log('HTML berhasil dimasukkan');
     pagination.innerHTML =
         html;
 }
@@ -700,7 +627,7 @@ function pageButton(
     return `
         <button
             type="button"
-            onclick="loadKonsultasi(${page})"
+            onclick="loadKonsultasiPerawat(${page})"
             style="
                 width:44px;
                 height:44px;
@@ -742,61 +669,17 @@ function pageButton(
     `;
 }
 
-function pageButtonKonsultasiSelesai(
+function pageButtonKonsultasiPerawatSelesai(
     page,
     current
 ) {
 
     const active =
         page === current;
-
-    // return `
-    //     <button
-    //         type="button"
-    //         onclick="this.blur(); loadKonsultasiSelesai(${page})"
-    //         style="
-    //             width:44px;
-    //             height:44px;
-    //             border:none;
-    //             border-radius:14px;
-    //             cursor:pointer;
-    //             font-weight:600;
-    //             transition:.2s;
-
-    //             ${active
-    //         ? `
-    //                         background:
-    //                             linear-gradient(
-    //                                 135deg,
-    //                                 #10b981,
-    //                                 #059669
-    //                             );
-    //                         color:white;
-    //                         box-shadow:
-    //                             0 8px 20px
-    //                             rgba(
-    //                                 16,
-    //                                 185,
-    //                                 129,
-    //                                 .35
-    //                             );
-    //                         transform:
-    //                             scale(1.1);
-    //                     `
-    //         : `
-    //                         background:#f8fafc;
-    //                         color:#334155;
-    //                     `
-    //     }
-    //         "
-    //     >
-    //         ${page}
-    //     </button>
-    // `;
     return `
         <button
             type="button"
-            onclick="loadKonsultasiSelesai(${page})"
+            onclick="loadKonsultasiPerawatSelesai(${page})"
             style="
                 width:44px;
                 height:44px;
@@ -840,7 +723,7 @@ function pageButtonKonsultasiSelesai(
 
 function bukaKonsultasi(noPermintaan) {
 
-    fetch(`/dokter/konsultasi/data/${noPermintaan}`)
+    fetch(`/dokter/konsultasiperawat/data/${noPermintaan}`)
         .then(response => response.json())
         .then(result => {
 
@@ -870,10 +753,12 @@ function bukaKonsultasi(noPermintaan) {
             }
             document.getElementById('modalNoRM').textContent = d.no_rkm_medis ?? '-';
             document.getElementById('modalPasien').textContent = d.nm_pasien ?? '-';
-            document.getElementById('modalDokter').textContent = d.nm_dokter_pengirim ?? '-';
-            document.getElementById('modalJenis').textContent = d.jenis_permintaan ?? '-';
-            document.getElementById('modalDiagnosa').textContent = d.diagnosa_kerja ?? '-';
-            document.getElementById('modalUraian').textContent = d.uraian_konsultasi ?? '-';
+            document.getElementById('modalPerawat').textContent = d.nm_perawat_pengirim ?? '-';
+            document.getElementById('modalSituation').textContent = d.situation ?? '-';
+            document.getElementById('modalSituationTimeLine').textContent = d.situation ?? '-';
+            document.getElementById('modalBackground').textContent = d.background ?? '-';
+            document.getElementById('modalAssessment').textContent = d.assessment ?? '-';
+            document.getElementById('modalRecomendation').textContent = d.recomendation ?? '-';
             if (d.tanggalkonsultasi) {
 
                 const tanggal = new Date(
@@ -890,8 +775,6 @@ function bukaKonsultasi(noPermintaan) {
             }
 
             // Timeline
-            document.getElementById('modalKeteranganKonsultasi').textContent =
-                d.uraian_konsultasi ?? '-';
 
             document.getElementById('modalDokterTujuan').textContent =
                 d.nm_dokter_tujuan ?? '-';
@@ -917,7 +800,7 @@ function bukaKonsultasi(noPermintaan) {
             document.getElementById('modalWaktuKirim').textContent = tanggalFormat;
 
             // Tampilkan modal
-            const modal = document.getElementById('modalKonsultasi');
+            const modal = document.getElementById('modalKonsultasiPerawat');
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -932,7 +815,7 @@ function bukaKonsultasi(noPermintaan) {
 
 function bukaKonsultasiSelesai(noPermintaan) {
 
-    fetch(`/dokter/konsultasi/history/${noPermintaan}`)
+    fetch(`/dokter/konsultasiperawat/history/${noPermintaan}`)
         .then(response => response.json())
         .then(result => {
 
@@ -962,10 +845,12 @@ function bukaKonsultasiSelesai(noPermintaan) {
             }
             document.getElementById('modalHistoryNoRM').textContent = d.no_rkm_medis ?? '-';
             document.getElementById('modalHistoryPasien').textContent = d.nm_pasien ?? '-';
-            document.getElementById('modalHistoryDokter').textContent = d.nm_dokter_pengirim ?? '-';
-            document.getElementById('modalHistoryJenis').textContent = d.jenis_permintaan ?? '-';
-            document.getElementById('modalHistoryDiagnosa').textContent = d.diagnosa_kerja ?? '-';
-            document.getElementById('modalHistoryUraian').textContent = d.uraian_konsultasi ?? '-';
+            document.getElementById('modalHistoryPerawat').textContent = d.nm_perawat_pengirim ?? '-';
+            document.getElementById('modalHistorySituation').textContent = d.situation ?? '-';
+            document.getElementById('modalHistorySituationTimeLine').textContent = d.situation ?? '-';
+            document.getElementById('modalHistoryBackground').textContent = d.background ?? '-';
+            document.getElementById('modalHistoryAssessment').textContent = d.assessment ?? '-';
+            document.getElementById('modalHistoryRecomendation').textContent = d.recomendation ?? '-';
             if (d.tanggalkonsultasi) {
 
                 const tanggal = new Date(
@@ -982,8 +867,6 @@ function bukaKonsultasiSelesai(noPermintaan) {
             }
 
             // Timeline
-            document.getElementById('modalHistoryKeteranganKonsultasi').textContent =
-                d.uraian_konsultasi ?? '-';
 
             document.getElementById('modalHistoryDokterTujuan').textContent =
                 d.nm_dokter_tujuan ?? '-';
@@ -1007,8 +890,6 @@ function bukaKonsultasiSelesai(noPermintaan) {
             }
 
             document.getElementById('modalHistoryWaktuKirim').textContent = tanggalFormat;
-            // SET tombol STEP 3 supaya bisa klik lagi
-            // document.querySelector('.btn-lihat-ulang').dataset.permintaan = d.no_permintaan;
 
             document.getElementById('modalHistoryActionButton').innerHTML = `
                 <button
@@ -1031,9 +912,8 @@ function bukaKonsultasiSelesai(noPermintaan) {
                     👁️ Lihat Jawaban
                 </button>
             `;
-
             // Tampilkan modal
-            const modal = document.getElementById('modalKonsultasiHistory');
+            const modal = document.getElementById('modalHistoryKonsultasiPerawat');
 
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -1048,7 +928,7 @@ function bukaKonsultasiSelesai(noPermintaan) {
 
 function bukaKonsultasiJawaban(noPermintaan) {
 
-    fetch(`/dokter/konsultasi/jawabanhistory/${noPermintaan}`)
+    fetch(`/dokter/konsultasiperawat/jawabanhistory/${noPermintaan}`)
         .then(res => res.json())
         .then(result => {
 
@@ -1057,28 +937,31 @@ function bukaKonsultasiJawaban(noPermintaan) {
             // ======================
             // IDENTITAS
             // ======================
-            document.getElementById('modalHistoryJawabanNoPermintaan').textContent = d.no_permintaan ?? '-';
-            document.getElementById('modalHistoryJawabanPasien').textContent = d.nm_pasien ?? '-';
-            document.getElementById('modalHistoryJawabanNoRM').textContent = d.no_rkm_medis ?? '-';
-            document.getElementById('modalHistoryJawabanJenis').textContent = d.jenis_permintaan ?? '-';
+            document.getElementById('modalHistoryPerawatJawabanNoPermintaan').textContent = d.no_permintaan ?? '-';
+            document.getElementById('modalHistoryPerawatJawabanPasien').textContent = d.nm_pasien ?? '-';
+            document.getElementById('modalHistoryPerawatJawabanNoRM').textContent = d.no_rkm_medis ?? '-';
 
             // ======================
             // KONSULTASI AWAL
             // ======================
-            document.getElementById('modalHistoryJawabanDiagnosa').textContent = d.diagnosa_konsultasi ?? '-';
-            document.getElementById('modalHistoryJawabanUraian').textContent = d.uraian_konsultasi ?? '-';
-            document.getElementById('modalHistoryJawabanDokterPengirim').textContent = d.dokter_pengirim ?? '-';
+            document.getElementById('modalHistoryPerawatJawabanSituation').textContent = d.situation ?? '-';
+            document.getElementById('modalHistoryPerawatJawabanBackground').textContent = d.background ?? '-';
+            document.getElementById('modalHistoryPerawatJawabanAssessment').textContent = d.assessment ?? '-';
+            document.getElementById('modalHistoryPerawatJawabanRecomendation').textContent = d.recomendation ?? '-';
 
             // ======================
-            // DOKTER TUJUAN
+            // DOKTER Penjawab
             // ======================
-            document.getElementById('modalHistoryJawabanDokterTujuan').textContent = d.dokter_tujuan ?? '-';
+            document.getElementById('modalHistoryPerawtatJawabanDokterPenjawab').textContent = d.dokter_penjawab ?? '-';
 
             // ======================
             // JAWABAN KONSULTASI
             // ======================
-            document.getElementById('modalHistoryJawabanJawaban').textContent = d.uraian_jawaban ?? '-';
-            document.getElementById('modalHistoryJawabanSaran').textContent = d.diagnosa_jawaban ?? '-';
+            document.getElementById('modalHistoryPerawatJawaban').textContent = d.nm_perawat_penerima ?? '-';
+            // document.getElementById('modalHistoryPerawatTTD').textContent = d.nm_perawat_penerima ?? '-';
+            document.getElementById('modalHistoryPerawatrespon').textContent = d.respon ?? '-';
+            document.getElementById('modalHistoryPerawatinstruksi').textContent = d.instruksi ?? '-';
+            document.getElementById('modalHistoryPerawatrencana').textContent = d.rencana ?? '-';
             // document.getElementById('modalHistoryJawabanTindakLanjut').textContent = d.tanggal_jawaban ?? '-';
             if (d.tanggal_jawaban) {
 
@@ -1086,7 +969,7 @@ function bukaKonsultasiJawaban(noPermintaan) {
                     d.tanggal_jawaban.replace(' ', 'T')
                 );
 
-                document.getElementById('modalHistoryJawabanTindakLanjut').textContent =
+                document.getElementById('modalHistoryPerawatJawabanTindakLanjut').textContent =
                     tanggal.toLocaleString('id-ID', {
                         day: 'numeric',
                         month: 'long',
@@ -1097,7 +980,7 @@ function bukaKonsultasiJawaban(noPermintaan) {
 
             } else {
 
-                document.getElementById('modalHistoryJawabanTindakLanjut').textContent = '-';
+                document.getElementById('modalHistoryPerawatJawabanTindakLanjut').textContent = '-';
 
             }
 
@@ -1107,7 +990,7 @@ function bukaKonsultasiJawaban(noPermintaan) {
                     d.tanggal_jawaban.replace(' ', 'T')
                 );
 
-                document.getElementById('modalHistoryJawabanTanggalTTD').textContent =
+                document.getElementById('modalHistoryPerawatJawabanTanggalTTD').textContent =
                     'Probolinggo, ' +
                     tanggal.toLocaleDateString('id-ID', {
                         day: 'numeric',
@@ -1119,7 +1002,7 @@ function bukaKonsultasiJawaban(noPermintaan) {
             // ======================
             // SHOW MODAL
             // ======================
-            const modal = document.getElementById('modalKonsultasiHistoryJawaban');
+            const modal = document.getElementById('modalKonsultasiPerawatHistoryJawaban');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             generateTTDHistoryJawaban();
@@ -1130,43 +1013,10 @@ function bukaKonsultasiJawaban(noPermintaan) {
         });
 }
 
-function tutupModalKonsultasiHistory() {
-    const modal = document.getElementById('modalKonsultasiHistoryJawaban');
-
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-}
-
-function resetModalHistoryJawaban() {
-    const ids = [
-        'modalHistoryJawabanNoPermintaan',
-        'modalHistoryJawabanTanggal',
-        'modalHistoryJawabanPasien',
-        'modalHistoryJawabanNoRM',
-        'modalHistoryJawabanJenis',
-        'modalHistoryJawabanDokterTujuan',
-        'modalHistoryJawabanDiagnosa',
-        'modalHistoryJawabanUraian',
-        'modalHistoryJawabanJawaban',
-        'modalHistoryJawabanSaran',
-        'modalHistoryJawabanTindakLanjut',
-        'modalHistoryJawabanTanggalTTD',
-        'modalHistoryJawabanDokter'
-    ];
-
-    ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = '';
-    });
-
-    const qr = document.getElementById('qrTtdHistoryJawaban');
-    if (qr) qr.innerHTML = '';
-}
-
 function generateTTD() {
 
     const dokter =
-        document.getElementById("modalDokter").textContent;
+        document.getElementById("modalPerawat").textContent;
 
     const tanggal =
         document.getElementById("modalTanggal").textContent;
@@ -1194,10 +1044,10 @@ function generateTTD() {
 function generateTTDHistory() {
 
     const dokter =
-        document.getElementById("modalHistoryDokter").textContent;
+        document.getElementById("modalHistoryPerawat").textContent;
 
     const tanggal =
-        document.getElementById("modalHistoryTanggal").textContent;
+        document.getElementById("modalHistoryTanggalTTD").textContent;
 
     const nomor =
         document.getElementById("modalHistoryNoPermintaan").textContent;
@@ -1222,13 +1072,13 @@ function generateTTDHistory() {
 function generateTTDHistoryJawaban() {
 
     const dokter =
-        document.getElementById("modalHistoryJawabanDokterTujuan").textContent;
+        document.getElementById("modalHistoryPerawtatJawabanDokterPenjawab").textContent;
 
     const tanggal =
-        document.getElementById("modalHistoryJawabanTindakLanjut").textContent;
+        document.getElementById("modalHistoryPerawatJawabanTanggalTTD").textContent;
 
     const nomor =
-        document.getElementById("modalHistoryJawabanNoPermintaan").textContent;
+        document.getElementById("modalHistoryPerawatJawabanNoPermintaan").textContent;
 
     const qrText = `
                 Dokter : ${dokter}
@@ -1237,32 +1087,32 @@ function generateTTDHistoryJawaban() {
                 Status : Ditandatangani Secara Elektronik
                 `;
 
-    document.getElementById("qrTtdHistoryJawaban").innerHTML = "";
+    document.getElementById("qrTtdHistoryPerawatJawaban").innerHTML = "";
 
-    new QRCode(document.getElementById("qrTtdHistoryJawaban"), {
+    new QRCode(document.getElementById("qrTtdHistoryPerawatJawaban"), {
         text: qrText,
         width: 120,
         height: 120
     });
-    console.log("QR dibuat");
+    // console.log("QR dibuat");
 }
 
 function tutupModalKonsultasi() {
-    const modal = document.getElementById('modalKonsultasi');
+    const modal = document.getElementById('modalKonsultasiPerawat');
 
     modal.classList.remove('flex');
     modal.classList.add('hidden');
 }
 
 function tutupModalKonsultasiHistory() {
-    const modal = document.getElementById('modalKonsultasiHistory');
+    const modal = document.getElementById('modalHistoryKonsultasiPerawat');
 
     modal.classList.remove('flex');
     modal.classList.add('hidden');
 }
 
 function tutupModalJawabanKonsultasiHistory() {
-    const modal = document.getElementById('modalKonsultasiHistoryJawaban');
+    const modal = document.getElementById('modalKonsultasiPerawatHistoryJawaban');
 
     modal.classList.remove('flex');
     modal.classList.add('hidden');
@@ -1286,67 +1136,46 @@ function debounce(
     };
 }
 
-document.addEventListener('click', function (e) {
-
-    const btn = e.target.closest('.btn-lihat-ulang');
-
-    if (!btn) return;
-
-    const noPermintaan = btn.dataset.permintaan;
-
-    // console.log('CLICK OK:', noPermintaan); // <-- cek dulu
-
-    if (!noPermintaan) {
-        alert('no_permintaan kosong!');
-        return;
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+        loadKonsultasiPerawat();
+        loadKonsultasiPerawatSelesai();
     }
-
-    bukaKonsultasiJawaban(noPermintaan);
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-
-    loadKonsultasi();
-    loadKonsultasiSelesai();
-
-    if (window.showNotifKonsultasi) {
-        cekNotifKonsultasi();
-    }
-
-});
+);
 
 document
-    .getElementById('searchKonsultasi')
+    .getElementById('searchKonsultasiPerawat')
     ?.addEventListener(
         'input',
         debounce(() => {
-            loadKonsultasi(1);
+            loadKonsultasiPerawat(1);
         }, 500)
     );
 
 document
-    .getElementById('tanggalKonsultasi')
+    .getElementById('tanggalKonsultasiPerawat')
     ?.addEventListener(
         'change',
         () => {
-            loadKonsultasi(1);
+            loadKonsultasiPerawat(1);
         }
     );
 
 document
-    .getElementById('searchKonsultasiSelesai')
+    .getElementById('searchKonsultasiSelesaiPerawat')
     ?.addEventListener(
         'input',
         debounce(() => {
-            loadKonsultasiSelesai(1);
+            loadKonsultasiPerawatSelesai(1);
         }, 500)
     );
 
 document
-    .getElementById('tanggalKonsultasiSelesai')
+    .getElementById('tanggalKonsultasiSelesaiPerawat')
     ?.addEventListener(
         'change',
         () => {
-            loadKonsultasiSelesai(1);
+            loadKonsultasiPerawatSelesai(1);
         }
     );

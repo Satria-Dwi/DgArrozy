@@ -230,66 +230,90 @@
                 }
 
                 content.innerHTML = `
-                <div class="p-4 space-y-3">
+                        <div class="p-4 space-y-3">
 
-                    <div
-                        class="
-                            flex
-                            justify-between
-                            items-center
-                            p-3
-                            rounded-xl
-                            bg-blue-50
-                        ">
-                        <span class="font-semibold text-blue-600">
-                            Konsultasi Masuk
-                        </span>
+                            <div class="
+                                flex justify-between items-center
+                                p-3 rounded-xl bg-blue-50
+                            ">
+                                <span class="font-semibold text-blue-600">
+                                    Konsultasi Medik Masuk
+                                </span>
 
-                        <span class="
-                            font-bold
-                            text-blue-600
-                        ">
-                            ${result.masuk}
-                        </span>
-                    </div>
+                                <span class="font-bold text-blue-600">
+                                    ${result.masuk}
+                                </span>
+                            </div>
 
-                    <div
-                        class="
-                            flex
-                            justify-between
-                            items-center
-                            p-3
-                            rounded-xl
-                            bg-emerald-50
-                        ">
-                        <span class="font-semibold text-green-500">
-                            Konsultasi Keluar
-                        </span>
+                            <div class="
+                                flex justify-between items-center
+                                p-3 rounded-xl bg-emerald-50
+                            ">
+                                <span class="font-semibold text-emerald-600">
+                                    Konsultasi Medik Keluar
+                                </span>
 
-                        <span class="
-                            font-bold
-                            text-emerald-600
-                        ">
-                            ${result.keluar}
-                        </span>
-                    </div>
+                                <span class="font-bold text-emerald-600">
+                                    ${result.keluar}
+                                </span>
+                            </div>
 
-                    <a
-                        href="/dokter/konsultasi"
-                        class="
-                            block
-                            text-center
-                            bg-indigo-600
-                            text-white
-                            py-2
-                            rounded-xl
-                            hover:bg-indigo-700
-                        ">
-                        Lihat Konsultasi
-                    </a>
+                            <div class="
+                                flex justify-between items-center
+                                p-3 rounded-xl bg-amber-50
+                            ">
+                                <span class="font-semibold text-amber-600">
+                                    Konsultasi Perawat
+                                </span>
 
-                </div>
-            `;
+                                <span class="font-bold text-amber-600">
+                                    ${result.perawat_masuk}
+                                </span>
+                            </div>
+
+                            <div class="
+                                flex justify-between items-center
+                                p-3 rounded-xl bg-slate-100
+                            ">
+                                <span class="font-semibold text-slate-700">
+                                    Total
+                                </span>
+
+                                <span class="font-bold text-slate-800">
+                                    ${result.total}
+                                </span>
+                            </div>
+
+                            <a
+                                href="/dokter/konsultasi"
+                                class="
+                                    block
+                                    text-center
+                                    bg-indigo-600
+                                    text-white
+                                    py-2
+                                    rounded-xl
+                                    hover:bg-indigo-700
+                                ">
+                                Lihat Konsultasi Medik
+                            </a>
+
+                            <a
+                                href="/dokter/konsultasiperawat"
+                                class="
+                                    block
+                                    text-center
+                                    bg-amber-600
+                                    text-white
+                                    py-2
+                                    rounded-xl
+                                    hover:bg-amber-700
+                                ">
+                                Lihat Konsultasi Perawat
+                            </a>
+
+                        </div>
+                        `;
 
             })
 

@@ -6,26 +6,25 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class KonsultasiDokterController extends Controller
+class KonsultasiPerawatController extends Controller
 {
-    public function KonsultasiDokter(Request $request)
+    public function KonsultasiPerawat(Request $request)
     {
         try {
-
             if (session('simrs_tipe') !== 'dokter') {
                 return response()->json([
-                    'error'   => true,
-                    'message' => 'User bukan dokter'
+                    'error' => true,
+                    'message'   => 'User bukan dokter'
                 ], 403);
             }
 
-            $kdDokter = session('simrs_nik');
+            $kdDokter   = session('simrs_nik');
             $search = trim($request->get('search', ''));
             $tanggal = $request->get('tanggal');
-            $query = DB::table('konsultasi_medik as km')
+            $query      = DB::table('konsultasi_perawat as kp')
                 ->join(
                     'reg_periksa as rp',
-                    'km.no_rawat',
+                    'kp.no_rawat',
                     '=',
                     'rp.no_rawat'
                 )
@@ -36,42 +35,38 @@ class KonsultasiDokterController extends Controller
                     'p.no_rkm_medis'
                 )
                 ->join(
+                    'petugas as pg',
+                    'kp.nip',
+                    '=',
+                    'pg.nip'
+                )
+                ->join(
                     'dokter as dk',
-                    'km.kd_dokter',
+                    'kp.kd_dokter_dikonsuli',
                     '=',
                     'dk.kd_dokter'
                 )
-
                 ->select(
                     DB::raw("
-                    DATE_FORMAT(
-                        km.tanggal,
-                        '%d/%m/%Y %H:%i:%s'
-                    ) as tanggalperiksa
-                "),
-                    'km.no_permintaan',
+                                    DATE_FORMAT(
+                                        kp.tanggal,
+                                        '%d/%m/%Y %H:%i:%s'
+                                    ) as tanggalperiksa
+                                "),
+                    'kp.no_permintaan',
                     'rp.no_rkm_medis',
                     'p.nm_pasien',
-
-                    'km.kd_dokter',
-                    'km.kd_dokter_dikonsuli',
-
+                    'pg.nip',
+                    'kp.kd_dokter_dikonsuli',
                     'dk.nm_dokter as dokterkonsul'
                 )
-
-                ->where(function ($q) use ($kdDokter) {
-
-                    $q->where('km.kd_dokter', $kdDokter)
-                        ->orWhere('km.kd_dokter_dikonsuli', $kdDokter);
-                })
-
+                ->where('kp.kd_dokter_dikonsuli', $kdDokter)
                 ->whereNotExists(function ($q) {
-
                     $q->select(DB::raw(1))
-                        ->from('jawaban_konsultasi_medik as jkm')
+                        ->from('jawaban_konsultasi_perawat as jkp')
                         ->whereColumn(
-                            'jkm.no_permintaan',
-                            'km.no_permintaan'
+                            'jkp.no_permintaan',
+                            'kp.no_permintaan'
                         );
                 });
 
@@ -90,7 +85,7 @@ class KonsultasiDokterController extends Controller
                             "%{$search}%"
                         )
                         ->orWhere(
-                            'km.no_permintaan',
+                            'kp.no_permintaan',
                             'like',
                             "%{$search}%"
                         );
@@ -100,56 +95,36 @@ class KonsultasiDokterController extends Controller
             if (!empty($tanggal)) {
 
                 $query->whereDate(
-                    'km.tanggal',
+                    'kp.tanggal',
                     $tanggal
                 );
             }
 
-            $perPage = $request->get('per_page', 10);
+            $perPage    = $request->get('per_page', 10);
 
-            $data = $query
-                ->orderBy('km.tanggal', 'desc')
+            $data   = $query
+                ->orderBy('kp.tanggal', 'desc')
                 ->paginate($perPage);
 
-            $data->getCollection()->transform(
-                function ($item) use ($kdDokter) {
-
-                    if (
-                        $item->kd_dokter_dikonsuli == $kdDokter
-                    ) {
-
-                        $item->jenis_konsultasi =
-                            'Konsultasi Masuk';
-                    } else {
-
-                        $item->jenis_konsultasi =
-                            'Konsultasi Keluar';
-                    }
-
-                    return $item;
-                }
-            );
-
             return response()->json([
-                'error' => false,
-                'data'  => $data
+                'error' =>  false,
+                'data'  =>  $data
             ]);
         } catch (\Exception $e) {
-
             return response()->json([
-                'error' => true,
-                'msg'   => $e->getMessage()
+                'error' =>  true,
+                'msg'   =>  $e->getMessage()
             ], 500);
         }
     }
 
-    public function DetilKonsultasiDokter($nopermintaan)
+    public function DetilKonsultasiPerawat($nopermintaan)
     {
-        $data = DB::table('konsultasi_medik as km')
+        $data = DB::table('konsultasi_perawat as kp')
 
             ->join(
                 'reg_periksa as rp',
-                'km.no_rawat',
+                'kp.no_rawat',
                 '=',
                 'rp.no_rawat'
             )
@@ -161,18 +136,18 @@ class KonsultasiDokterController extends Controller
                 'p.no_rkm_medis'
             )
 
-            // dokter pengirim konsultasi
+            // perawat pengirim konsultasi
             ->join(
-                'dokter as dk_pengirim',
-                'km.kd_dokter',
+                'petugas as p_pengirim',
+                'kp.nip',
                 '=',
-                'dk_pengirim.kd_dokter'
+                'p_pengirim.nip'
             )
 
             // dokter tujuan konsultasi
             ->join(
                 'dokter as dk_tujuan',
-                'km.kd_dokter_dikonsuli',
+                'kp.kd_dokter_dikonsuli',
                 '=',
                 'dk_tujuan.kd_dokter'
             )
@@ -181,26 +156,28 @@ class KonsultasiDokterController extends Controller
             ->select(
                 DB::raw("
                     DATE_FORMAT(
-                        km.tanggal,
+                        kp.tanggal,
                         '%Y-%m-%d %H:%i:%s'
                     ) as tanggalkonsultasi
                 "),
-                'km.no_permintaan',
+                'kp.no_permintaan',
                 'rp.no_rkm_medis',
                 'p.nm_pasien',
-                'km.jenis_permintaan',
-                'km.diagnosa_kerja',
-                'km.uraian_konsultasi',
+                'kp.situation',
+                'kp.background',
+                'kp.assessment',
+                'kp.recomendation',
 
-                'km.kd_dokter',
-                'km.kd_dokter_dikonsuli',
 
-                'dk_pengirim.nm_dokter as nm_dokter_pengirim',
+                'kp.nip',
+                'kp.kd_dokter_dikonsuli',
+
+                'p_pengirim.nama as nm_perawat_pengirim',
                 'dk_tujuan.nm_dokter as nm_dokter_tujuan'
             )
 
             ->where(
-                'km.no_permintaan',
+                'kp.no_permintaan',
                 $nopermintaan
             )
 
@@ -219,7 +196,7 @@ class KonsultasiDokterController extends Controller
         ]);
     }
 
-    public function KonsultasiDokterSelesai(Request $request)
+    public function KonsultasiPerawatSelesai(Request $request)
     {
         try {
 
@@ -233,10 +210,10 @@ class KonsultasiDokterController extends Controller
             $kdDokter = session('simrs_nik');
             $search = trim($request->get('search', ''));
             $tanggal = $request->get('tanggal');
-            $query = DB::table('konsultasi_medik as km')
+            $query = DB::table('konsultasi_perawat as kp')
                 ->join(
                     'reg_periksa as rp',
-                    'km.no_rawat',
+                    'kp.no_rawat',
                     '=',
                     'rp.no_rawat'
                 )
@@ -246,43 +223,49 @@ class KonsultasiDokterController extends Controller
                     '=',
                     'p.no_rkm_medis'
                 )
+                // perawat pengirim konsultasi
+                ->join(
+                    'petugas as pg',
+                    'kp.nip',
+                    '=',
+                    'pg.nip'
+                )
+
+                // dokter tujuan konsultasi
                 ->join(
                     'dokter as dk',
-                    'km.kd_dokter',
+                    'kp.kd_dokter_dikonsuli',
                     '=',
                     'dk.kd_dokter'
                 )
+
+                ->where('kp.kd_dokter_dikonsuli', $kdDokter)
+
                 ->select(
                     DB::raw("
-                    DATE_FORMAT(
-                        km.tanggal,
-                        '%d/%m/%Y %H:%i:%s'
-                    ) as tanggalperiksa
-                "),
-                    'km.no_permintaan',
+                                    DATE_FORMAT(
+                                        kp.tanggal,
+                                        '%d/%m/%Y %H:%i:%s'
+                                    ) as tanggalperiksa
+                                "),
+                    'kp.no_permintaan',
                     'rp.no_rkm_medis',
                     'p.nm_pasien',
-                    'km.kd_dokter',
-                    'km.kd_dokter_dikonsuli',
+                    'pg.nip',
+                    'kp.kd_dokter_dikonsuli',
                     'dk.nm_dokter as dokterkonsul'
                 )
-
-                ->where(function ($q) use ($kdDokter) {
-
-                    $q->where('km.kd_dokter', $kdDokter)
-                        ->orWhere('km.kd_dokter_dikonsuli', $kdDokter);
-                })
 
                 ->whereExists(function ($q) {
 
                     $q->select(DB::raw(1))
-                        ->from('jawaban_konsultasi_medik as jkm')
+                        ->from('jawaban_konsultasi_perawat as jkp')
                         ->whereColumn(
-                            'jkm.no_permintaan',
-                            'km.no_permintaan'
+                            'jkp.no_permintaan',
+                            'kp.no_permintaan'
                         );
                 });
-            
+
             if ($search !== '') {
 
                 $query->where(function ($q) use ($search) {
@@ -298,7 +281,7 @@ class KonsultasiDokterController extends Controller
                             "%{$search}%"
                         )
                         ->orWhere(
-                            'km.no_permintaan',
+                            'kp.no_permintaan',
                             'like',
                             "%{$search}%"
                         );
@@ -308,7 +291,7 @@ class KonsultasiDokterController extends Controller
             if (!empty($tanggal)) {
 
                 $query->whereDate(
-                    'km.tanggal',
+                    'kp.tanggal',
                     $tanggal
                 );
             }
@@ -316,25 +299,8 @@ class KonsultasiDokterController extends Controller
             $perPage = $request->get('per_page', 10);
 
             $data = $query
-                ->orderBy('km.tanggal', 'desc')
+                ->orderBy('kp.tanggal', 'desc')
                 ->paginate($perPage);
-
-            $data->getCollection()->transform(
-                function ($item) use ($kdDokter) {
-
-                    if ($item->kd_dokter_dikonsuli == $kdDokter) {
-
-                        $item->jenis_konsultasi =
-                            'Konsultasi Masuk';
-                    } else {
-
-                        $item->jenis_konsultasi =
-                            'Konsultasi Keluar';
-                    }
-
-                    return $item;
-                }
-            );
 
             return response()->json([
                 'error' => false,
@@ -349,13 +315,13 @@ class KonsultasiDokterController extends Controller
         }
     }
 
-    public function DetilHistoryKonsultasiDokter($nopermintaan)
+    public function DetilHistoryKonsultasiPerawat($nopermintaan)
     {
-        $data = DB::table('konsultasi_medik as km')
+        $data = DB::table('konsultasi_perawat as kp')
 
             ->join(
                 'reg_periksa as rp',
-                'km.no_rawat',
+                'kp.no_rawat',
                 '=',
                 'rp.no_rawat'
             )
@@ -367,18 +333,18 @@ class KonsultasiDokterController extends Controller
                 'p.no_rkm_medis'
             )
 
-            // dokter pengirim konsultasi
+            // perawat pengirim konsultasi
             ->join(
-                'dokter as dk_pengirim',
-                'km.kd_dokter',
+                'petugas as p_pengirim',
+                'kp.nip',
                 '=',
-                'dk_pengirim.kd_dokter'
+                'p_pengirim.nip'
             )
 
             // dokter tujuan konsultasi
             ->join(
                 'dokter as dk_tujuan',
-                'km.kd_dokter_dikonsuli',
+                'kp.kd_dokter_dikonsuli',
                 '=',
                 'dk_tujuan.kd_dokter'
             )
@@ -387,26 +353,28 @@ class KonsultasiDokterController extends Controller
             ->select(
                 DB::raw("
                     DATE_FORMAT(
-                        km.tanggal,
+                        kp.tanggal,
                         '%Y-%m-%d %H:%i:%s'
                     ) as tanggalkonsultasi
                 "),
-                'km.no_permintaan',
+                'kp.no_permintaan',
                 'rp.no_rkm_medis',
                 'p.nm_pasien',
-                'km.jenis_permintaan',
-                'km.diagnosa_kerja',
-                'km.uraian_konsultasi',
+                'kp.situation',
+                'kp.background',
+                'kp.assessment',
+                'kp.recomendation',
 
-                'km.kd_dokter',
-                'km.kd_dokter_dikonsuli',
 
-                'dk_pengirim.nm_dokter as nm_dokter_pengirim',
+                'kp.nip',
+                'kp.kd_dokter_dikonsuli',
+
+                'p_pengirim.nama as nm_perawat_pengirim',
                 'dk_tujuan.nm_dokter as nm_dokter_tujuan'
             )
 
             ->where(
-                'km.no_permintaan',
+                'kp.no_permintaan',
                 $nopermintaan
             )
 
@@ -425,38 +393,42 @@ class KonsultasiDokterController extends Controller
         ]);
     }
 
-    public function DetilHistoryJawabanKonsultasiDokter($nopermintaan)
+    public function DetilHistoryJawabanKonsultasiPerawat($nopermintaan)
     {
         try {
 
-            $data = DB::table('konsultasi_medik as km')
+            $data = DB::table('konsultasi_perawat as kp')
 
                 // WAJIB: hanya yang punya jawaban
-                ->join('jawaban_konsultasi_medik as jkm', function ($join) {
-                    $join->on('km.no_permintaan', '=', 'jkm.no_permintaan');
+                ->join('jawaban_konsultasi_perawat as jkp', function ($join) {
+                    $join->on('kp.no_permintaan', '=', 'jkp.no_permintaan');
                 })
 
-                ->join('reg_periksa as rp', 'km.no_rawat', '=', 'rp.no_rawat')
+                ->join('reg_periksa as rp', 'kp.no_rawat', '=', 'rp.no_rawat')
 
                 ->join('pasien as p', 'rp.no_rkm_medis', '=', 'p.no_rkm_medis')
 
-                ->join('dokter as dk_pengirim', 'km.kd_dokter', '=', 'dk_pengirim.kd_dokter')
+                ->join(
+                    'petugas as p_pengirim',
+                    'kp.nip',
+                    '=',
+                    'p_pengirim.nip'
+                )
 
-                ->join('dokter as dk_tujuan', 'km.kd_dokter_dikonsuli', '=', 'dk_tujuan.kd_dokter')
+                ->join('dokter as dk_tujuan', 'kp.kd_dokter_dikonsuli', '=', 'dk_tujuan.kd_dokter')
 
                 ->select(
 
                     // ========================
                     // IDENTITAS KONSULTASI
                     // ========================
-                    'km.no_permintaan',
-                    'km.no_rawat',
-                    'km.jenis_permintaan',
+                    'kp.no_permintaan',
+                    'kp.no_rawat',
 
-                    DB::raw("DATE_FORMAT(km.tanggal,'%Y-%m-%d %H:%i:%s') as tanggal_konsultasi"),
+                    DB::raw("DATE_FORMAT(kp.tanggal,'%Y-%m-%d %H:%i:%s') as tanggal_konsultasi"),
 
-                    'km.diagnosa_kerja as diagnosa_konsultasi',
-                    'km.uraian_konsultasi',
+                    // 'kp.diagnosa_kerja as diagnosa_konsultasi',
+                    // 'km.uraian_konsultasi',
 
                     // ========================
                     // PASIEN
@@ -465,25 +437,36 @@ class KonsultasiDokterController extends Controller
                     'p.nm_pasien',
 
                     // ========================
+                    // Kronologi
+                    // ========================
+                    'kp.situation',
+                    'kp.background',
+                    'kp.assessment',
+                    'kp.recomendation',
+
+                    // ========================
+                    // perawat
+                    // ========================
+                    'kp.nip',
+                    'p_pengirim.nama as nm_perawat_penerima',
+
+                    // ========================
                     // DOKTER
                     // ========================
-                    'km.kd_dokter',
-                    'dk_pengirim.nm_dokter as dokter_pengirim',
-
-                    'km.kd_dokter_dikonsuli',
-                    'dk_tujuan.nm_dokter as dokter_tujuan',
+                    'kp.kd_dokter_dikonsuli',
+                    'dk_tujuan.nm_dokter as dokter_penjawab',
 
                     // ========================
                     // JAWABAN KONSULTASI
                     // ========================
-                    DB::raw("DATE_FORMAT(jkm.tanggal,'%Y-%m-%d %H:%i:%s') as tanggal_jawaban"),
+                    DB::raw("DATE_FORMAT(jkp.tanggal,'%Y-%m-%d %H:%i:%s') as tanggal_jawaban"),
 
-                    'jkm.diagnosa_kerja as diagnosa_jawaban',
-                    'jkm.uraian_jawaban'
-
+                    'jkp.respon',
+                    'jkp.instruksi',
+                    'jkp.rencana',
                 )
 
-                ->where('km.no_permintaan', $nopermintaan)
+                ->where('kp.no_permintaan', $nopermintaan)
 
                 ->first();
 
@@ -493,6 +476,7 @@ class KonsultasiDokterController extends Controller
                     'message' => 'Data konsultasi tidak ditemukan'
                 ], 404);
             }
+
 
             return response()->json([
                 'success' => true,
@@ -520,9 +504,10 @@ class KonsultasiDokterController extends Controller
 
             $kdDokter = session('simrs_nik');
 
-            // Konsultasi medik masuk
             $masuk = DB::table('konsultasi_medik as km')
+
                 ->where('km.kd_dokter_dikonsuli', $kdDokter)
+
                 ->whereNotExists(function ($q) {
                     $q->select(DB::raw(1))
                         ->from('jawaban_konsultasi_medik as jkm')
@@ -531,11 +516,14 @@ class KonsultasiDokterController extends Controller
                             'km.no_permintaan'
                         );
                 })
+
                 ->count();
 
-            // Konsultasi medik keluar
+
             $keluar = DB::table('konsultasi_medik as km')
+
                 ->where('km.kd_dokter', $kdDokter)
+
                 ->whereNotExists(function ($q) {
                     $q->select(DB::raw(1))
                         ->from('jawaban_konsultasi_medik as jkm')
@@ -544,27 +532,14 @@ class KonsultasiDokterController extends Controller
                             'km.no_permintaan'
                         );
                 })
-                ->count();
 
-            // Konsultasi perawat masuk
-            $perawatMasuk = DB::table('konsultasi_perawat as kp')
-                ->where('kp.kd_dokter_dikonsuli', $kdDokter)
-                ->whereNotExists(function ($q) {
-                    $q->select(DB::raw(1))
-                        ->from('jawaban_konsultasi_perawat as jkp')
-                        ->whereColumn(
-                            'jkp.no_permintaan',
-                            'kp.no_permintaan'
-                        );
-                })
                 ->count();
 
             return response()->json([
                 'error' => false,
                 'masuk' => $masuk,
                 'keluar' => $keluar,
-                'perawat_masuk' => $perawatMasuk,
-                'total' => $masuk + $keluar + $perawatMasuk
+                'total' => $masuk + $keluar
             ]);
         } catch (\Exception $e) {
 
