@@ -14,7 +14,7 @@
         <div class="flex items-center gap-2">
             <img src="{{ asset('img/logo-pin-edit.png') }}?v={{ filemtime(public_path('img/logo-pin-edit.png')) }}"
                 class="header-icon">
-            <span class="text-xl font-bold tracking-wide">RSUD AR ROZY</span>
+            <span class="text-xl font-bold tracking-wide"> ARION - RSUD AR ROZY</span>
             <span>|</span>
         </div>
 

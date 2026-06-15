@@ -157,7 +157,10 @@
                 class="text-lg font-extrabold tracking-wide 
                    bg-gradient-to-r from-indigo-600 to-purple-600 
                    bg-clip-text text-transparent">
-                M-ArRozy
+                ARION
+                {{-- <h5 class="text-sm">
+                    Ar Rozy Integrated Information and Operation System
+                </h5> --}}
             </span>
         </div>
 
