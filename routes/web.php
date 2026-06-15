@@ -29,6 +29,7 @@ Route::post('/signout', [SigninController::class, 'signout']);
 
 Route::get('/dashboard', [DashboardController::class, 'index']);
 Route::get('/dashboard-data', [DashboardController::class, 'dashboardData']);
+// Route::get('/API/bed-arrozy', [MainAdminController::class, 'APItempatTidurPerBangsal']);
 
 Route::middleware(['dgarrozy.auth:admin|manajemen'])->group(function () {});
 Route::get('/mainadmin', [MainAdminController::class, 'index'])->name('mainadmin.index');

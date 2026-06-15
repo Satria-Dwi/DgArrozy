@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class MainAdminController extends Controller
 {
@@ -161,5 +163,86 @@ class MainAdminController extends Controller
             'labels' => $data->pluck('nm_poli'),
             'data'   => $data->pluck('total'),
         ]);
+    }
+
+    public function APItempatTidurPerBangsal()
+    {
+        try {
+
+            $cacheKey = 'bed_info_per_bangsal';
+            $cacheTTL = now()->addSeconds(30);
+
+            $result = Cache::remember($cacheKey, $cacheTTL, function () {
+
+                $bangsal = DB::table('bangsal')
+                    ->where('status', '1')
+                    ->select('kd_bangsal', 'nm_bangsal')
+                    ->orderBy('nm_bangsal')
+                    ->get();
+
+                $kamar = DB::table('kamar')
+                    ->where('statusdata', '1')
+                    ->select(
+                        'kd_bangsal',
+                        DB::raw('COUNT(*) as jumlah_bed'),
+                        DB::raw("
+                        SUM(
+                            CASE
+                                WHEN status = 'ISI' THEN 1
+                                ELSE 0
+                            END
+                        ) as bed_terisi
+                    ")
+                    )
+                    ->groupBy('kd_bangsal')
+                    ->get()
+                    ->keyBy('kd_bangsal');
+
+                return $bangsal->map(function ($b) use ($kamar) {
+
+                    $jumlah = (int) ($kamar[$b->kd_bangsal]->jumlah_bed ?? 0);
+                    $terisi = (int) ($kamar[$b->kd_bangsal]->bed_terisi ?? 0);
+                    $kosong = max(0, $jumlah - $terisi);
+
+                    return [
+                        'kd_bangsal' => $b->kd_bangsal,
+                        'nm_bangsal' => $b->nm_bangsal,
+                        'jumlah_bed' => $jumlah,
+                        'bed_terisi' => $terisi,
+                        'bed_kosong' => $kosong,
+                        'persentase_bor' => round(
+                            $jumlah > 0
+                                ? ($terisi / $jumlah) * 100
+                                : 0,
+                            2
+                        ),
+                    ];
+                })->values();
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data berhasil diambil',
+                'data' => $result,
+                'meta' => [
+                    'total_bangsal' => $result->count(),
+                    'updated_at' => now()->toISOString(),
+                    'cache_duration_seconds' => 30
+                ]
+            ], 200);
+        } catch (\Throwable $e) {
+
+            Log::error('API Bed Info Error', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan pada server',
+                'data' => [],
+            ], 500);
+        }
     }
 }

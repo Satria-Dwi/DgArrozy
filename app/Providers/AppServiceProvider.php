@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,6 +34,23 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::directive('endrole', function () {
             return "<?php endif; ?>";
+        });
+
+        // ==================== Rate Limiter ====================
+
+        RateLimiter::for('bed-info', function (Request $request) {
+
+            return Limit::perMinute(10)
+                ->by($request->ip())
+                ->response(function () {
+
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Terlalu banyak request. Silakan coba lagi dalam 1 menit.',
+                        'data' => []
+                    ], 429);
+
+                });
         });
     }
 }

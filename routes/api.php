@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\MainAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// Route::middleware(['auth:sanctum','throttle:30,1'])->get('/v1/bed-info',[MainAdminController::class, 'APItempatTidurPerBangsal']);
+// Route::get('/v1/bed-info',[MainAdminController::class,'APItempatTidurPerBangsal'])->middleware('throttle:10,1');
+Route::get('/v1/bed-info',[MainAdminController::class, 'APItempatTidurPerBangsal'])->middleware('throttle:bed-info');
