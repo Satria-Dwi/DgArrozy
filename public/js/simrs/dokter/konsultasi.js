@@ -13,7 +13,7 @@ function loadKonsultasi(page = 1) {
         document.getElementById(
             'tanggalKonsultasi'
         )?.value || '';
-        
+
     const tbody =
         document.getElementById(
             "tableKonsultasi"
@@ -98,83 +98,101 @@ function loadKonsultasi(page = 1) {
 
             const html = rows.map((item, index) => {
 
-                const rowClass =
-                    index % 2 === 0
-                        ? 'bg-white dark:bg-slate-900'
-                        : 'bg-slate-50 dark:bg-slate-800/50';
+                const jenis = (item.jenis_konsultasi || '').toLowerCase();
 
-                const badgeClass =
-                    item.jenis_konsultasi === 'Konsultasi Masuk'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-blue-100 text-blue-700';
+                // warna row
+                let typeClass = '';
+
+                if (jenis.includes('masuk')) {
+                    typeClass = 'bg-green-100 dark:bg-green-900/20 border-l-4 border-green-500';
+                } else if (jenis.includes('keluar')) {
+                    typeClass = 'bg-blue-100 dark:bg-blue-900/20 border-l-4 border-blue-500';
+                } else {
+                    typeClass = 'bg-slate-50 dark:bg-slate-900 border-l-4 border-slate-300';
+                }
+                // zebra tetap jalan
+                const baseClass =
+                    index % 2 === 0
+                        ? ''
+                        : 'opacity-[0.97]';
+
+                const rowClass = `${baseClass} ${typeClass}`;
+
+                // badge
+                let badgeClass = 'bg-slate-100 text-slate-800 ring-1 ring-slate-300';
+
+                if (jenis.includes('masuk')) {
+                    badgeClass = 'bg-green-100 text-green-900 ring-1 ring-green-400';
+                } else if (jenis.includes('keluar')) {
+                    badgeClass = 'bg-blue-100 text-blue-900 ring-1 ring-blue-400';
+                }
 
                 return `
-                    <tr class="${rowClass}
-                        hover:bg-blue-50
-                        dark:hover:bg-slate-700/50
+        <tr class="${rowClass}
+                    hover:bg-white
+                    dark:hover:bg-slate-800
+                    transition-all duration-200">
+
+            <td class="px-6 py-4 text-center whitespace-nowrap">
+                ${item.tanggalperiksa}
+            </td>
+
+            <td class="px-6 py-4 text-center whitespace-nowrap font-medium">
+                ${item.no_permintaan}
+            </td>
+
+            <td class="px-6 py-4 text-center whitespace-nowrap">
+                ${item.no_rkm_medis}
+            </td>
+
+            <td class="px-6 py-4">
+                ${item.nm_pasien}
+            </td>
+
+            <td class="px-6 py-4">
+                ${item.dokterkonsul}
+            </td>
+
+            <td class="px-6 py-4 text-center font-bold">
+                <span class="
+                    inline-flex
+                    items-center
+                    px-3
+                    py-1
+                    text-xs
+                    font-semibold
+                    rounded-full
+                    ${badgeClass}
+                ">
+                    ${item.jenis_konsultasi}
+                </span>
+            </td>
+
+            <td class="px-6 py-4 text-center">
+                <button
+                    onclick="bukaKonsultasi('${item.no_permintaan}')"
+                    class="
+                        inline-flex
+                        items-center
+                        gap-2
+                        bg-blue-600
+                        hover:bg-blue-700
+                        text-white
+                        text-sm
+                        font-semibold
+                        py-2
+                        px-4
+                        rounded-xl
+                        shadow-md
+                        hover:shadow-lg
                         transition-all
-                        duration-200">
+                    ">
+                    👁️ Lihat
+                </button>
+            </td>
 
-                        <td class="px-6 py-4 text-center whitespace-nowrap">
-                            ${item.tanggalperiksa}
-                        </td>
-
-                        <td class="px-6 py-4 text-center whitespace-nowrap font-medium">
-                            ${item.no_permintaan}
-                        </td>
-
-                        <td class="px-6 py-4 text-center whitespace-nowrap">
-                            ${item.no_rkm_medis}
-                        </td>
-
-                        <td class="px-6 py-4">
-                            ${item.nm_pasien}
-                        </td>
-
-                        <td class="px-6 py-4">
-                            ${item.dokterkonsul}
-                        </td>
-
-                        <td class="px-6 py-4 text-center">
-                            <span class="
-                                inline-flex
-                                items-center
-                                px-3
-                                py-1
-                                text-xs
-                                font-semibold
-                                rounded-full
-                                ${badgeClass}
-                            ">
-                                ${item.jenis_konsultasi}
-                            </span>
-                        </td>
-
-                        <td class="px-6 py-4 text-center">
-                            <button
-                                onclick="bukaKonsultasi('${item.no_permintaan}')"
-                                class="
-                                    inline-flex
-                                    items-center
-                                    gap-2
-                                    bg-blue-600
-                                    hover:bg-blue-700
-                                    text-white
-                                    text-sm
-                                    font-semibold
-                                    py-2
-                                    px-4
-                                    rounded-xl
-                                    shadow-md
-                                    hover:shadow-lg
-                                    transition-all
-                                ">
-                                👁️ Lihat
-                            </button>
-                        </td>
-
-                    </tr>
-                `;
+        </tr>
+    `;
             }).join('');
 
             tbody.innerHTML = html;
@@ -267,7 +285,7 @@ function loadKonsultasiSelesai(page = 1) {
         tanggal
     });
 
-    fetch(`/dokter/konsultasi/history?page=${params}`)
+    fetch(`/dokter/konsultasi/history?${params}`)
         .then(res => res.json())
         .then(result => {
 
@@ -292,89 +310,100 @@ function loadKonsultasiSelesai(page = 1) {
                 return;
             }
 
-            data.data.forEach(item => {
+            data.data.forEach((item, index) => {
 
-                let badgeJenis = item.jenis_konsultasi === "Konsultasi Masuk"
-                    ? `
-                        <span class="
-                            px-3 py-1 rounded-full
-                            bg-emerald-100
-                            text-emerald-700
-                            text-xs font-semibold
-                        ">
-                            ${item.jenis_konsultasi}
-                        </span>
-                    `
-                    : `
-                        <span class="
-                            px-3 py-1 rounded-full
-                            bg-blue-100
-                            text-blue-700
-                            text-xs font-semibold
-                        ">
-                            ${item.jenis_konsultasi}
-                        </span>
-                    `;
+                const jenis = (item.jenis_konsultasi || '').toLowerCase();
+
+                // 🎨 ROW STYLE (SAMAKAN DENGAN MAP VERSION)
+                let typeClass = '';
+
+                if (jenis.includes('masuk')) {
+                    typeClass = 'bg-green-100 dark:bg-green-900/20 border-l-4 border-green-500';
+                } else if (jenis.includes('keluar')) {
+                    typeClass = 'bg-blue-100 dark:bg-blue-900/20 border-l-4 border-blue-500';
+                } else {
+                    typeClass = 'bg-slate-50 dark:bg-slate-900 border-l-4 border-slate-300';
+                }
+
+                // zebra + subtle effect (sama seperti map)
+                const baseClass =
+                    index % 2 === 0
+                        ? ''
+                        : 'opacity-[0.97]';
+
+                const rowClass = `${baseClass} ${typeClass}`;
+
+                // 🏷 BADGE (SAMAKAN DENGAN MAP VERSION)
+                let badgeClass = 'bg-slate-100 text-slate-800 ring-1 ring-slate-300';
+
+                if (jenis.includes('masuk')) {
+                    badgeClass = 'bg-green-100 text-green-900 ring-1 ring-green-400';
+                } else if (jenis.includes('keluar')) {
+                    badgeClass = 'bg-blue-100 text-blue-900 ring-1 ring-blue-400';
+                }
 
                 tbody.innerHTML += `
-                    <tr class="
-                        border-b
-                        border-slate-100
-                        dark:border-slate-800
-                        hover:bg-slate-50
-                        dark:hover:bg-slate-800/50
+        <tr class="${rowClass}
+                    hover:bg-white
+                    dark:hover:bg-slate-800
+                    transition-all duration-200">
+
+            <td class="px-6 py-4 text-center">
+                ${item.tanggalperiksa}
+            </td>
+
+            <td class="px-6 py-4 text-center font-medium">
+                ${item.no_permintaan}
+            </td>
+
+            <td class="px-6 py-4 text-center">
+                ${item.no_rkm_medis}
+            </td>
+
+            <td class="px-6 py-4">
+                ${item.nm_pasien}
+            </td>
+
+            <td class="px-6 py-4">
+                ${item.dokterkonsul}
+            </td>
+
+            <td class="px-6 py-4 text-center font-bold">
+                <span class="
+                    inline-flex
+                    items-center
+                    px-3 py-1
+                    text-xs font-semibold
+                    rounded-full
+                    ${badgeClass}
+                ">
+                    ${item.jenis_konsultasi}
+                </span>
+            </td>
+
+            <td class="px-6 py-4 text-center">
+                <button
+                    onclick="bukaKonsultasiSelesai('${item.no_permintaan}')"
+                    class="
+                        inline-flex
+                        items-center
+                        gap-2
+                        bg-emerald-600
+                        hover:bg-emerald-700
+                        text-white
+                        text-sm
+                        font-semibold
+                        py-2 px-4
+                        rounded-xl
+                        shadow-md
+                        transition-all
                     ">
+                    👁️ Lihat
+                </button>
+            </td>
 
-                        <td class="px-4 py-3 text-center">
-                            ${item.tanggalperiksa}
-                        </td>
-
-                        <td class="px-4 py-3 text-center font-medium">
-                            ${item.no_permintaan}
-                        </td>
-
-                        <td class="px-4 py-3 text-center">
-                            ${item.no_rkm_medis}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            ${item.nm_pasien}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            ${item.dokterkonsul}
-                        </td>
-
-                        <td class="px-4 py-3">
-                            ${badgeJenis}
-                        </td>
-
-                        <td class="px-4 py-3 text-center">
-
-                            <button
-                                onclick="bukaKonsultasiSelesai('${item.no_permintaan}')"
-                                class="
-                                    inline-flex
-                                    items-center
-                                    gap-2
-                                    bg-emerald-600
-                                    hover:bg-emerald-700
-                                    text-white
-                                    text-sm
-                                    font-semibold
-                                    py-2
-                                    px-4
-                                    rounded-xl
-                                    shadow-md
-                                    transition-all
-                                ">
-                                👁️ Lihat
-                            </button>
-
-                        </td>
-
-                    </tr>
-                `;
+        </tr>
+    `;
             });
 
             if (info) {
@@ -750,49 +779,6 @@ function pageButtonKonsultasiSelesai(
     const active =
         page === current;
 
-    // return `
-    //     <button
-    //         type="button"
-    //         onclick="this.blur(); loadKonsultasiSelesai(${page})"
-    //         style="
-    //             width:44px;
-    //             height:44px;
-    //             border:none;
-    //             border-radius:14px;
-    //             cursor:pointer;
-    //             font-weight:600;
-    //             transition:.2s;
-
-    //             ${active
-    //         ? `
-    //                         background:
-    //                             linear-gradient(
-    //                                 135deg,
-    //                                 #10b981,
-    //                                 #059669
-    //                             );
-    //                         color:white;
-    //                         box-shadow:
-    //                             0 8px 20px
-    //                             rgba(
-    //                                 16,
-    //                                 185,
-    //                                 129,
-    //                                 .35
-    //                             );
-    //                         transform:
-    //                             scale(1.1);
-    //                     `
-    //         : `
-    //                         background:#f8fafc;
-    //                         color:#334155;
-    //                     `
-    //     }
-    //         "
-    //     >
-    //         ${page}
-    //     </button>
-    // `;
     return `
         <button
             type="button"

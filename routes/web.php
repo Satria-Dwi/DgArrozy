@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\DgarrozySimrs\LoginController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\DetailTindakan\DetailTindakanController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\ManajemenController;
 use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RekamMedisController;
+use App\Http\Controllers\admin\DgarrozySimrs\RekamMedis\RujukanKeluarController;
 use App\Http\Controllers\Admin\MainAdminController;
 use App\Http\Controllers\Admin\SigninController;
 use Illuminate\Support\Facades\Route;
@@ -135,7 +136,12 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
     Route::get('/rm/pasien/ranap/export', [RekamMedisController::class, 'exportRanap']);
     Route::post('/rm/pasien/verify-ranap', [RekamMedisController::class, 'saveVerifyRanap'])->name('rekammedis.verify-ranap');
     Route::post('/rm/pasien/verify-ranap/comment', [RekamMedisController::class, 'updateComment']);
-});
+    
+    Route::get('/rm/rujukankeluar/get', [RujukanKeluarController::class, 'getDataRujukanKeluar']);
+    Route::get('/rm/rujukankeluar', [RujukanKeluarController::class, 'index']);
+    Route::get('/rm/rujukankeluar/export', [RujukanKeluarController::class, 'exportRujukanKeluar']
+);
+    });
 
 Route::middleware(['simrs.login:petugas', 'simrs.it'])->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('simrs.user');

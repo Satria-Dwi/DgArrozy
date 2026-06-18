@@ -18,7 +18,7 @@ class RekamMedisController extends Controller
             return redirect('/login')->with('error', 'Silakan login dulu');
         }
 
-        return view('simrs.rekam_medis.index', [
+        return view('simrs.rekam_medis.resume.index', [
             'title' => 'Rekam Medis',
             'user' => [
                 'nik'        => session('simrs_nik'),

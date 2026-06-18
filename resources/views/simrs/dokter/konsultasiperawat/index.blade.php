@@ -98,29 +98,29 @@
 
                         <input type="date" id="tanggalKonsultasiPerawat"
                             class="
-                    w-full
-                    py-3
-                    px-4
-                    rounded-xl
-                    border
-                    border-slate-200
-                    bg-slate-50
-                    focus:bg-white
-                    focus:border-blue-500
-                    focus:ring-4
-                    focus:ring-blue-100
-                    outline-none
-                    transition-all
-                ">
+                                w-full
+                                py-3
+                                px-4
+                                rounded-xl
+                                border
+                                border-slate-200
+                                bg-slate-50
+                                focus:bg-white
+                                focus:border-blue-500
+                                focus:ring-4
+                                focus:ring-blue-100
+                                outline-none
+                                transition-all
+                            ">
                     </div>
 
                     <!-- Reset -->
                     <button type="button"
-                        onclick="
-                        document.getElementById('searchKonsultasiPerawat').value='';
-                        document.getElementById('tanggalKonsultasiPerawat').value='';
-                        loadKonsultasiPerawat(1);
-                    "
+                            onclick="
+                            document.getElementById('searchKonsultasiPerawat').value='';
+                            document.getElementById('tanggalKonsultasiPerawat').value='';
+                            loadKonsultasiPerawat(1);
+                        "
                         class="
                             px-5
                             py-3
@@ -296,12 +296,13 @@
                                 <div class="relative z-10">
 
                                     <h3 class="text-3xl font-bold tracking-wide">
-                                        SURAT KONSULTASI MEDIS
+                                        Permintaan Konsultasi Perawat Untuk Dokter
+                                         
                                     </h3>
 
-                                    <p class="text-blue-100 mt-1 text-center">
-                                        Permintaan Konsultasi Perawat Untuk Dokter
-                                    </p>
+                                    {{-- <p class="text-blue-100 mt-1 text-center">
+                                         KONSULTASI
+                                    </p> --}}
 
                                 </div>
 
@@ -353,7 +354,7 @@
                                     </p>
                                 </div>
 
-                                <!-- Pembuka Surat -->
+                                <!-- Pembuka  -->
                                 <div class="mb-4 text-slate-700 leading-relaxed">
                                     <p>Dengan hormat,</p>
 
@@ -875,12 +876,12 @@
                                 <div class="relative z-10">
 
                                     <h3 class="text-3xl font-bold tracking-wide">
-                                        SURAT KONSULTASI MEDIS
-                                    </h3>
-
-                                    <p class="text-blue-100 mt-1 text-center">
                                         Permintaan Konsultasi Perawat Untuk Dokter
-                                    </p>
+                                    </h3>
+                                    
+                                    {{-- <p class="text-blue-100 mt-1 text-center">
+                                         KONSULTASI MEDIS
+                                    </p> --}}
 
                                 </div>
 
@@ -932,7 +933,7 @@
                                     </p>
                                 </div>
 
-                                <!-- Pembuka Surat -->
+                                <!-- Pembuka  -->
                                 <div class="mb-4 text-slate-700 leading-relaxed">
                                     <p>Dengan hormat,</p>
 
@@ -1195,12 +1196,12 @@
                                 <div class="relative z-10">
 
                                     <h3 class="text-3xl font-bold tracking-wide">
-                                        SURAT HASIL KONSULTASI MEDIS
-                                    </h3>
-
-                                    <p class="text-blue-100 mt-1 text-center">
                                         Hasil Konsultasi Perawat Untuk dokter
-                                    </p>
+                                    </h3>
+                                    
+                                    {{-- <p class="text-blue-100 mt-1 text-center">
+                                         HASIL KONSULTASI MEDIS
+                                    </p> --}}
 
                                 </div>
 
@@ -1261,7 +1262,7 @@
                                     </p>
                                 </div>
 
-                                <!-- Pembuka Surat -->
+                                <!-- Pembuka  -->
                                 <div class="mb-4 text-slate-700 leading-relaxed">
 
                                     <p>

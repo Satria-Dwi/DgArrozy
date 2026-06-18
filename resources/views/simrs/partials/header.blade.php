@@ -186,50 +186,52 @@
         </div>
     </div>
 </header>
-<script>
-    // console.log('SCRIPT NOTIF LOADED');
+@section('scripts')
+    @if (session('simrs_tipe') === 'petugas')
+        <script>
+            // console.log('SCRIPT NOTIF LOADED');
 
-    function loadNotifKonsultasi() {
+            function loadNotifKonsultasi() {
 
-        fetch('/dokter/notif-konsultasi')
+                fetch('/dokter/notif-konsultasi')
 
-            .then(res => res.json())
+                    .then(res => res.json())
 
 
-            .then(result => {
+                    .then(result => {
 
-                // console.log('RESULT :', result);
+                        // console.log('RESULT :', result);
 
-                if (result.error) return;
+                        if (result.error) return;
 
-                const badge =
-                    document.getElementById(
-                        'badgeNotifKonsultasi'
-                    );
+                        const badge =
+                            document.getElementById(
+                                'badgeNotifKonsultasi'
+                            );
 
-                const content =
-                    document.getElementById(
-                        'notifKonsultasiContent'
-                    );
-                // console.log('CONTENT :', content);
+                        const content =
+                            document.getElementById(
+                                'notifKonsultasiContent'
+                            );
+                        // console.log('CONTENT :', content);
 
-                if (!badge || !content) return;
+                        if (!badge || !content) return;
 
-                if (result.total > 0) {
+                        if (result.total > 0) {
 
-                    badge.classList.remove('hidden');
+                            badge.classList.remove('hidden');
 
-                    badge.textContent =
-                        result.total > 99 ?
-                        '99+' :
-                        result.total;
+                            badge.textContent =
+                                result.total > 99 ?
+                                '99+' :
+                                result.total;
 
-                } else {
+                        } else {
 
-                    badge.classList.add('hidden');
-                }
+                            badge.classList.add('hidden');
+                        }
 
-                content.innerHTML = `
+                        content.innerHTML = `
                         <div class="p-4 space-y-3">
 
                             <div class="
@@ -315,56 +317,58 @@
                         </div>
                         `;
 
-            })
+                    })
 
-            .catch(console.error);
-    }
-
-    document.addEventListener(
-        'DOMContentLoaded',
-        function() {
-
-            // console.log('DOM READY');
-
-            // PANGGIL DI SINI
-            loadNotifKonsultasi();
-
-            const btn =
-                document.getElementById(
-                    'btnNotifKonsultasi'
-                );
-
-            const dropdown =
-                document.getElementById(
-                    'dropdownNotifKonsultasi'
-                );
-
-            if (!btn || !dropdown) return;
-
-            btn.addEventListener(
-                'click',
-                function(e) {
-
-                    e.stopPropagation();
-
-                    dropdown.classList.toggle(
-                        'hidden'
-                    );
-
-                }
-            );
+                    .catch(console.error);
+            }
 
             document.addEventListener(
-                'click',
+                'DOMContentLoaded',
                 function() {
 
-                    dropdown.classList.add(
-                        'hidden'
+                    // console.log('DOM READY');
+
+                    // PANGGIL DI SINI
+                    loadNotifKonsultasi();
+
+                    const btn =
+                        document.getElementById(
+                            'btnNotifKonsultasi'
+                        );
+
+                    const dropdown =
+                        document.getElementById(
+                            'dropdownNotifKonsultasi'
+                        );
+
+                    if (!btn || !dropdown) return;
+
+                    btn.addEventListener(
+                        'click',
+                        function(e) {
+
+                            e.stopPropagation();
+
+                            dropdown.classList.toggle(
+                                'hidden'
+                            );
+
+                        }
+                    );
+
+                    document.addEventListener(
+                        'click',
+                        function() {
+
+                            dropdown.classList.add(
+                                'hidden'
+                            );
+
+                        }
                     );
 
                 }
             );
-
-        }
-    );
-</script>
+        </script>
+    @endif
+@endsection

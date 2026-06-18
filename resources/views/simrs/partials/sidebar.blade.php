@@ -144,7 +144,7 @@
         <div x-show="!collapse" x-transition class="flex items-center gap-2">
 
             <!-- Icon Logo -->
-            <div 
+            <div
                 class="w-9 h-9 rounded-xl 
                     bg-gradient-to-br from-indigo-500 to-purple-600
                     flex items-center justify-center
@@ -153,7 +153,7 @@
             </div>
 
             <!-- Text Brand -->
-            <span 
+            <span
                 class="text-lg font-extrabold tracking-wide 
                    bg-gradient-to-r from-indigo-600 to-purple-600 
                    bg-clip-text text-transparent">
@@ -347,13 +347,43 @@
                         </i>
                     </button>
 
-                    <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1 ">
+                    {{-- <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1 ">
 
                         <a href="{{ url('/rm') }}"
                             class="submenu-item {{ request()->is('rm*') ? 'submenu-active' : '' }}">
 
                             <i class="fas fa-users"></i>
                             <span x-show="!collapse" x-transition>Data Pasien</span>
+                        </a>
+                        
+                        <a href="{{ url('/rm/rujukankeluar') }}"
+                            class="submenu-item {{ request()->is('rm*') ? 'submenu-active' : '' }}">
+
+                            <i class="fas fa-users"></i>
+                            <span x-show="!collapse" x-transition>Rujukan Keluar</span>
+                        </a>
+                    </div> --}}
+
+                    <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1">
+
+                        {{-- Data Pasien --}}
+                        <a href="{{ url('/rm') }}"
+                            class="submenu-item {{ request()->is('rm') ? 'submenu-active' : '' }}">
+
+                            <i class="fas fa-users"></i>
+                            <span x-show="!collapse" x-transition>
+                                Data Pasien
+                            </span>
+                        </a>
+
+                        {{-- Rujukan Keluar --}}
+                        <a href="{{ url('/rm/rujukankeluar') }}"
+                            class="submenu-item {{ request()->is('rm/rujukankeluar*') ? 'submenu-active' : '' }}">
+
+                            <i class="fas fa-share-square"></i>
+                            <span x-show="!collapse" x-transition>
+                                Rujukan Keluar
+                            </span>
                         </a>
 
                     </div>

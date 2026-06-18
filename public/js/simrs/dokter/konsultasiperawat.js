@@ -242,63 +242,66 @@ function loadKonsultasiPerawatSelesai(page = 1) {
                 return;
             }
 
-            data.data.forEach(item => {
+            data.data.forEach((item, index) => {
+
+                const rowClass =
+                    index % 2 === 0
+                        ? 'bg-white dark:bg-slate-900'
+                        : 'bg-slate-50 dark:bg-slate-800/50';
 
                 tbody.innerHTML += `
-                    <tr class="
-                        border-b
-                        border-slate-100
-                        dark:border-slate-800
-                        hover:bg-slate-50
-                        dark:hover:bg-slate-800/50
-                    ">
+                            <tr class="${rowClass} 
+                                border-b
+                                border-slate-100
+                                dark:border-slate-800
+                                hover:bg-slate-50
+                                dark:hover:bg-slate-800/50
+                            ">
 
-                        <td class="px-4 py-3 text-center">
-                            ${item.tanggalperiksa}
-                        </td>
+                                <td class="px-4 py-3 text-center">
+                                    ${item.tanggalperiksa}
+                                </td>
 
-                        <td class="px-4 py-3 text-center font-medium">
-                            ${item.no_permintaan}
-                        </td>
+                                <td class="px-4 py-3 text-center font-medium">
+                                    ${item.no_permintaan}
+                                </td>
 
-                        <td class="px-4 py-3 text-center">
-                            ${item.no_rkm_medis}
-                        </td>
+                                <td class="px-4 py-3 text-center">
+                                    ${item.no_rkm_medis}
+                                </td>
 
-                        <td class="px-4 py-3">
-                            ${item.nm_pasien}
-                        </td>
+                                <td class="px-4 py-3">
+                                    ${item.nm_pasien}
+                                </td>
 
-                        <td class="px-4 py-3">
-                            ${item.dokterkonsul}
-                        </td>
+                                <td class="px-4 py-3">
+                                    ${item.dokterkonsul}
+                                </td>
 
-                        <td class="px-4 py-3 text-center">
+                                <td class="px-4 py-3 text-center">
+                                    <button
+                                        onclick="bukaKonsultasiSelesai('${item.no_permintaan}')"
+                                        class="
+                                            inline-flex
+                                            items-center
+                                            gap-2
+                                            bg-emerald-600
+                                            hover:bg-emerald-700
+                                            text-white
+                                            text-sm
+                                            font-semibold
+                                            py-2
+                                            px-4
+                                            rounded-xl
+                                            shadow-md
+                                            transition-all
+                                        ">
+                                        👁️ Lihat
+                                    </button>
+                                </td>
 
-                            <button
-                                onclick="bukaKonsultasiSelesai('${item.no_permintaan}')"
-                                class="
-                                    inline-flex
-                                    items-center
-                                    gap-2
-                                    bg-emerald-600
-                                    hover:bg-emerald-700
-                                    text-white
-                                    text-sm
-                                    font-semibold
-                                    py-2
-                                    px-4
-                                    rounded-xl
-                                    shadow-md
-                                    transition-all
-                                ">
-                                👁️ Lihat
-                            </button>
-
-                        </td>
-
-                    </tr>
-                `;
+                            </tr>
+                        `;
             });
 
             if (info) {

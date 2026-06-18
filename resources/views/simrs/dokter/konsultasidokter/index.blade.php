@@ -327,7 +327,7 @@
                                 <div class="relative z-10">
 
                                     <h3 class="text-3xl font-bold tracking-wide">
-                                        SURAT KONSULTASI MEDIS
+                                         KONSULTASI MEDIS
                                     </h3>
 
                                     <p class="text-blue-100 mt-1 text-center">
@@ -384,7 +384,7 @@
                                     </p>
                                 </div>
 
-                                <!-- Pembuka Surat -->
+                                <!-- Pembuka  -->
                                 <div class="mb-4 text-slate-700 leading-relaxed">
                                     <p>Dengan hormat,</p>
 
@@ -898,7 +898,7 @@
                                 <div class="relative z-10">
 
                                     <h3 class="text-3xl font-bold tracking-wide">
-                                        SURAT KONSULTASI MEDIS
+                                         KONSULTASI MEDIS
                                     </h3>
 
                                     <p class="text-blue-100 mt-1 text-center">
@@ -955,7 +955,7 @@
                                     </p>
                                 </div>
 
-                                <!-- Pembuka Surat -->
+                                <!-- Pembuka  -->
                                 <div class="mb-4 text-slate-700 leading-relaxed">
                                     <p>Dengan hormat,</p>
 
@@ -1206,7 +1206,7 @@
                                 <div class="relative z-10">
 
                                     <h3 class="text-3xl font-bold tracking-wide">
-                                        SURAT HASIL KONSULTASI MEDIS
+                                         HASIL KONSULTASI MEDIS
                                     </h3>
 
                                     <p class="text-blue-100 mt-1 text-center">
@@ -1272,7 +1272,7 @@
                                     </p>
                                 </div>
 
-                                <!-- Pembuka Surat -->
+                                <!-- Pembuka  -->
                                 <div class="mb-4 text-slate-700 leading-relaxed">
 
                                     <p>
