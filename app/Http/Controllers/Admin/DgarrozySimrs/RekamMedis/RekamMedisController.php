@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin\DgarrozySimrs\RekamMedis;
+namespace App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis;
 
 use App\Exports\PasienExport;
 use App\Http\Controllers\Controller;

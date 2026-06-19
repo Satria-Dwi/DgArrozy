@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin\DgarrozySimrs\dokter;
+namespace App\Http\Controllers\Admin\DgarrozySimrs\dokter;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;

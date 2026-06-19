@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin\DgarrozySimrs;
+namespace App\Http\Controllers\Admin\DgarrozySimrs;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;

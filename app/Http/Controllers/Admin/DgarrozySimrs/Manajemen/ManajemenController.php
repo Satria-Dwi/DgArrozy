@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin\DgarrozySimrs\Manajemen;
+namespace App\Http\Controllers\Admin\DgarrozySimrs\Manajemen;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
