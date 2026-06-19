@@ -342,7 +342,7 @@ function loadKonsultasiPerawatSelesai(page = 1) {
 function renderPaginationKonsultasiPerawat(res) {
     const pagination =
         document.getElementById(
-            'paginationKonsultasiPerawatSelesai'
+            'paginationKonsultasiPerawat'
         );
 
     if (!pagination) return;
