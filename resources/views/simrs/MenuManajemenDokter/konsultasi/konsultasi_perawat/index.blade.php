@@ -1464,6 +1464,6 @@
         </div>
 @endsection
 @section('scripts')
-    <script src="{{ asset('js/simrs/manajemen/konsultasi/konsultasiperawat.js') }}"></script>
+    <script src="{{ asset('js/simrs/manajemen/konsultasi/konsultasidariperawat.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 @endsection
