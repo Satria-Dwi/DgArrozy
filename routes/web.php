@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\DgarrozySimrs\LoginController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\DetailTindakan\DetailTindakanController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\ManajemenController;
 use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RekamMedisController;
-use App\Http\Controllers\admin\DgarrozySimrs\RekamMedis\RujukanKeluarController;
+use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RujukanKeluarController;
 use App\Http\Controllers\Admin\MainAdminController;
 use App\Http\Controllers\Admin\SigninController;
 use Illuminate\Support\Facades\Route;
