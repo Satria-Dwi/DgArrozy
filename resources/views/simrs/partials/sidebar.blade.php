@@ -12,7 +12,19 @@
     }
 
     /* ===== MENU BASE ===== */
-    .menu-item,
+    .menu-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        padding: 12px 16px;
+        border-radius: 14px;
+
+        color: #64748b;
+        transition: all 0.25s ease;
+    }
+
     .submenu-item {
         display: flex;
         align-items: center;
@@ -42,7 +54,11 @@
     }
 
     /* Hover soft modern */
-    .menu-item:hover,
+    .menu-item:hover {
+        background: rgba(99, 102, 241, 0.06);
+        color: #4f46e5;
+    }
+
     .submenu-item:hover {
         background: rgba(99, 102, 241, 0.08);
         color: #4f46e5;
@@ -52,9 +68,29 @@
    ACTIVE PARENT (Soft)
     ========================= */
     .menu-parent-active {
-        background: rgba(99, 102, 241, 0.08);
-        color: #4f46e5 !important;
-        font-weight: 500 !important;
+        background: linear-gradient(135deg,
+                rgba(99, 102, 241, 0.16),
+                rgba(99, 102, 241, 0.08));
+
+        color: #4338ca !important;
+        font-weight: 600 !important;
+
+        border-left: 4px solid #4f46e5;
+
+        box-shadow:
+            0 4px 14px rgba(99, 102, 241, 0.12);
+
+        transform: translateX(2px);
+    }
+
+    .menu-parent-active i {
+        color: #4f46e5;
+    }
+
+    .menu-parent-active:hover {
+        background: linear-gradient(135deg,
+                rgba(99, 102, 241, 0.22),
+                rgba(99, 102, 241, 0.12));
     }
 
     /* =========================
@@ -138,51 +174,99 @@
            flex flex-col shadow-sm">
 
     {{-- LOGO + COLLAPSE BUTTON --}}
-    <div class="sidebar-brand flex items-center justify-between px-4 py-4">
+    <div class="sidebar-brand relative flex items-center justify-between
+           px-4 py-4 mb-3">
 
-        <!-- Logo / Brand -->
-        <div x-show="!collapse" x-transition class="flex items-center gap-2">
+        <!-- Background Accent -->
+        <div
+            class="absolute inset-0 rounded-2xl
+                bg-gradient-to-r from-indigo-500/5 via-purple-500/5 to-pink-500/5
+                pointer-events-none">
+        </div>
 
-            <!-- Icon Logo -->
-            <div
-                class="w-9 h-9 rounded-xl 
-                    bg-gradient-to-br from-indigo-500 to-purple-600
-                    flex items-center justify-center
-                    text-white font-bold shadow-sm">
-                🏥
+        <!-- Brand -->
+        <div x-show="!collapse" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 -translate-x-2" x-transition:enter-end="opacity-100 translate-x-0"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-x-0"
+            x-transition:leave-end="opacity-0 -translate-x-2" class="relative flex items-center gap-3">
+
+            <!-- Logo -->
+            <div class="flex items-center justify-center w-18 h-18">
+
+                <img src="{{ asset('img/ARION-ICON.png') }}" alt="ARION"
+                    class="w-16 h-16 object-contain drop-shadow-md
+               group-hover:scale-105 transition-transform duration-300" />
+
             </div>
 
-            <!-- Text Brand -->
-            <span
-                class="text-lg font-extrabold tracking-wide 
-                   bg-gradient-to-r from-indigo-600 to-purple-600 
-                   bg-clip-text text-transparent">
-                ARION
-                {{-- <h5 class="text-sm">
-                    Ar Rozy Integrated Information and Operation System
-                </h5> --}}
-            </span>
+            <!-- Brand Text -->
+            <div class="flex flex-col leading-tight">
+
+                <span
+                    class="text-xl font-black tracking-widest
+           bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
+           bg-clip-text text-transparent
+           relative
+           drop-shadow-[0_2px_6px_rgba(99,102,241,0.35)]
+           font-sans">
+
+                    ARION
+
+                    <!-- glow underline accent -->
+                    <span
+                        class="absolute left-0 -bottom-1 w-full h-[2px]
+                 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
+                 opacity-60 blur-[1px]"></span>
+                </span>
+
+                <span class="text-[11px] text-slate-400 font-medium mt-2">
+                    Integrated Hospital System
+                </span>
+
+            </div>
         </div>
 
         <!-- Collapse Button -->
         <button @click="collapse = !collapse"
-            class="w-10 h-10 flex items-center justify-center rounded-full
-               bg-gradient-to-br from-indigo-100 to-purple-100
-               hover:from-indigo-200 hover:to-purple-200
-               text-indigo-600 hover:text-indigo-800
-               shadow-md hover:shadow-xl
-               transition-all duration-300 transform"
-            title="Toggle Sidebar">
+            class="relative group flex items-center justify-center
+               w-11 h-11 rounded-xl
 
-            <i class="fas fa-bars-staggered"></i>
+               bg-white/80 dark:bg-slate-800/80
+               backdrop-blur-xl
+
+               border border-slate-200/60 dark:border-slate-700
+
+               text-slate-500 dark:text-slate-300
+
+               hover:text-indigo-600
+               hover:border-indigo-200
+               hover:shadow-lg hover:shadow-indigo-500/10
+
+               transition-all duration-300"
+            :class="{ 'rotate-180': collapse }" title="Toggle Sidebar">
+
+            <i class="fas fa-bars-staggered transition-transform duration-300"></i>
+
+            <span
+                class="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100
+                   bg-gradient-to-br from-indigo-500/10 to-purple-500/10
+                   transition-opacity duration-300">
+            </span>
+
         </button>
+
+    </div>
+
+    <!-- Divider -->
+    <div
+        class="mx-4 mb-1 h-px bg-gradient-to-r
+            from-transparent via-slate-200 dark:via-slate-700 to-transparent">
     </div>
 
     {{-- MENU --}}
     <nav class="flex-1 px-3  overflow-y-auto">
 
         {{-- BERANDA --}}
-
         @if (session('simrs_tipe') === 'petugas')
             <a href="{{ route('marrozy.dashboard') }}" @click="open=false"
                 class="menu-item {{ request()->routeIs('marrozy.dashboard') ? 'menu-parent-active' : '' }}">
@@ -192,49 +276,7 @@
             </a>
         @endif
 
-        {{-- @if (session('simrs_tipe') === 'dokter')
-            <div x-data="{ openMenu: {{ request()->routeIs('marrozy.dokter') ? 'true' : 'false' }} }">
-
-                <button @click="openMenu = !openMenu"
-                    class="menu-item w-full justify-between {{ request()->is('dokter*') ? 'menu-parent-active' : '' }}">
-
-                    <div class="flex items-center gap-2">
-                        <i class="fas fa-user-md"></i>
-                        <span x-show="!collapse" x-transition>Dokter</span>
-                    </div>
-
-                    <i x-show="!collapse" class="fas fa-chevron-down transition-transform duration-300"
-                        :class="{ 'rotate-180': openMenu }">
-                    </i>
-
-                </button>
-
-                <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1">
-
-                    <a href="{{ route('marrozy.dokter') }}"
-                        class="submenu-item {{ request()->routeIs('marrozy.dokter') ? 'submenu-active' : '' }}">
-
-                        <i class="fas fa-users"></i>
-                        <span x-show="!collapse" x-transition>Pasien</span>
-
-                    </a>
-
-                </div>
-
-                <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1">
-
-                    <a href="{{ route('marrozy.konsultasi') }}"
-                        class="submenu-item {{ request()->routeIs('marrozy.dokter') ? 'submenu-active' : '' }}">
-
-                        <i class="fas fa-users"></i>
-                        <span x-show="!collapse" x-transition>Konsultasi</span>
-
-                    </a>
-
-                </div>
-
-            </div>
-        @endif --}}
+        {{-- MENU PER DOKTER --}}
         @if (session('simrs_tipe') === 'dokter')
             <div x-data="{
                 openMenu: {{ request()->routeIs('marrozy.dokter') || request()->routeIs('marrozy.konsultasidokter') || request()->routeIs('marrozy.konsultasiperawat') ? 'true' : 'false' }}
@@ -249,7 +291,7 @@
                         <span x-show="!collapse" x-transition>Dokter</span>
                     </div>
 
-                    <i x-show="!collapse" class="fas fa-chevron-down transition-transform duration-300"
+                    <i x-show="!collapse" class="fas fa-chevron-down ml-auto transition-transform duration-300"
                         :class="{ 'rotate-180': openMenu }">
                     </i>
 
@@ -262,7 +304,7 @@
                          {{ request()->routeIs('marrozy.dokter') ? 'submenu-active' : '' }}">
 
                         <i class="fas fa-users"></i>
-                        <span x-show="!collapse" x-transition>Pasien</span>
+                        <span x-show="!collapse" x-transition>Data Pasien</span>
 
                     </a>
 
@@ -288,44 +330,88 @@
 
             </div>
         @endif
+
+        {{-- MENU MANAJEMEN --}}
         @if (session('simrs_tipe') === 'petugas')
+            {{-- MENU DOKTER --}}
+            @if (session('simrs_dep_id') === '06' ||
+                    session('simrs_dept') === 'MANAJEMEN' ||
+                    session('simrs_dept') === 'IT' ||
+                    session('simrs_dept') === 'TEKNOLOGI INFORMASI' ||
+                    session('simrs_dep_id') === '07' ||
+                    session('simrs_dept') === 'REKAM MEDIK')
+                {{-- Dokter --}}
+                <div x-data="{ openMenu: {{ request()->routeIs('menudokter.*') ? 'true' : 'false' }} }">
+                    <button @click="openMenu = !openMenu"
+                        class="menu-item flex items-center w-full  {{ request()->routeIs('menudokter.*') ? 'menu-parent-active' : '' }}">
+
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-stethoscope"></i>
+                            <span x-show="!collapse" x-transition>Dokter</span>
+                        </div>
+
+                        <i x-show="!collapse" class="fas fa-chevron-down ml-auto transition-transform duration-300"
+                            :class="{ 'rotate-180': openMenu }">
+                        </i>
+                    </button>
+
+                    <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1">
+
+                        <a href="{{ route('menudokter.konsultasi.index') }}"
+                            class="submenu-item {{ request()->routeIs('menudokter.konsultasi.*') ? 'submenu-active' : '' }}">
+                            <i class="fas fa-user-doctor"></i>
+                            <span x-show="!collapse" x-transition>Konsultasi Dokter</span>
+                        </a>
+                        
+                        <a href="{{ route('menudokter.konsultasiperawat.index') }}"
+                            class="submenu-item {{ request()->routeIs('menudokter.konsultasiperawat.*') ? 'submenu-active' : '' }}">
+                            <i class="fas fa-user-nurse"></i>
+                            <span x-show="!collapse" x-transition>Konsultasi Perawat</span>
+                        </a>
+
+                    </div>
+                </div>
+            @endif
+            {{-- MANAJEMEN --}}
             @if (session('simrs_dep_id') === '06' ||
                     session('simrs_dept') === 'MANAJEMEN' ||
                     session('simrs_dept') === 'IT' ||
                     session('simrs_dept') === 'TEKNOLOGI INFORMASI')
-                {{-- MANAJEMEN --}}
-                <div x-data="{ openMenu: {{ request()->is('manajemen*') ? 'true' : 'false' }} }">
+                <div x-data="{
+                    openMenu: {{ request()->routeIs('manajemen.*') ? 'true' : 'false' }}
+                }">
                     <button @click="openMenu = !openMenu"
-                        class="menu-item w-full justify-between {{ request()->is('manajemen*') ? 'menu-parent-active' : '' }}">
+                        class="menu-item w-full justify-between {{ request()->routeIs('manajemen.*') ? 'menu-parent-active' : '' }}">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-layer-group"></i>
                             <span x-show="!collapse" x-transition>Manajemen</span>
                         </div>
-                        <i x-show="!collapse" class="fas fa-chevron-down transition-transform duration-300"
+                        <i x-show="!collapse" class="fas fa-chevron-down ml-auto transition-transform duration-300"
                             :class="{ 'rotate-180': openMenu }"></i>
                     </button>
 
-                    <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1 ">
-                        <!-- Submenu Dokter -->
+                    <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1">
+
                         <a href="{{ route('manajemen.index') }}"
                             class="submenu-item {{ request()->routeIs('manajemen.index') ? 'submenu-active' : '' }}">
                             <i class="fas fa-users-cog"></i>
-                            <span x-show="!collapse" x-transition>Dokter</span>
+                            <span x-show="!collapse" x-transition>Dokter Hari Ini</span>
                         </a>
 
                         @if (session('simrs_nik') === '198611172005012002' ||
                                 session('simrs_dept_id') === 'IT' ||
                                 session('simrs_dept') === 'TEKNOLOGI INFORMASI')
-                            <!-- Submenu Detail Tindakan -->
                             <a href="{{ route('manajemen.detailtindakan.index') }}"
-                                class="submenu-item {{ request()->routeIs('manajemen.detailtindakan.index', 'manajemen.detailtindakan') ? 'submenu-active' : '' }}">
+                                class="submenu-item {{ request()->routeIs('manajemen.detailtindakan.*') ? 'submenu-active' : '' }}">
                                 <i class="fas fa-notes-medical"></i>
                                 <span x-show="!collapse" x-transition>Detail Tindakan</span>
                             </a>
                         @endif
+
                     </div>
                 </div>
             @endif
+            {{-- REKAM MEDIS --}}
             @if (session('simrs_dep_id') === '07' ||
                     session('simrs_dept') === 'REKAM MEDIK' ||
                     session('simrs_dept') === 'IT' ||
@@ -342,7 +428,7 @@
                             <span x-show="!collapse" x-transition>Rekam Medis</span>
                         </div>
 
-                        <i x-show="!collapse" class="fas fa-chevron-down transition-transform duration-300"
+                        <i x-show="!collapse" class="fas fa-chevron-down ml-auto transition-transform duration-300"
                             :class="{ 'rotate-180': openMenu }">
                         </i>
                     </button>
@@ -389,7 +475,7 @@
                     </div>
                 </div>
             @endif
-
+            {{-- IT MASTER --}}
             @if (session('simrs_dept') === 'IT' || session('simrs_dept') === 'TEKNOLOGI INFORMASI')
                 {{-- REKAM MEDIS --}}
                 <div x-data="{ openMenu: {{ request()->is('user*') ? 'true' : 'false' }} }">
@@ -402,7 +488,7 @@
                             <span x-show="!collapse" x-transition>IT Master</span>
                         </div>
 
-                        <i x-show="!collapse" class="fas fa-chevron-down transition-transform duration-300"
+                        <i x-show="!collapse" class="fas fa-chevron-down ml-auto transition-transform duration-300"
                             :class="{ 'rotate-180': openMenu }">
                         </i>
                     </button>

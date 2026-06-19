@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Admin\DgarrozySimrs\Manajemen;
+namespace App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\DaftarPasienDokter;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
-class ManajemenController extends Controller
+class DaftarPasienDokterController extends Controller
 {
-    public function index() 
+    public function index()
     {
         // Pastikan user sudah login (tambahan safety)
         if (!session('simrs_login')) {
@@ -29,35 +29,36 @@ class ManajemenController extends Controller
 
     public function laporanDokterRealtime()
     {
-        $today = date('Y-m-d');
+        $today = now()->toDateString();
 
         $data = DB::table('dokter as d')
             ->select(
                 'd.kd_dokter',
                 'd.nm_dokter',
 
-                // ✅ TOTAL RAWAT JALAN
+                // TOTAL RAWAT JALAN
                 DB::raw("
                 (
-                    SELECT COUNT(*) 
+                    SELECT COUNT(*)
                     FROM reg_periksa rp
                     WHERE rp.kd_dokter = d.kd_dokter
-                    AND DATE(rp.tgl_registrasi) = '$today'
-                    AND rp.stts IN ('Belum','Sudah')
+                    AND DATE(rp.tgl_registrasi) = '{$today}'
+                    AND rp.stts IN ('Belum', 'Sudah')
                     AND NOT EXISTS (
-                        SELECT 1 
+                        SELECT 1
                         FROM kamar_inap ki
                         WHERE ki.no_rawat = rp.no_rawat
                     )
                 ) as total_rawat_jalan
             "),
 
-                // ✅ TOTAL RAWAT INAP
+                // TOTAL RAWAT INAP
                 DB::raw("
                 (
                     SELECT COUNT(DISTINCT dr.no_rawat)
                     FROM dpjp_ranap dr
-                    JOIN kamar_inap ki ON dr.no_rawat = ki.no_rawat
+                    JOIN kamar_inap ki
+                        ON dr.no_rawat = ki.no_rawat
                     WHERE dr.kd_dokter = d.kd_dokter
                     AND (
                         ki.tgl_keluar IS NULL
@@ -71,17 +72,17 @@ class ManajemenController extends Controller
                 ) as total_rawat_inap
             "),
 
-                // ✅ TOTAL PASIEN = RJ + RI
+                // TOTAL PASIEN
                 DB::raw("
                 (
                     (
-                        SELECT COUNT(*) 
+                        SELECT COUNT(*)
                         FROM reg_periksa rp
                         WHERE rp.kd_dokter = d.kd_dokter
-                        AND DATE(rp.tgl_registrasi) = '$today'
-                        AND rp.stts IN ('Belum','Sudah')
+                        AND DATE(rp.tgl_registrasi) = '{$today}'
+                        AND rp.stts IN ('Belum', 'Sudah')
                         AND NOT EXISTS (
-                            SELECT 1 
+                            SELECT 1
                             FROM kamar_inap ki
                             WHERE ki.no_rawat = rp.no_rawat
                         )
@@ -90,7 +91,8 @@ class ManajemenController extends Controller
                     (
                         SELECT COUNT(DISTINCT dr.no_rawat)
                         FROM dpjp_ranap dr
-                        JOIN kamar_inap ki ON dr.no_rawat = ki.no_rawat
+                        JOIN kamar_inap ki
+                            ON dr.no_rawat = ki.no_rawat
                         WHERE dr.kd_dokter = d.kd_dokter
                         AND (
                             ki.tgl_keluar IS NULL
@@ -106,6 +108,7 @@ class ManajemenController extends Controller
             ")
             )
             ->whereRaw("d.nm_dokter NOT REGEXP '[0-9]'")
+            ->havingRaw('total_pasien > 0')
             ->orderByDesc('total_pasien')
             ->get();
 

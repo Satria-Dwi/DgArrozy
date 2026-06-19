@@ -45,7 +45,7 @@ function loadKonsultasiPerawat(page = 1) {
         tanggal
     });
 
-    fetch(`/dokter/konsultasiperawat/data?page=${params}`)
+    fetch(`/dokter/konsultasiperawat/data?${params.toString()}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(
@@ -217,7 +217,7 @@ function loadKonsultasiPerawatSelesai(page = 1) {
         tanggal
     });
 
-    fetch(`/dokter/konsultasiperawat/history?page=${params}`)
+    fetch(`/dokter/konsultasiperawat/history?${params.toString()}`)
         .then(res => res.json())
         .then(result => {
 

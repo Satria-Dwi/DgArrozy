@@ -46,7 +46,7 @@
                     session('simrs_dept') === 'MANAJEMEN' ||
                     session('simrs_dept') === 'IT' ||
                     session('simrs_dept') === 'TEKNOLOGI INFORMASI')
-                <script src="{{ asset('js/simrs/manajemen/dokter.js') }}"></script>
+                <script src="{{ asset('js/simrs/manajemen/dokter/dokter.js') }}"></script>
             @endif
         @endif
 

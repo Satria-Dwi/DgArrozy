@@ -50,7 +50,7 @@ function loadKonsultasi(page = 1) {
     });
 
     fetch(
-        `/dokter/konsultasi/data?${params}`
+        `/konsultasi?${params}`
     )
         .then(response => {
 
@@ -98,40 +98,20 @@ function loadKonsultasi(page = 1) {
 
             const html = rows.map((item, index) => {
 
-                const jenis = (item.jenis_konsultasi || '').toLowerCase();
 
-                // warna row
-                let typeClass = '';
-
-                if (jenis.includes('masuk')) {
-                    typeClass = 'bg-green-100 dark:bg-green-900/20 border-l-4 border-green-500';
-                } else if (jenis.includes('keluar')) {
-                    typeClass = 'bg-blue-100 dark:bg-blue-900/20 border-l-4 border-blue-500';
-                } else {
-                    typeClass = 'bg-slate-50 dark:bg-slate-900 border-l-4 border-slate-300';
-                }
                 // zebra tetap jalan
                 const baseClass =
                     index % 2 === 0
-                        ? ''
-                        : 'opacity-[0.97]';
-
-                const rowClass = `${baseClass} ${typeClass}`;
-
-                // badge
-                let badgeClass = 'bg-slate-100 text-slate-800 ring-1 ring-slate-300';
-
-                if (jenis.includes('masuk')) {
-                    badgeClass = 'bg-green-100 text-green-900 ring-1 ring-green-400';
-                } else if (jenis.includes('keluar')) {
-                    badgeClass = 'bg-blue-100 text-blue-900 ring-1 ring-blue-400';
-                }
+                        ? 'bg-white'
+                        : 'bg-slate-50';
 
                 return `
-        <tr class="${rowClass}
-                    hover:bg-white
-                    dark:hover:bg-slate-800
-                    transition-all duration-200">
+        <tr class="
+            ${baseClass}
+            hover:bg-slate-100
+            dark:hover:bg-slate-800
+            transition-all duration-200
+        ">
 
             <td class="px-6 py-4 text-center whitespace-nowrap">
                 ${item.tanggalperiksa}
@@ -151,21 +131,6 @@ function loadKonsultasi(page = 1) {
 
             <td class="px-6 py-4">
                 ${item.dokterkonsul}
-            </td>
-
-            <td class="px-6 py-4 text-center font-bold">
-                <span class="
-                    inline-flex
-                    items-center
-                    px-3
-                    py-1
-                    text-xs
-                    font-semibold
-                    rounded-full
-                    ${badgeClass}
-                ">
-                    ${item.jenis_konsultasi}
-                </span>
             </td>
 
             <td class="px-6 py-4 text-center">
@@ -254,19 +219,23 @@ function loadKonsultasi(page = 1) {
 function loadKonsultasiSelesai(page = 1) {
 
     currentPageKonsultasiSelesai = page;
+
     const search =
-        document.getElementById(
-            'searchKonsultasiSelesai'
-        )?.value || '';
+        document.getElementById('searchKonsultasiSelesai')?.value || '';
 
     const tanggal =
-        document.getElementById(
-            'tanggalKonsultasiSelesai'
-        )?.value || '';
+        document.getElementById('tanggalKonsultasiSelesai')?.value || '';
 
-    const tbody = document.getElementById("tableKonsultasiSelesai");
-    const info = document.getElementById("infoKonsultasiSelesai");
-    const pagination = document.getElementById("paginationKonsultasiSelesai");
+    const tbody =
+        document.getElementById('tableKonsultasiSelesai');
+
+    const info =
+        document.getElementById('infoKonsultasiSelesai');
+
+    const pagination =
+        document.getElementById('paginationKonsultasiSelesai');
+
+    if (!tbody) return;
 
     tbody.innerHTML = `
         <tr>
@@ -285,7 +254,7 @@ function loadKonsultasiSelesai(page = 1) {
         tanggal
     });
 
-    fetch(`/dokter/konsultasi/history?${params}`)
+    fetch(`/konsultasi/history?${params}`)
         .then(res => res.json())
         .then(result => {
 
@@ -293,11 +262,11 @@ function loadKonsultasiSelesai(page = 1) {
                 throw new Error("Gagal memuat data");
             }
 
+            const data = result.data;
+
             tbody.innerHTML = "";
 
-            const data = result?.data;
-
-            if (!data || !data.data || data.data.length === 0) {
+            if (data.data.length === 0) {
 
                 tbody.innerHTML = `
                     <tr>
@@ -310,37 +279,22 @@ function loadKonsultasiSelesai(page = 1) {
                 return;
             }
 
-            const html = data.data.map((item, index) => {
+            data.data.forEach((item, index) => {
 
-                const jenis = (item.jenis_konsultasi || '').toLowerCase();
-
-                let typeClass = '';
-
-                if (jenis.includes('masuk')) {
-                    typeClass = 'bg-green-100 dark:bg-green-900/20 border-l-4 border-green-500';
-                } else if (jenis.includes('keluar')) {
-                    typeClass = 'bg-blue-100 dark:bg-blue-900/20 border-l-4 border-blue-500';
-                } else {
-                    typeClass = 'bg-slate-50 dark:bg-slate-900 border-l-4 border-slate-300';
-                }
-
-                const baseClass = index % 2 === 0 ? '' : 'opacity-[0.97]';
-
-                const rowClass = `${baseClass} ${typeClass}`;
-
-                let badgeClass = 'bg-slate-100 text-slate-800 ring-1 ring-slate-300';
-
-                if (jenis.includes('masuk')) {
-                    badgeClass = 'bg-green-100 text-green-900 ring-1 ring-green-400';
-                } else if (jenis.includes('keluar')) {
-                    badgeClass = 'bg-blue-100 text-blue-900 ring-1 ring-blue-400';
-                }
-
-                return `
-        <tr class="${rowClass}
-                    hover:bg-white
+                // zebra + subtle effect (sama seperti map)
+                // zebra tetap jalan
+                const baseClass =
+                    index % 2 === 0
+                        ? 'bg-white'
+                        : 'bg-slate-50';
+                        
+                tbody.innerHTML += `
+                <tr class="
+                    ${baseClass}
+                    hover:bg-slate-100
                     dark:hover:bg-slate-800
-                    transition-all duration-200">
+                    transition-all duration-200
+                ">
 
             <td class="px-6 py-4 text-center">
                 ${item.tanggalperiksa}
@@ -360,12 +314,6 @@ function loadKonsultasiSelesai(page = 1) {
 
             <td class="px-6 py-4">
                 ${item.dokterkonsul}
-            </td>
-
-            <td class="px-6 py-4 text-center font-bold">
-                <span class="inline-flex items-center px-3 py-1 text-xs font-semibold rounded-full ${badgeClass}">
-                    ${item.jenis_konsultasi}
-                </span>
             </td>
 
             <td class="px-6 py-4 text-center">
@@ -392,8 +340,6 @@ function loadKonsultasiSelesai(page = 1) {
         </tr>
     `;
             });
-
-            tbody.innerHTML = html.join('');
 
             if (info) {
                 info.innerHTML = `
@@ -815,7 +761,7 @@ function pageButtonKonsultasiSelesai(
 
 function bukaKonsultasi(noPermintaan) {
 
-    fetch(`/dokter/konsultasi/data/${noPermintaan}`)
+    fetch(`/konsultasi/data/${noPermintaan}`)
         .then(response => response.json())
         .then(result => {
 
@@ -907,7 +853,7 @@ function bukaKonsultasi(noPermintaan) {
 
 function bukaKonsultasiSelesai(noPermintaan) {
 
-    fetch(`/dokter/konsultasi/history/${noPermintaan}`)
+    fetch(`/konsultasi/history/${noPermintaan}`)
         .then(response => response.json())
         .then(result => {
 
@@ -1023,7 +969,7 @@ function bukaKonsultasiSelesai(noPermintaan) {
 
 function bukaKonsultasiJawaban(noPermintaan) {
 
-    fetch(`/dokter/konsultasi/jawabanhistory/${noPermintaan}`)
+    fetch(`/konsultasi/jawabanhistory/${noPermintaan}`)
         .then(res => res.json())
         .then(result => {
 

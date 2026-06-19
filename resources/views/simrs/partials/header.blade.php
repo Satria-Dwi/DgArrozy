@@ -186,8 +186,8 @@
         </div>
     </div>
 </header>
-@section('scripts')
-    @if (session('simrs_tipe') === 'petugas')
+@push('scripts')
+    @if (session('simrs_tipe') === 'dokter')
         <script>
             // console.log('SCRIPT NOTIF LOADED');
 
@@ -371,4 +371,4 @@
             );
         </script>
     @endif
-@endsection
+@endpush('scripts')

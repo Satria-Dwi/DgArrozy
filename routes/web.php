@@ -11,8 +11,10 @@ use App\Http\Controllers\Admin\DgarrozySimrs\Dokter\KonsultasiDokterController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Dokter\KonsultasiPerawatController;
 use App\Http\Controllers\Admin\DgarrozySimrs\ITMaster\UserController;
 use App\Http\Controllers\Admin\DgarrozySimrs\LoginController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\DaftarPasienDokter\DaftarPasienDokterController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\DetailTindakan\DetailTindakanController;
-use App\Http\Controllers\Admin\DgarrozySimrs\Manajemen\ManajemenController;
+use App\Http\Controllers\Admin\DgarrozySimrs\MenuManajemenDokter\Konsultasi\DaftarKonsultasiDokterController;
+use App\Http\Controllers\Admin\DgarrozySimrs\MenuManajemenDokter\Konsultasi\DaftarKonsultasiPerawatController;
 use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RekamMedisController;
 use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RujukanKeluarController;
 use App\Http\Controllers\Admin\MainAdminController;
@@ -89,21 +91,25 @@ Route::middleware(['simrs.login'])->group(function () {
 
 Route::middleware(['simrs.login:dokter'])->group(function () {
     Route::get('/dokter', [DokterController::class, 'index'])->name('marrozy.dokter');
-    Route::get('/dokter/konsultasi', function () {return view('simrs.dokter.konsultasidokter.index', ['title' => 'Konsultasi Dokter']); })->name('marrozy.konsultasidokter');
+    Route::get('/dokter/konsultasi', function () {
+        return view('simrs.dokter.konsultasidokter.index', ['title' => 'Konsultasi Dokter']);
+    })->name('marrozy.konsultasidokter');
     Route::get('/dokter/konsultasi/data', [KonsultasiDokterController::class, 'KonsultasiDokter'])->name('marrozy.konsultasidokter.data');
     Route::get('/dokter/konsultasi/data/{nopermintaan}', [KonsultasiDokterController::class, 'DetilKonsultasiDokter'])->name('marrozy.konsultasidokter.detail');
     Route::get('/dokter/konsultasi/history', [KonsultasiDokterController::class, 'KonsultasiDokterSelesai'])->name('marrozy.konsultasidokter.history');
     Route::get('/dokter/konsultasi/history/{nopermintaan}', [KonsultasiDokterController::class, 'DetilHistoryKonsultasiDokter'])->name('marrozy.konsultasidokter.detail.history');
     Route::get('/dokter/konsultasi/jawabanhistory/{nopermintaan}', [KonsultasiDokterController::class, 'DetilHistoryJawabanKonsultasiDokter'])->name('marrozy.jawaban.konsultasidokter.detail.history');
-    Route::get('/dokter/notif-konsultasi',[KonsultasiDokterController::class, 'NotifKonsultasiBelumDijawab']);
-    
-    Route::get('/dokter/konsultasiperawat', function () {return view('simrs.dokter.konsultasiperawat.index', ['title' => 'Konsultasi Perawat']); })->name('marrozy.konsultasiperawat');
+    Route::get('/dokter/notif-konsultasi', [KonsultasiDokterController::class, 'NotifKonsultasiBelumDijawab']);
+
+    Route::get('/dokter/konsultasiperawat', function () {
+        return view('simrs.dokter.konsultasiperawat.index', ['title' => 'Konsultasi Perawat']);
+    })->name('marrozy.konsultasiperawat');
     Route::get('/dokter/konsultasiperawat/data', [KonsultasiPerawatController::class, 'KonsultasiPerawat'])->name('marrozy.konsultasiperawat.data');
     Route::get('/dokter/konsultasiperawat/data/{nopermintaan}', [KonsultasiPerawatController::class, 'DetilKonsultasiPerawat'])->name('marrozy.konsultasiperawat.detail');
     Route::get('/dokter/konsultasiperawat/history', [KonsultasiPerawatController::class, 'KonsultasiPerawatSelesai'])->name('marrozy.konsultasiperawat.history');
     Route::get('/dokter/konsultasiperawat/history/{nopermintaan}', [KonsultasiPerawatController::class, 'DetilHistoryKonsultasiPerawat'])->name('marrozy.konsultasiperawat.detail.history');
     Route::get('/dokter/konsultasiperawat/jawabanhistory/{nopermintaan}', [KonsultasiPerawatController::class, 'DetilHistoryJawabanKonsultasiPerawat'])->name('marrozy.jawaban.konsultasiperawat.detail.history');
-    
+
     Route::get('/dokter/total-pasien', [DokterController::class, 'totalPasienDokterHariIni']);
     Route::get('/dokter/total-rawat-inap', [DokterController::class, 'totalPasienRawatInapDokterHariIni']);
     Route::get('/dokter/total-rawat-jalan', [DokterController::class, 'totalPasienRawatJalanDokterHariIni']);
@@ -116,9 +122,63 @@ Route::middleware(['simrs.login:dokter'])->group(function () {
     Route::get('/dokter/total-operasi-hari-ini', [DokterController::class, 'operasiDokter'])->name('dashboard.dokter.total-operasi');
 });
 
+Route::middleware(['simrs.login:petugas', 'simrs.manajemen', 'simrs.it', 'simrs.rm'])->group(function () {
+    Route::prefix('konsultasi')
+        ->name('menudokter.konsultasi.')
+        ->group(function () {
+
+            Route::get('/daftar', [DaftarKonsultasiDokterController::class, 'index'])
+                ->name('index');
+
+            Route::get('/', [DaftarKonsultasiDokterController::class, 'KonsultasiDokter'])
+                ->name('data');
+
+            Route::get('/data/{nopermintaan}', [DaftarKonsultasiDokterController::class, 'DetilKonsultasiDokter'])
+                ->name('detail');
+
+            Route::get('/history', [DaftarKonsultasiDokterController::class, 'KonsultasiDokterSelesai'])
+                ->name('history');
+
+            Route::get('/history/{nopermintaan}', [DaftarKonsultasiDokterController::class, 'DetilHistoryKonsultasiDokter'])
+                ->name('history.detail');
+
+            Route::get('/jawabanhistory/{nopermintaan}', [DaftarKonsultasiDokterController::class, 'DetilHistoryJawabanKonsultasiDokter'])
+                ->name('history.jawaban');
+
+            Route::get('/konsultasiselesai', [DaftarKonsultasiDokterController::class, 'KonsultasiDokterSelesai'])
+                ->name('selesai'); // FIX INI
+        });
+
+    Route::prefix('konsultasiperawat')
+        ->name('menudokter.konsultasiperawat.')
+        ->group(function () {
+
+            Route::get('/daftar', [DaftarKonsultasiPerawatController::class, 'index'])
+                ->name('index');
+
+            Route::get('/', [DaftarKonsultasiPerawatController::class, 'KonsultasiPerawat'])
+                ->name('data');
+
+            Route::get('/data/{nopermintaan}', [DaftarKonsultasiPerawatController::class, 'DetilKonsultasiPerawat'])
+                ->name('detail');
+
+            Route::get('/history', [DaftarKonsultasiPerawatController::class, 'KonsultasiPerawatSelesai'])
+                ->name('history');
+
+            Route::get('/history/{nopermintaan}', [DaftarKonsultasiPerawatController::class, 'DetilHistoryKonsultasiPerawat'])
+                ->name('history.detail');
+
+            Route::get('/jawabanhistory/{nopermintaan}', [DaftarKonsultasiPerawatController::class, 'DetilHistoryJawabanKonsultasiPerawat'])
+                ->name('history.jawaban');
+
+            Route::get('/konsultasiselesai', [DaftarKonsultasiPerawatController::class, 'KonsultasiPerawatSelesai'])
+                ->name('selesai'); // FIX INI
+        });
+});
+
 Route::middleware(['simrs.login:petugas', 'simrs.manajemen'])->group(function () {
-    Route::get('/manajemen', [ManajemenController::class, 'index'])->name('manajemen.index');
-    Route::get('/dashboard/laporan-dokter-realtime', [ManajemenController::class, 'laporanDokterRealtime']);
+    Route::get('/manajemen', [DaftarPasienDokterController::class, 'index'])->name('manajemen.index');
+    Route::get('/dashboard/laporan-dokter-realtime', [DaftarPasienDokterController::class, 'laporanDokterRealtime']);
 });
 
 Route::middleware(['simrs.login:petugas', 'simrs.detailtindakan'])->group(function () {
@@ -136,12 +196,14 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
     Route::get('/rm/pasien/ranap/export', [RekamMedisController::class, 'exportRanap']);
     Route::post('/rm/pasien/verify-ranap', [RekamMedisController::class, 'saveVerifyRanap'])->name('rekammedis.verify-ranap');
     Route::post('/rm/pasien/verify-ranap/comment', [RekamMedisController::class, 'updateComment']);
-    
+
     Route::get('/rm/rujukankeluar/get', [RujukanKeluarController::class, 'getDataRujukanKeluar']);
     Route::get('/rm/rujukankeluar', [RujukanKeluarController::class, 'index']);
-    Route::get('/rm/rujukankeluar/export', [RujukanKeluarController::class, 'exportRujukanKeluar']
-);
-    });
+    Route::get(
+        '/rm/rujukankeluar/export',
+        [RujukanKeluarController::class, 'exportRujukanKeluar']
+    );
+});
 
 Route::middleware(['simrs.login:petugas', 'simrs.it'])->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('simrs.user');
