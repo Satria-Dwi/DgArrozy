@@ -317,12 +317,12 @@
 
                     </a>
 
-                    <a href="{{ route('marrozy.konsultasimenuperawat') }}"
+                    <a href="{{ route('marrozy.konsultasiperawat') }}"
                         class="submenu-item
-                        {{ request()->routeIs('marrozy.konsultasimenuperawat') ? 'submenu-active' : '' }}">
+                        {{ request()->routeIs('marrozy.konsultasiperawat') ? 'submenu-active' : '' }}">
 
                         <i class="fas fa-user-nurse"></i>
-                        <span x-show="!collapse" x-transition>Konsultasi menuperawat</span>
+                        <span x-show="!collapse" x-transition>Konsultasi Perawat</span>
 
                     </a>
 
