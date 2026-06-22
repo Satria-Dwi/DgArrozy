@@ -122,7 +122,35 @@ Route::middleware(['simrs.login:dokter'])->group(function () {
     Route::get('/dokter/total-operasi-hari-ini', [DokterController::class, 'operasiDokter'])->name('dashboard.dokter.total-operasi');
 });
 
-Route::middleware(['simrs.login:petugas', 'simrs.manajemen', 'simrs.it', 'simrs.rm'])->group(function () {
+Route::middleware(['simrs.login:petugas', 'simrs.perawat'])->group(function () {
+    Route::prefix('menuperawat/konsultasiperawat')
+        ->name('menuperawat.konsultasiperawat.')
+        ->group(function () {
+
+            Route::get('/daftar', [DaftarKonsultasiPerawatController::class, 'index'])
+                ->name('index');
+
+            Route::get('/', [DaftarKonsultasiPerawatController::class, 'KonsultasiPerawat'])
+                ->name('data');
+
+            Route::get('/data/{nopermintaan}', [DaftarKonsultasiPerawatController::class, 'DetilKonsultasiPerawat'])
+                ->name('detail');
+
+            Route::get('/history', [DaftarKonsultasiPerawatController::class, 'KonsultasiPerawatSelesai'])
+                ->name('history');
+
+            Route::get('/history/{nopermintaan}', [DaftarKonsultasiPerawatController::class, 'DetilHistoryKonsultasiPerawat'])
+                ->name('history.detail');
+
+            Route::get('/jawabanhistory/{nopermintaan}', [DaftarKonsultasiPerawatController::class, 'DetilHistoryJawabanKonsultasiPerawat'])
+                ->name('history.jawaban');
+
+            Route::get('/konsultasiselesai', [DaftarKonsultasiPerawatController::class, 'KonsultasiPerawatSelesai'])
+                ->name('selesai'); // FIX INI
+        });
+});
+
+Route::middleware(['simrs.login:petugas', 'simrs.perawat'])->group(function () {
     Route::prefix('konsultasi')
         ->name('menudokter.konsultasi.')
         ->group(function () {

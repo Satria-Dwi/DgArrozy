@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'simrs.it' => \App\Http\Middleware\SimrsRoleIT::class,
         'simrs.rm' => \App\Http\Middleware\SimrsRoleRM::class,
         'simrs.manajemen' => \App\Http\Middleware\SimrsRoleManajemen::class,
+        'simrs.perawat' => \App\Http\Middleware\SimrsRolePerawat::class
         ];
 }
