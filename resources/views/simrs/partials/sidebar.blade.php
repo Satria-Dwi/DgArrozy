@@ -167,11 +167,20 @@
         open ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
         collapse ? 'w-20' : 'w-56'
     ]"
-    class="fixed inset-y-0 left-0 z-40
-           bg-white
-           border-r border-slate-200
-           transform transition-all duration-300 ease-in-out
-           flex flex-col shadow-sm">
+    class="
+        fixed inset-y-0 left-0 z-40
+
+        bg-white
+        border-r border-slate-200
+
+        flex flex-col shadow-sm
+
+        transform-gpu
+
+        transition-transform
+        duration-700
+        ease-[cubic-bezier(.22,1,.36,1)]
+    ">
 
     {{-- LOGO + COLLAPSE BUTTON --}}
     <div class="sidebar-brand relative flex items-center justify-between
@@ -227,7 +236,7 @@
         </div>
 
         <!-- Collapse Button -->
-        <button @click="collapse = !collapse"
+        {{-- <button @click="collapse = !collapse"
             class="relative group flex items-center justify-center
                w-11 h-11 rounded-xl
 
@@ -253,8 +262,61 @@
                    transition-opacity duration-300">
             </span>
 
-        </button>
+        </button> --}}
 
+        <button @click="collapse = !collapse" title="Toggle Sidebar"
+                        class="
+                    absolute top-4
+                    flex items-center justify-center
+
+                    w-11 h-11 rounded-xl
+
+                    text-slate-500 dark:text-slate-300
+
+                    hover:text-indigo-600
+                    hover:-translate-y-0.5
+                    hover:scale-105
+                    active:scale-90
+
+                    transition-all duration-500 ease-out
+                "
+                        :class="collapse
+                            ?
+                            'bg-transparent border-transparent shadow-none backdrop-blur-0' :
+                            'bg-white/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700 backdrop-blur-xl shadow-sm hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-500/20'"
+                        :style="collapse
+                            ?
+                            'transform: translateX(0px)' :
+                            'transform: translateX(240px)'">
+
+            <!-- Glow -->
+            <span
+                class="absolute inset-0 rounded-xl
+
+               opacity-0 scale-75
+
+               bg-gradient-to-br
+               from-indigo-500/15
+               via-purple-500/15
+               to-pink-500/15
+
+               group-hover:opacity-100
+               group-hover:scale-100
+
+               transition-all duration-500">
+            </span>
+
+            <!-- Icon -->
+            <!-- ARION ICON (collapse) -->
+            <img x-show="collapse" x-transition src="{{ asset('img/ARION-ICON.png') }}"
+                class="w-14 h-14 object-contain relative z-10" :class="collapse ? 'mt-4 mb-10' : ''" alt="ARION">
+
+            <!-- Hamburger (expand) -->
+            <i x-show="!collapse" x-transition class="fas fa-bars-staggered relative z-10"
+                style="transition: transform 700ms cubic-bezier(.34,1.56,.64,1);">
+            </i>
+
+        </button>
     </div>
 
     <!-- Divider -->
@@ -378,7 +440,6 @@
             @if (in_array(session('simrs_dep_id'), ['06', '07']) ||
                     in_array(session('simrs_dept'), ['MANAJEMEN', 'IT', 'TEKNOLOGI INFORMASI', 'REKAM MEDIK']) ||
                     \Illuminate\Support\Str::contains(strtolower(trim(session('simrs_jbtn', ''))), 'perawat'))
-
                 {{-- menuperawat --}}
                 <div x-data="{ openMenu: {{ request()->routeIs('menuperawat.*') ? 'true' : 'false' }} }">
                     <button @click="openMenu = !openMenu"
