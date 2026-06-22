@@ -162,24 +162,31 @@
     }
 </style>
 
+<div x-show="open" @click="open = false" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 md:hidden">
+</div>
+
 <aside
     :class="[
-        open ? 'translate-x-0' : '-translate-x-full md:translate-x-0',
-        collapse ? 'w-20' : 'w-56'
+        open ? 'translate-x-0' : '-translate-x-full',
+        'md:translate-x-0',
+    
+        collapse ? 'md:w-20' : 'md:w-56',
+    
+        // mobile selalu full width
+        'w-56'
     ]"
     class="
         fixed inset-y-0 left-0 z-40
 
         bg-white
         border-r border-slate-200
-
-        flex flex-col shadow-sm
+        flex flex-col shadow-xl
 
         transform-gpu
-
         transition-transform
-        duration-700
-        ease-[cubic-bezier(.22,1,.36,1)]
+        duration-300 ease-out
+
+        md:shadow-sm
     ">
 
     {{-- LOGO + COLLAPSE BUTTON --}}
@@ -265,7 +272,9 @@
         </button> --}}
 
         <button @click="collapse = !collapse" title="Toggle Sidebar"
-                        class="
+            title="Toggle Sidebar"
+            class="
+                    hidden md:flex
                     absolute top-4
                     flex items-center justify-center
 
@@ -280,14 +289,14 @@
 
                     transition-all duration-500 ease-out
                 "
-                        :class="collapse
-                            ?
-                            'bg-transparent border-transparent shadow-none backdrop-blur-0' :
-                            'bg-white/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700 backdrop-blur-xl shadow-sm hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-500/20'"
-                        :style="collapse
-                            ?
-                            'transform: translateX(0px)' :
-                            'transform: translateX(240px)'">
+            :class="collapse
+                ?
+                'bg-transparent border-transparent shadow-none backdrop-blur-0' :
+                'bg-white/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700 backdrop-blur-xl shadow-sm hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-500/20'"
+            :style="collapse
+                ?
+                'transform: translateX(0px)' :
+                'transform: translateX(240px)'">
 
             <!-- Glow -->
             <span
@@ -326,7 +335,7 @@
     </div>
 
     {{-- MENU --}}
-    <nav class="flex-1 px-3  overflow-y-auto">
+    <nav class="flex-1 px-3 overflow-y-auto overscroll-contain">
 
         {{-- BERANDA --}}
         @if (session('simrs_tipe') === 'petugas')
@@ -610,7 +619,7 @@
     </nav>
 
     {{-- FOOTER --}}
-    <div class="sidebar-footer">
+    <div class="sidebar-footer mt-auto">
 
         <form action="/logout" method="POST">
             @csrf

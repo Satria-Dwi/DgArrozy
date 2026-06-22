@@ -1,45 +1,45 @@
 <header
     class="h-14 md:h-16
-           grid grid-cols-3 items-center
-           px-6
+           flex items-center justify-between
+           px-4 md:px-6
            bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500
            text-white
            border-b border-slate-200
            sticky top-0 z-30
-           shadow-sm">
+           shadow-sm overflow-visible">
 
     <!-- Toggle Sidebar (mobile only) -->
-    <div class="flex items-center">
+    <div class="flex items-center flex-shrink-0">
         <button @click="$dispatch('toggle-sidebar')"
-            class="md:hidden p-2 rounded-lg 
-               hover:bg-white/20 active:scale-95 transition">
+            class="md:hidden p-2 rounded-lg hover:bg-white/20 active:scale-95 transition">
             <i class="fa-solid fa-bars text-lg"></i>
         </button>
     </div>
 
     <!-- Date -->
-    <div class="flex flex-col items-center justify-center text-center">
+    <div class="flex flex-col items-center justify-center text-center flex-1 min-w-0 px-2">
 
-        <div class="text-xs md:text-sm opacity-90 tracking-wide">
+        <div class="text-[10px] md:text-sm opacity-90 tracking-wide truncate max-w-full">
             {{ now()->locale('id')->translatedFormat('l, d F Y') }}
         </div>
 
         <div id="rt-jam"
-            class="font-mono text-base md:text-lg font-semibold
+            class="font-mono text-xs md:text-lg font-semibold
                tracking-widest
-               px-3 py-1 mt-1
+               px-2 md:px-3 py-1 mt-1
                rounded-full
                bg-white/15 backdrop-blur-md
                border border-white/20
                shadow-md
-               text-white">
+               text-white
+               whitespace-nowrap">
             09:00:00 WIB
         </div>
 
     </div>
 
     <!-- Right Icons -->
-    <div class="flex items-center justify-end gap-4">
+    <div class="flex items-center justify-end gap-3 md:gap-4 flex-shrink-0">
         <div class="flex items-center gap-4">
 
             <!-- Notification -->
@@ -105,8 +105,8 @@
                         shadow-xl
                         border
                         border-slate-200
-                        overflow-hidden
-                        z-50
+                        overflow-visible
+                        z-[9999]
                     ">
 
                         <div class="px-4 py-3 border-b bg-slate-50">
@@ -150,8 +150,8 @@
                        bg-white
                        rounded-xl shadow-xl
                        border border-slate-200
-                       overflow-hidden
-                       z-50">
+                       overflow-visible
+                       z-[9999]">
 
                     <!-- HEADER PROFILE -->
                     <div class="px-4 py-3 border-b border-slate-200">
