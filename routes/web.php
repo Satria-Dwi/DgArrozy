@@ -233,10 +233,6 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
         '/rm/rujukankeluar/export',
         [RujukanKeluarController::class, 'exportRujukanKeluar']
     );
-});
-
-
-Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
     Route::prefix('casemix/cekberkasdigital')
         ->name('casemix.cekberkasdigital.')
         ->group(function () {
