@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\DgarrozySimrs\MenuManajemenDokter\Konsultasi\Daft
 use App\Http\Controllers\Admin\DgarrozySimrs\MenuManajemenDokter\Konsultasi\DaftarKonsultasiPerawatController;
 use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RekamMedisController;
 use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RujukanKeluarController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Report\Resume\ResumeController;
 use App\Http\Controllers\Admin\MainAdminController;
 use App\Http\Controllers\Admin\SigninController;
 use Illuminate\Support\Facades\Route;
@@ -235,7 +236,7 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
 });
 
 
-Route::middleware(['simrs.login:petugas', 'simrs.it', 'simrs.rm'])->group(function () {
+Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
     Route::prefix('casemix/cekberkasdigital')
         ->name('casemix.cekberkasdigital.')
         ->group(function () {
@@ -247,5 +248,7 @@ Route::middleware(['simrs.login:petugas', 'simrs.it', 'simrs.rm'])->group(functi
 Route::middleware(['simrs.login:petugas', 'simrs.it'])->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('simrs.user');
     Route::get('/user/table', [UserController::class, 'table'])->name('simrs.user.table');
-    Route::get('/casemix/cekberkasdigitalcoba', [MonitoringBerkasDigitalController::class, 'getMonitoringBerkasCoba']);
+    // Route::get('/casemix/cekberkasdigitalcoba', [MonitoringBerkasDigitalController::class, 'getMonitoringBerkasCoba']);
+    Route::get('/resume-medis/{norawat}', [ResumeController::class, 'resumeMedis'])
+    ->where('norawat', '.*');
 });
