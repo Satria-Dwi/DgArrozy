@@ -481,6 +481,7 @@
                     </div>
                 </div>
             @endif
+
             {{-- MANAJEMEN --}}
             @if (session('simrs_dep_id') === '06' ||
                     session('simrs_dept') === 'MANAJEMEN' ||
@@ -520,6 +521,7 @@
                     </div>
                 </div>
             @endif
+
             {{-- REKAM MEDIS --}}
             @if (session('simrs_dep_id') === '07' ||
                     session('simrs_dept') === 'REKAM MEDIK' ||
@@ -584,6 +586,45 @@
                     </div>
                 </div>
             @endif
+            
+            {{-- CASEMIX --}}
+            @if (session('simrs_dep_id') === '07' ||
+                    session('simrs_dept') === 'REKAM MEDIK' ||
+                    session('simrs_dept') === 'IT' ||
+                    session('simrs_dept') === 'TEKNOLOGI INFORMASI' ||
+                    session('simrs_nik') === '3513196706930001')
+                {{-- REKAM MEDIS --}}
+                <div x-data="{ openMenu: {{ request()->is('casemix*') ? 'true' : 'false' }} }">
+
+                    <button @click="openMenu = !openMenu"
+                        class="menu-item w-full justify-between {{ request()->is('casemix*') ? 'menu-parent-active' : '' }}">
+
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-hand-holding-usd"></i>
+                            <span x-show="!collapse" x-transition>Casemix</span>
+                        </div>
+
+                        <i x-show="!collapse" class="fas fa-chevron-down ml-auto transition-transform duration-300"
+                            :class="{ 'rotate-180': openMenu }">
+                        </i>
+                    </button>
+
+                    <div x-show="openMenu && !collapse" x-collapse class="ml-4 mt-1">
+
+                        {{-- Data Pasien --}}
+                        <a href="{{ url('/casemix/cekberkasdigital') }}"
+                            class="submenu-item {{ request()->is('casemix/cekberkasdigital') ? 'submenu-active' : '' }}">
+
+                            <i class="fas fa-users"></i>
+                            <span x-show="!collapse" x-transition>
+                                Berkas Digital
+                            </span>
+                        </a>
+
+                    </div>
+                </div>
+            @endif
+
             {{-- IT MASTER --}}
             @if (session('simrs_dept') === 'IT' || session('simrs_dept') === 'TEKNOLOGI INFORMASI')
                 {{-- REKAM MEDIS --}}
