@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\DgarrozySimrs\Report\Resume;
 
-use Barryvdh\DomPDF\Facade\pdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 
@@ -135,7 +135,7 @@ class ResumeController extends Controller
         //     }
         // }
 
-        $pdf = pdf::loadView('simrs.report.resume.ralan.index', compact('data'))
+        $pdf = Pdf::loadView('simrs.report.resume.ralan.index', compact('data'))
             ->setPaper([0, 0, 595.28, 935.43], 'portrait');
 
         return $pdf->stream('resume-medis.pdf');
@@ -286,7 +286,7 @@ class ResumeController extends Controller
         $data->pj2 = $dokterPendamping[0] ?? null;
         $data->pj3 = $dokterPendamping[1] ?? null;
         $data->pj4 = $dokterPendamping[2] ?? null;
-        $pdf = pdf::loadView(
+        $pdf = Pdf::loadView(
             'simrs.report.resume.ranap.index',
             compact('data')
         )->setPaper([0, 0, 595.28, 935.43], 'portrait');
