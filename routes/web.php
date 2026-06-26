@@ -238,6 +238,11 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
         ->group(function () {
             Route::get('/', [MonitoringBerkasDigitalController::class, 'index'])->name('index');
             Route::get('/data', [MonitoringBerkasDigitalController::class, 'getMonitoringBerkas'])->name('data');
+
+            Route::get('/resume-medis/Ralan/{norawat}', [ResumeController::class, 'resumeMedisRalan'])
+                ->where('norawat', '.*');
+            Route::get('/resume-medis/Ranap/{norawat}', [ResumeController::class, 'resumeMedisRanap'])
+                ->where('norawat', '.*');
         });
 });
 
@@ -245,6 +250,4 @@ Route::middleware(['simrs.login:petugas', 'simrs.it'])->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('simrs.user');
     Route::get('/user/table', [UserController::class, 'table'])->name('simrs.user.table');
     // Route::get('/casemix/cekberkasdigitalcoba', [MonitoringBerkasDigitalController::class, 'getMonitoringBerkasCoba']);
-    Route::get('/resume-medis/{norawat}', [ResumeController::class, 'resumeMedis'])
-    ->where('norawat', '.*');
 });

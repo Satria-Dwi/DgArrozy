@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Blade;
@@ -35,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('endrole', function () {
             return "<?php endif; ?>";
         });
+        
+        Carbon::setLocale('id');
 
         // ==================== Rate Limiter ====================
 

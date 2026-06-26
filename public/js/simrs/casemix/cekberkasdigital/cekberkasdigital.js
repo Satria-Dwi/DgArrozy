@@ -89,6 +89,10 @@ function loadCekBerkasDigital(page = 1) {
                     index % 2 === 0
                         ? 'bg-white dark:bg-slate-900'
                         : 'bg-slate-50 dark:bg-slate-800/50';
+
+                const urlResume =
+                    `/casemix/cekberkasdigital/resume-medis/${item.status_lanjut}/${item.no_rawat}`;
+
                 const badgeStatus = (val) => {
                     return val
                         ? `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
@@ -135,9 +139,28 @@ function loadCekBerkasDigital(page = 1) {
                             </div>
                         </td>                        
 
-                        <td class="px-6 py-4 text-center">
+                       <td class="px-6 py-4 text-center">
                             ${badgeStatus(item.ada_resume)}
-                        </td>
+
+                            <a href="${item.ada_resume == 1 ? urlResume : '#'}"
+                                target="_blank"
+                                style="
+                                    display:inline-flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    margin-top:6px;
+                                    padding:4px 8px;
+                                    border-radius:8px;
+                                    font-size:11px;
+                                    font-weight:600;
+                                    text-decoration:none;
+                                    background:${item.ada_resume == 1 ? '#2563eb' : '#e5e7eb'};
+                                    color:${item.ada_resume == 1 ? '#fff' : '#6b7280'};
+                                    ${item.ada_resume == 1 ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                ">
+                                Resume
+                            </a>
+                        </td>   
 
                         <td class="px-6 py-4 text-center">
                             ${badgeStatus(item.ada_billing)}
