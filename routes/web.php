@@ -18,7 +18,10 @@ use App\Http\Controllers\Admin\DgarrozySimrs\MenuManajemenDokter\Konsultasi\Daft
 use App\Http\Controllers\Admin\DgarrozySimrs\MenuManajemenDokter\Konsultasi\DaftarKonsultasiPerawatController;
 use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RekamMedisController;
 use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RujukanKeluarController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Report\AsesmenIGD\AsesmenIgdController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Report\Billing\BillingController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\Resume\ResumeController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Report\TriaseIGD\TriaseIgdController;
 use App\Http\Controllers\Admin\MainAdminController;
 use App\Http\Controllers\Admin\SigninController;
 use Illuminate\Support\Facades\Route;
@@ -244,6 +247,22 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
             Route::get('/resume-medis/Ranap/{norawat}', [ResumeController::class, 'resumeMedisRanap'])
                 ->where('norawat', '.*');
         });
+    Route::prefix('casemix/billing')->name('casemix.billing.')->group(function () {
+        Route::get('/{no_rawat}', [BillingController::class, 'cetakbilling'])
+            ->where('no_rawat', '.*')
+            ->name('show');
+    });
+    Route::prefix('casemix/asesmen-igd')->name('casemix.asesmen.')->group(function () {
+        Route::get('/{no_rawat}', [AsesmenIgdController::class, 'getAsesmenIgd'])
+            ->where('no_rawat', '.*')
+            ->name('show');
+    });
+    Route::prefix('casemix/triase-igd')->name('casemix.triase.')->group(function () {
+        Route::get('/{no_rawat}', [TriaseIgdController::class, 'getTriaseIGD'])
+            ->where('no_rawat', '.*')
+            ->name('show');
+    });
+
 });
 
 Route::middleware(['simrs.login:petugas', 'simrs.it'])->group(function () {

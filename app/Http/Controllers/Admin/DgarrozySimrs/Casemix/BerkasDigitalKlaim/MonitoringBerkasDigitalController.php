@@ -35,6 +35,7 @@ class MonitoringBerkasDigitalController extends Controller
             ->join('dokter as d', 'rp.kd_dokter', '=', 'd.kd_dokter')
             ->leftJoin('nota_jalan as nj', 'rp.no_rawat', '=', 'nj.no_rawat')
             ->leftJoin('nota_inap as ni', 'rp.no_rawat', '=', 'ni.no_rawat')
+            ->join('poliklinik as poli', 'rp.kd_poli', '=', 'poli.kd_poli')
             ->leftJoin('bridging_sep as bs', function ($join) {
                 $join->on('rp.no_rawat', '=', 'bs.no_rawat')
                     ->whereRaw('bs.no_sep = (SELECT MAX(no_sep) FROM bridging_sep WHERE no_rawat = rp.no_rawat)');
@@ -46,6 +47,7 @@ class MonitoringBerkasDigitalController extends Controller
                 'rp.jam_reg',
                 'rp.status_lanjut',
                 'rp.kd_poli',
+                'poli.nm_poli',
                 'p.no_rkm_medis',
                 'p.nm_pasien',
                 DB::raw("
@@ -241,57 +243,114 @@ class MonitoringBerkasDigitalController extends Controller
                         "),
 
                 DB::raw("
-                    (
-                        EXISTS(
+                        CASE
+                            WHEN rp.kd_poli <> 'IGDK' THEN 'Tidak Ada'
+
+                            WHEN (
+                                EXISTS(
+                                    SELECT 1
+                                    FROM penilaian_medis_igd
+                                    WHERE no_rawat = rp.no_rawat
+                                )
+                                OR
+                                EXISTS(
+                                    SELECT 1
+                                    FROM penilaian_medis_ralan
+                                    WHERE no_rawat = rp.no_rawat
+                                )
+                                OR
+                                EXISTS(
+                                    SELECT 1
+                                    FROM penilaian_medis_ranap
+                                    WHERE no_rawat = rp.no_rawat
+                                )
+                            ) THEN 'Lengkap'
+
+                            ELSE 'Tidak Lengkap'
+                        END AS status_asmed
+                    "),
+                    
+                DB::raw("
+                    CASE
+                        WHEN rp.kd_poli <> 'IGDK' THEN 'Tidak Ada'
+
+                        WHEN EXISTS (
                             SELECT 1
-                            FROM penilaian_medis_igd
-                            WHERE no_rawat = rp.no_rawat
-                        )
-                        OR
-                        EXISTS(
+                            FROM data_triase_igd dt
+                            WHERE dt.no_rawat = rp.no_rawat
+                        ) THEN 'Lengkap'
+
+                        ELSE 'Tidak Lengkap'
+                    END AS status_triase
+                "),
+
+                DB::raw("
+                    CASE
+                        WHEN EXISTS (
                             SELECT 1
-                            FROM penilaian_medis_ralan
-                            WHERE no_rawat = rp.no_rawat
+                            FROM booking_operasi bo
+                            WHERE bo.no_rawat = rp.no_rawat
                         )
-                        OR
-                        EXISTS(
+                        AND NOT EXISTS (
                             SELECT 1
-                            FROM penilaian_medis_ranap
-                            WHERE no_rawat = rp.no_rawat
+                            FROM operasi op
+                            WHERE op.no_rawat = rp.no_rawat
+                        ) THEN 'Tidak Lengkap'
+
+                        WHEN NOT EXISTS (
+                            SELECT 1
+                            FROM booking_operasi bo
+                            WHERE bo.no_rawat = rp.no_rawat
+                        ) THEN 'Tidak Ada Operasi'
+
+                        ELSE 'Lengkap'
+                    END AS status_operasi
+                "),
+
+                DB::raw("
+                    CASE
+                        WHEN EXISTS (
+                            SELECT 1
+                            FROM permintaan_lab pl
+                            WHERE pl.no_rawat = rp.no_rawat
                         )
-                    ) as ada_asmed
+                        AND NOT EXISTS (
+                            SELECT 1
+                            FROM periksa_lab lb
+                            WHERE lb.no_rawat = rp.no_rawat
+                        ) THEN 'Tidak Lengkap'
+
+                        WHEN NOT EXISTS (
+                            SELECT 1
+                            FROM permintaan_lab pl
+                            WHERE pl.no_rawat = rp.no_rawat
+                        ) THEN 'Tidak Ada Lab'
+
+                        ELSE 'Lengkap'
+                    END AS status_lab
                 "),
 
                 DB::raw("
-                    EXISTS(
-                        SELECT 1
-                        FROM data_triase_igd
-                        WHERE no_rawat = rp.no_rawat
-                    ) as ada_triase
-                "),
+                    CASE
+                        WHEN EXISTS (
+                            SELECT 1
+                            FROM permintaan_radiologi pr
+                            WHERE pr.no_rawat = rp.no_rawat
+                        )
+                        AND NOT EXISTS (
+                            SELECT 1
+                            FROM periksa_radiologi rad
+                            WHERE rad.no_rawat = rp.no_rawat
+                        ) THEN 'Tidak Lengkap'
 
-                DB::raw("
-                    EXISTS(
-                        SELECT 1
-                        FROM operasi
-                        WHERE no_rawat = rp.no_rawat
-                    ) as ada_op
-                "),
+                        WHEN NOT EXISTS (
+                            SELECT 1
+                            FROM permintaan_radiologi pr
+                            WHERE pr.no_rawat = rp.no_rawat
+                        ) THEN 'Tidak Ada Radiologi'
 
-                DB::raw("
-                    EXISTS(
-                        SELECT 1
-                        FROM periksa_lab
-                        WHERE no_rawat = rp.no_rawat
-                    ) as ada_lab
-                "),
-
-                DB::raw("
-                    EXISTS(
-                        SELECT 1
-                        FROM periksa_radiologi
-                        WHERE no_rawat = rp.no_rawat
-                    ) as ada_rad
+                        ELSE 'Lengkap'
+                    END AS status_radiologi
                 "),
             ])
             ->where(function ($q) {

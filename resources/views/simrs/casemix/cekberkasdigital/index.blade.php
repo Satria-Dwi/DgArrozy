@@ -121,79 +121,51 @@
             </div>
         </div>
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <style>
+            #tableWrapper {
+                overflow: auto;
+                user-select: none;
+                cursor: grab;
+            }
 
-            <table class="w-full">
+            #tableWrapper:active {
+                cursor: grabbing;
+            }
 
-                <thead>
+            .selectable {
+                user-select: text;
+                cursor: text;
+            }
+        </style>
+        <div id="tableWrapper" class="overflow-auto max-h-[75vh] cursor-grab active:cursor-grabbing">
+
+            <table class="min-w-max w-full border-collapse">
+                <thead class="sticky top-0 z-20 bg-slate-50 dark:bg-slate-800">
                     <tr
                         class="
-            bg-slate-50
-            dark:bg-slate-800
-            text-slate-600
-            dark:text-slate-300
-            text-sm
-            uppercase
-            font-bold
-        ">
+                    text-slate-600
+                    dark:text-slate-300
+                    text-sm
+                    uppercase
+                    font-bold
+                ">
 
-                        <th class="px-4 py-3 text-center font-bold">
-                            No Rawat / Tgl Closing
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            Pasien / No RM / Dokter
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            No SEP / Status / Poli
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            Resume
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            Billing
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            CPPT
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            CPPT Dokter
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            Asmed
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            Triase
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            Operasi
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            Lab
-                        </th>
-
-                        <th class="px-4 py-3 text-center font-bold">
-                            Radiologi
-                        </th>
-
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">No Rawat / Tgl Closing</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">Pasien / No RM / Dokter</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">No SEP / Status / Poli</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">Resume</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">Billing</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">CPPT</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">CPPT Dokter</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">Asmed</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">Triase</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">Operasi</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">Lab</th>
+                        <th class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-30 px-4 py-3">Radiologi</th>
                     </tr>
                 </thead>
 
-                <tbody id="tableCekBerkasDigital"
-                    class="
-        text-sm
-        text-slate-700
-        dark:text-slate-200
-    ">
+                <tbody id="tableCekBerkasDigital" class="text-sm text-slate-700 dark:text-slate-200">
                 </tbody>
 
             </table>
@@ -245,7 +217,7 @@
                         Data Berkas Digital
                     </div>
 
-                    <div id="infoCekBerkasDigital" class="text-xs text-slate-500 dark:text-slate-400">
+                    <div id="infoCekBerkasDigital" class="text-xs text-slate-500 dark:text-slate-400 selectable">
                         Memuat data...
                     </div>
 

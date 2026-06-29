@@ -1,5 +1,35 @@
 let currentPageCekBerkasDigital = 1;
 
+const slider = document.getElementById("tableWrapper");
+
+let isDown = false;
+let startX;
+let scrollLeft;
+
+slider.addEventListener("mousedown", (e) => {
+    if (e.target.closest(".selectable")) return;
+
+    isDown = true;
+    startX = e.pageX;
+    scrollLeft = slider.scrollLeft;
+});
+
+document.addEventListener("mouseup", () => {
+    isDown = false;
+});
+
+document.addEventListener("mousemove", (e) => {
+
+    if (!isDown) return;
+
+    e.preventDefault();
+
+    const walk = (e.pageX - startX) * 2;
+
+    slider.scrollLeft = scrollLeft - walk;
+
+});
+
 function loadCekBerkasDigital(page = 1) {
     currentPageCekBerkasDigital = page;
 
@@ -93,20 +123,53 @@ function loadCekBerkasDigital(page = 1) {
                 const urlResume =
                     `/casemix/cekberkasdigital/resume-medis/${item.status_lanjut}/${item.no_rawat}`;
 
+                const urlBilling =
+                    `/casemix/billing/${item.no_rawat}`;
+
+                const urlAsesmenIGD =
+                    `/casemix/asesmen-igd/${item.no_rawat}`;
+
+                const isLengkap = item.status_asmed === 'Lengkap';
+
                 const badgeStatus = (val) => {
                     return val
                         ? `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                Lengkap
-           </span>`
+                                    Lengkap
+                            </span>`
                         : `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
-                Tidak Lengkap
-           </span>`;
+                                    Tidak Lengkap
+                            </span>`;
+                };
+
+                const badgeStatusLain = (status) => {
+                    switch (status) {
+                        case 'Lengkap':
+                            return `
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                        Lengkap
+                                    </span>
+                                `;
+
+                        case 'Tidak Lengkap':
+                            return `
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                                        Tidak Lengkap
+                                    </span>
+                                `;
+
+                        default:
+                            return `
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400">
+                                        Tidak Ada 
+                                    </span>
+                                `;
+                    }
                 };
 
                 return `
                     <tr class="${rowClass} hover:bg-blue-50 dark:hover:bg-slate-700 transition-all duration-200">
 
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-4 whitespace-nowrap selectable">
                             <div class="font-medium text-slate-900 dark:text-slate-100">
                                 ${item.no_rawat}
                             </div>
@@ -115,7 +178,7 @@ function loadCekBerkasDigital(page = 1) {
                             </div>
                         </td>
 
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-4 whitespace-nowrap selectable">
                             <div class="font-medium text-slate-900 dark:text-slate-100">
                                 ${item.nm_pasien}
                             </div>
@@ -127,7 +190,7 @@ function loadCekBerkasDigital(page = 1) {
                             </div>
                         </td>
 
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-4 whitespace-nowrap selectable">
                             <div class="font-medium text-slate-900 dark:text-slate-100">
                                 ${item.no_sep ?? '-'}
                             </div>
@@ -135,7 +198,7 @@ function loadCekBerkasDigital(page = 1) {
                                 Status : ${item.status_lanjut}
                             </div>
                             <div class="text-xs text-slate-500">
-                                Poli : ${item.kd_poli}
+                                Poli : ${item.nm_poli}
                             </div>
                         </td>                        
 
@@ -164,34 +227,89 @@ function loadCekBerkasDigital(page = 1) {
 
                         <td class="px-6 py-4 text-center">
                             ${badgeStatus(item.ada_billing)}
+                            <a href="${item.ada_billing == 1 ? urlBilling : '#'}"
+                                target="_blank"
+                                style="
+                                    display:inline-flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    margin-top:6px;
+                                    padding:4px 8px;
+                                    border-radius:8px;
+                                    font-size:11px;
+                                    font-weight:600;
+                                    text-decoration:none;
+                                    background:${item.ada_billing == 1 ? '#16a34a' : '#e5e7eb'};
+                                    color:${item.ada_billing == 1 ? '#fff' : '#6b7280'};
+                                    ${item.ada_billing == 1 ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                ">
+                                Billing
+                            </a>
                         </td>
-
+                            
                         <td class="px-6 py-4 text-center">
                             ${badgeStatus(item.ada_cppt)}
                         </td>
-
+                            
                         <td class="px-6 py-4 text-center">
                             ${badgeStatus(item.ada_cppt_dokter)}
                         </td>
-
+                            
                         <td class="px-6 py-4 text-center">
-                            ${badgeStatus(item.ada_asmed)}
+                            ${badgeStatusLain(item.status_asmed)}
+
+                            <a href="${isLengkap ? `/casemix/asesmen-igd/${encodeURIComponent(item.no_rawat)}` : '#'}"
+                                target="_blank"
+                                style="
+                                    display:inline-flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    margin-top:6px;
+                                    padding:4px 8px;
+                                    border-radius:8px;
+                                    font-size:11px;
+                                    font-weight:600;
+                                    text-decoration:none;
+                                    background:${isLengkap ? '#7c3aed' : '#e5e7eb'};
+                                    color:${isLengkap ? '#fff' : '#6b7280'};
+                                    ${isLengkap ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                ">
+                                Asesmen IGD
+                            </a>
+                        </td>
+                            
+                        <td class="px-6 py-4 text-center">
+                            ${badgeStatusLain(item.status_triase)}
+                            <a href="${isLengkap ? `/casemix/triase-igd/${encodeURIComponent(item.no_rawat)}` : '#'}"
+                                target="_blank"
+                                style="
+                                    display:inline-flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    margin-top:6px;
+                                    padding:4px 8px;
+                                    border-radius:8px;
+                                    font-size:11px;
+                                    font-weight:600;
+                                    text-decoration:none;
+                                    background:${isLengkap ? '#f59e0b' : '#e5e7eb'};
+                                    color:${isLengkap ? '#fff' : '#6b7280'};
+                                    ${isLengkap ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                ">
+                                Triase IGD
+                            </a>
+                        </td>
+                            
+                        <td class="px-6 py-4 text-center">
+                            ${badgeStatusLain(item.status_operasi)}
                         </td>
 
                         <td class="px-6 py-4 text-center">
-                            ${badgeStatus(item.ada_triase)}
+                            ${badgeStatusLain(item.status_lab)}
                         </td>
 
                         <td class="px-6 py-4 text-center">
-                            ${badgeStatus(item.ada_op)}
-                        </td>
-
-                        <td class="px-6 py-4 text-center">
-                            ${badgeStatus(item.ada_lab)}
-                        </td>
-
-                        <td class="px-6 py-4 text-center">
-                            ${badgeStatus(item.ada_rad)}
+                            ${badgeStatusLain(item.status_radiologi)}
                         </td>
 
                     </tr>

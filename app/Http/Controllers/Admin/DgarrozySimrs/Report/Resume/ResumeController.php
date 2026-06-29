@@ -138,7 +138,7 @@ class ResumeController extends Controller
         $pdf = Pdf::loadView('simrs.report.resume.ralan.index', compact('data'))
             ->setPaper([0, 0, 595.28, 935.43], 'portrait');
 
-        return $pdf->stream('resume-medis.pdf');
+        return $pdf->stream("Resume-medis_{$norawat}.pdf");
     }
 
     public function resumeMedisRanap($norawat)
@@ -291,6 +291,6 @@ class ResumeController extends Controller
             compact('data')
         )->setPaper([0, 0, 595.28, 935.43], 'portrait');
 
-        return $pdf->stream('resume-medis.pdf');
+        return $pdf->stream("resume-medis_{$norawat}.pdf");
     }
 }

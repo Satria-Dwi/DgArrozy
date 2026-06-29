@@ -305,9 +305,9 @@
                 </td>
             </tr>
 
-            <table width="100%" class="content-table" cellspacing="0" cellpadding="2">
+            <table width="100%" style="margin-top:10px;">
                 <tr>
-                    <td width="41.6%" style="padding:4px 0; vertical-align:top;">
+                    <td width="31%" style="padding:4px 0; vertical-align:top;">
                         Terapi / Obat Pulang
                     </td>
                     <td width="2%" style="padding:4px 0; vertical-align:top;">

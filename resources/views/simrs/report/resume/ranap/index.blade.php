@@ -442,30 +442,22 @@
 
         <table width="100%" style="border-collapse:collapse; margin-top:10px;">
             <tr>
-                <td colspan="4" style="padding:0;">
-                    <table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
-                        <tr>
-                            <td style="font-weight:bold; padding-bottom:3px; border-bottom:1px solid #000;">
-                                Obat-obatan Waktu Pulang
-                            </td>
-                        </tr>
-                    </table>
+                <td colspan="3" style="font-weight:bold; padding-bottom:3px; border-bottom:1px solid #000;">
+                    Obat-obatan Waktu Pulang
                 </td>
             </tr>
 
-            <table width="100%" class="content-table" cellspacing="0" cellpadding="2">
-                <tr>
-                    <td width="41.6%" style="padding:4px 0; vertical-align:top;">
-                        Terapi / Obat Pulang
-                    </td>
-                    <td width="2%" style="padding:4px 0; vertical-align:top;">
-                        :
-                    </td>
-                    <td style="vertical-align:top; padding-left: 5px;">
-                        {!! nl2br(e(trim($data->obat_pulang))) !!}
-                    </td>
-                </tr>
-            </table>
+            <tr>
+                <td width="30%" style="padding:2px 0; vertical-align:top;">
+                    Terapi / Obat Pulang
+                </td>
+                <td width="2%" style="padding:2px 0; vertical-align:top;">
+                    :
+                </td>
+                <td style="padding:2px 0; vertical-align:top;">
+                    {!! nl2br(e(trim($data->obat_pulang))) !!}
+                </td>
+            </tr>
         </table>
 
     </div>
