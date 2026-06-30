@@ -872,6 +872,9 @@ video {
 .h-screen {
   height: 100vh;
 }
+.max-h-\[75vh\] {
+  max-height: 75vh;
+}
 .max-h-\[90vh\] {
   max-height: 90vh;
 }
@@ -1101,6 +1104,9 @@ video {
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+.cursor-grab {
+  cursor: grab;
+}
 .cursor-not-allowed {
   cursor: not-allowed;
 }
@@ -1222,6 +1228,9 @@ video {
 .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-opacity: 1;
   border-color: rgb(226 232 240 / var(--tw-divide-opacity, 1));
+}
+.overflow-auto {
+  overflow: auto;
 }
 .overflow-hidden {
   overflow: hidden;
@@ -2940,6 +2949,9 @@ video {
   --tw-scale-x: 0.99;
   --tw-scale-y: 0.99;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+.active\:cursor-grabbing:active {
+  cursor: grabbing;
 }
 .group:focus-within .group-focus-within\:scale-110 {
   --tw-scale-x: 1.1;

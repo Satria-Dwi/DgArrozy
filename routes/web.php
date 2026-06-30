@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RujukanKeluarController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\AsesmenIGD\AsesmenIgdController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\Billing\BillingController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\Resume\ResumeController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Report\Sep\SepController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\TriaseIGD\TriaseIgdController;
 use App\Http\Controllers\Admin\MainAdminController;
 use App\Http\Controllers\Admin\SigninController;
@@ -259,6 +260,11 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
     });
     Route::prefix('casemix/triase-igd')->name('casemix.triase.')->group(function () {
         Route::get('/{no_rawat}', [TriaseIgdController::class, 'getTriaseIGD'])
+            ->where('no_rawat', '.*')
+            ->name('show');
+    });
+    Route::prefix('casemix/sep')->name('casemix.sep.')->group(function () {
+        Route::get('/{no_rawat}', [SepController::class, 'getSep'])
             ->where('no_rawat', '.*')
             ->name('show');
     });

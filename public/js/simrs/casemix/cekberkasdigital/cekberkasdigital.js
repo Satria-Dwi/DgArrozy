@@ -129,6 +129,11 @@ function loadCekBerkasDigital(page = 1) {
                 const urlAsesmenIGD =
                     `/casemix/asesmen-igd/${item.no_rawat}`;
 
+                const hasSep = item.no_sep && item.no_sep !== '-';
+
+                const urlSep =
+                    `/casemix/sep/${item.no_rawat}`;
+
                 const isLengkap = item.status_asmed === 'Lengkap';
 
                 const badgeStatus = (val) => {
@@ -193,6 +198,24 @@ function loadCekBerkasDigital(page = 1) {
                         <td class="px-6 py-4 whitespace-nowrap selectable">
                             <div class="font-medium text-slate-900 dark:text-slate-100">
                                 ${item.no_sep ?? '-'}
+                                <a href="${hasSep ? urlSep : '#'}"
+                                    target="_blank"
+                                    style="
+                                        display:inline-flex;
+                                        align-items:center;
+                                        justify-content:center;
+                                        margin-top:6px;
+                                        padding:4px 8px;
+                                        border-radius:8px;
+                                        font-size:11px;
+                                        font-weight:600;
+                                        text-decoration:none;
+                                        background:${hasSep ? '#2563eb' : '#e5e7eb'};
+                                        color:${hasSep ? '#fff' : '#6b7280'};
+                                        ${hasSep ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                    ">
+                                    SEP
+                                </a>
                             </div>
                             <div class="text-xs text-slate-500">
                                 Status : ${item.status_lanjut}
