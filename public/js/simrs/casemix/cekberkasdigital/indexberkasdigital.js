@@ -134,6 +134,11 @@ function loadCekBerkasDigital(page = 1) {
                 const urlSep =
                     `/casemix/sep/${item.no_rawat}`;
 
+                const hasSpri = hasSep && item.status_lanjut === 'Ranap';
+
+                const urlSpri =
+                    `/casemix/spribpjs/${item.no_rawat}`;
+
                 const isLengkap = item.status_asmed === 'Lengkap';
 
                 const badgeStatus = (val) => {
@@ -198,24 +203,46 @@ function loadCekBerkasDigital(page = 1) {
                         <td class="px-6 py-4 whitespace-nowrap selectable">
                             <div class="font-medium text-slate-900 dark:text-slate-100">
                                 ${item.no_sep ?? '-'}
-                                <a href="${hasSep ? urlSep : '#'}"
-                                    target="_blank"
-                                    style="
-                                        display:inline-flex;
-                                        align-items:center;
-                                        justify-content:center;
-                                        margin-top:6px;
-                                        padding:4px 8px;
-                                        border-radius:8px;
-                                        font-size:11px;
-                                        font-weight:600;
-                                        text-decoration:none;
-                                        background:${hasSep ? '#2563eb' : '#e5e7eb'};
-                                        color:${hasSep ? '#fff' : '#6b7280'};
-                                        ${hasSep ? '' : 'pointer-events:none;cursor:not-allowed;'}
-                                    ">
-                                    SEP
-                                </a>
+
+                                <div style="display:flex;gap:6px;margin-top:6px;">
+
+                                    <a href="${hasSep ? urlSep : '#'}"
+                                        target="_blank"
+                                        style="
+                                            display:inline-flex;
+                                            align-items:center;
+                                            justify-content:center;
+                                            padding:4px 8px;
+                                            border-radius:8px;
+                                            font-size:11px;
+                                            font-weight:600;
+                                            text-decoration:none;
+                                            background:${hasSep ? '#2563eb' : '#e5e7eb'};
+                                            color:${hasSep ? '#fff' : '#6b7280'};
+                                            ${hasSep ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                        ">
+                                        SEP
+                                    </a>
+
+                                    <a href="${hasSpri ? urlSpri : '#'}"
+                                        target="_blank"
+                                        style="
+                                            display:inline-flex;
+                                            align-items:center;
+                                            justify-content:center;
+                                            padding:4px 8px;
+                                            border-radius:8px;
+                                            font-size:11px;
+                                            font-weight:600;
+                                            text-decoration:none;
+                                            background:${hasSpri ? '#16a34a' : '#e5e7eb'};
+                                            color:${hasSpri ? '#fff' : '#6b7280'};
+                                            ${hasSpri ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                        ">
+                                        SPRI
+                                    </a>
+
+                                </div>
                             </div>
                             <div class="text-xs text-slate-500">
                                 Status : ${item.status_lanjut}

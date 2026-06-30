@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\DgarrozySimrs\Report\AsesmenIGD\AsesmenIgdControl
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\Billing\BillingController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\Resume\ResumeController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\Sep\SepController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Report\SPRIBPJS\SPRIBPJSController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\TriaseIGD\TriaseIgdController;
 use App\Http\Controllers\Admin\MainAdminController;
 use App\Http\Controllers\Admin\SigninController;
@@ -265,6 +266,11 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
     });
     Route::prefix('casemix/sep')->name('casemix.sep.')->group(function () {
         Route::get('/{no_rawat}', [SepController::class, 'getSep'])
+            ->where('no_rawat', '.*')
+            ->name('show');
+    });
+    Route::prefix('casemix/spribpjs')->name('casemix.spribpjs.')->group(function () {
+        Route::get('/{no_rawat}', [SPRIBPJSController::class, 'getSPRIBPJS'])
             ->where('no_rawat', '.*')
             ->name('show');
     });

@@ -13,8 +13,6 @@ class SepController extends Controller
     {
         $data = DB::table('reg_periksa as rp')
             ->join('bridging_sep as bs', 'rp.no_rawat', '=', 'bs.no_rawat')
-            ->join('pasien as p', 'rp.no_rkm_medis', '=', 'p.no_rkm_medis')
-            // ->join('dokter as d', 'r.kd_dokter', '=', 'd.kd_dokter')
             ->where('bs.no_rawat', $no_rawat)
             ->select(
                 'rp.no_rawat',
