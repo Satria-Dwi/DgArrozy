@@ -237,7 +237,7 @@
                 session('simrs_dept') === 'REKAM MEDIK' ||
                 session('simrs_dept') === 'IT' ||
                 session('simrs_dept') === 'TEKNOLOGI INFORMASI')
-            <script src="{{ asset('js/simrs/casemix/cekberkasdigital/cekberkasdigital.js') }}"></script>
+            <script src="{{ asset('js/simrs/casemix/cekberkasdigital/monitoringberkasdigital.js') }}"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         @endif
     @endif
