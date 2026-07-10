@@ -20,6 +20,9 @@ use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RekamMedisController;
 use App\Http\Controllers\Admin\DgarrozySimrs\RekamMedis\RujukanKeluarController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\AsesmenIGD\AsesmenIgdController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\Billing\BillingController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Report\LaporanOperasi\LaporanOperasiController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Report\ResepObat\ResepObatController;
+use App\Http\Controllers\Admin\DgarrozySimrs\Report\ResepPulang\ResepPulangController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\Resume\ResumeController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\Sep\SepController;
 use App\Http\Controllers\Admin\DgarrozySimrs\Report\SPRIBPJS\SPRIBPJSController;
@@ -271,6 +274,21 @@ Route::middleware(['simrs.login:petugas', 'simrs.rm'])->group(function () {
     });
     Route::prefix('casemix/spribpjs')->name('casemix.spribpjs.')->group(function () {
         Route::get('/{no_rawat}', [SPRIBPJSController::class, 'getSPRIBPJS'])
+            ->where('no_rawat', '.*')
+            ->name('show');
+    });
+    Route::prefix('casemix/resepobat')->name('casemix.resepobat.')->group(function () {
+        Route::get('/{no_rawat}', [ResepObatController::class, 'resepPasien'])
+            ->where('no_rawat', '.*')
+            ->name('show');
+    });
+    Route::prefix('casemix/reseppulang')->name('casemix.reseppulang.')->group(function () {
+        Route::get('/{no_rawat}', [ResepPulangController::class, 'resepPulang'])
+            ->where('no_rawat', '.*')
+            ->name('show');
+    });
+    Route::prefix('casemix/laporanoperasi')->name('casemix.laporanoperasi.')->group(function () {
+        Route::get('/{no_rawat}', [LaporanOperasiController::class, 'getLaporanOperasi'])
             ->where('no_rawat', '.*')
             ->name('show');
     });

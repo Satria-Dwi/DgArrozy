@@ -120,26 +120,33 @@ function loadCekBerkasDigital(page = 1) {
                         ? 'bg-white dark:bg-slate-900'
                         : 'bg-slate-50 dark:bg-slate-800/50';
 
-                const urlResume =
-                    `/casemix/cekberkasdigital/resume-medis/${item.status_lanjut}/${item.no_rawat}`;
+                const urlResume = `/casemix/cekberkasdigital/resume-medis/${item.status_lanjut}/${item.no_rawat}`;
 
-                const urlBilling =
-                    `/casemix/billing/${item.no_rawat}`;
+                const urlBilling = `/casemix/billing/${item.no_rawat}`;
 
-                const urlAsesmenIGD =
-                    `/casemix/asesmen-igd/${item.no_rawat}`;
+                const urlResepObat = `/casemix/resepobat/${item.no_rawat}`;
+
+                const hasResepObat = item.has_resep_obat === 1;
+
+                const urlResepPulang = `/casemix/reseppulang/${item.no_rawat}`;
+
+                const hasResepPulang = item.has_resep_pulang === 1;
+
+                const urlAsesmenIGD = `/casemix/asesmen-igd/${item.no_rawat}`;
 
                 const hasSep = item.no_sep && item.no_sep !== '-';
 
-                const urlSep =
-                    `/casemix/sep/${item.no_rawat}`;
+                const urlSep = `/casemix/sep/${item.no_rawat}`;
 
                 const hasSpri = hasSep && item.status_lanjut === 'Ranap';
 
-                const urlSpri =
-                    `/casemix/spribpjs/${item.no_rawat}`;
+                const urlSpri = `/casemix/spribpjs/${item.no_rawat}`;
 
-                const isLengkap = item.status_asmed === 'Lengkap';
+                const isLengkapAsmed = item.status_asmed === 'Lengkap';
+
+                const urlLaporanOperasi = `/casemix/laporanoperasi/${item.no_rawat}`;
+
+                const isLengkapLaporanOperasi = item.status_operasi === 'Lengkap';
 
                 const badgeStatus = (val) => {
                     return val
@@ -203,7 +210,14 @@ function loadCekBerkasDigital(page = 1) {
                         <td class="px-6 py-4 whitespace-nowrap selectable">
                             <div class="font-medium text-slate-900 dark:text-slate-100">
                                 ${item.no_sep ?? '-'}
-
+                            </div>
+                            <div class="text-xs text-slate-500">
+                                Status : ${item.status_lanjut}
+                            </div>
+                            <div class="text-xs text-slate-500">
+                                Poli : ${item.nm_poli}
+                            </div>
+                            <div class="text-xs text-slate-500">
                                 <div style="display:flex;gap:6px;margin-top:6px;">
 
                                     <a href="${hasSep ? urlSep : '#'}"
@@ -241,14 +255,41 @@ function loadCekBerkasDigital(page = 1) {
                                         ">
                                         SPRI
                                     </a>
-
+                                    <a href="${hasResepObat ? urlResepObat : '#'}"
+                                        target="_blank"
+                                        style="
+                                            display:inline-flex;
+                                            align-items:center;
+                                            justify-content:center;
+                                            padding:4px 8px;
+                                            border-radius:8px;
+                                            font-size:11px;
+                                            font-weight:600;
+                                            text-decoration:none;
+                                            background:${hasResepObat ? '#2563eb' : '#e5e7eb'};
+                                            color:${hasResepObat ? '#fff' : '#6b7280'};
+                                            ${hasResepObat ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                        ">
+                                        RESEP OBAT
+                                    </a>
+                                    <a href="${hasResepPulang ? urlResepPulang : '#'}"
+                                        target="_blank"
+                                        style="
+                                            display:inline-flex;
+                                            align-items:center;
+                                            justify-content:center;
+                                            padding:4px 8px;
+                                            border-radius:8px;
+                                            font-size:11px;
+                                            font-weight:600;
+                                            text-decoration:none;
+                                            background:${hasResepPulang ? '#16a34a' : '#e5e7eb'};
+                                            color:${hasResepPulang ? '#fff' : '#6b7280'};
+                                            ${hasResepPulang ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                        ">
+                                        RESEP PULANG
+                                    </a>
                                 </div>
-                            </div>
-                            <div class="text-xs text-slate-500">
-                                Status : ${item.status_lanjut}
-                            </div>
-                            <div class="text-xs text-slate-500">
-                                Poli : ${item.nm_poli}
                             </div>
                         </td>                        
 
@@ -308,7 +349,7 @@ function loadCekBerkasDigital(page = 1) {
                         <td class="px-6 py-4 text-center">
                             ${badgeStatusLain(item.status_asmed)}
 
-                            <a href="${isLengkap ? `/casemix/asesmen-igd/${encodeURIComponent(item.no_rawat)}` : '#'}"
+                            <a href="${isLengkapAsmed ? `/casemix/asesmen-igd/${encodeURIComponent(item.no_rawat)}` : '#'}"
                                 target="_blank"
                                 style="
                                     display:inline-flex;
@@ -320,9 +361,9 @@ function loadCekBerkasDigital(page = 1) {
                                     font-size:11px;
                                     font-weight:600;
                                     text-decoration:none;
-                                    background:${isLengkap ? '#7c3aed' : '#e5e7eb'};
-                                    color:${isLengkap ? '#fff' : '#6b7280'};
-                                    ${isLengkap ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                    background:${isLengkapAsmed ? '#7c3aed' : '#e5e7eb'};
+                                    color:${isLengkapAsmed ? '#fff' : '#6b7280'};
+                                    ${isLengkapAsmed ? '' : 'pointer-events:none;cursor:not-allowed;'}
                                 ">
                                 Asesmen IGD
                             </a>
@@ -330,7 +371,7 @@ function loadCekBerkasDigital(page = 1) {
                             
                         <td class="px-6 py-4 text-center">
                             ${badgeStatusLain(item.status_triase)}
-                            <a href="${isLengkap ? `/casemix/triase-igd/${encodeURIComponent(item.no_rawat)}` : '#'}"
+                            <a href="${isLengkapAsmed ? `/casemix/triase-igd/${encodeURIComponent(item.no_rawat)}` : '#'}"
                                 target="_blank"
                                 style="
                                     display:inline-flex;
@@ -342,9 +383,9 @@ function loadCekBerkasDigital(page = 1) {
                                     font-size:11px;
                                     font-weight:600;
                                     text-decoration:none;
-                                    background:${isLengkap ? '#f59e0b' : '#e5e7eb'};
-                                    color:${isLengkap ? '#fff' : '#6b7280'};
-                                    ${isLengkap ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                    background:${isLengkapAsmed ? '#f59e0b' : '#e5e7eb'};
+                                    color:${isLengkapAsmed ? '#fff' : '#6b7280'};
+                                    ${isLengkapAsmed ? '' : 'pointer-events:none;cursor:not-allowed;'}
                                 ">
                                 Triase IGD
                             </a>
@@ -352,6 +393,24 @@ function loadCekBerkasDigital(page = 1) {
                             
                         <td class="px-6 py-4 text-center">
                             ${badgeStatusLain(item.status_operasi)}
+                            <a href="${isLengkapLaporanOperasi ? `/casemix/laporanoperasi/${encodeURIComponent(item.no_rawat)}` : 'javascript:void(0)'}"
+                                target="_blank"
+                                style="
+                                    display:inline-flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    margin-top:6px;
+                                    padding:4px 8px;
+                                    border-radius:8px;
+                                    font-size:11px;
+                                    font-weight:600;
+                                    text-decoration:none;
+                                    background:${isLengkapLaporanOperasi ? '#2563eb' : '#e5e7eb'};
+                                    color:${isLengkapLaporanOperasi ? '#ffffff' : '#6b7280'};
+                                    ${isLengkapLaporanOperasi ? '' : 'pointer-events:none;cursor:not-allowed;'}
+                                ">
+                                Laporan Operasi
+                            </a>
                         </td>
 
                         <td class="px-6 py-4 text-center">

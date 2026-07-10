@@ -57,7 +57,7 @@ class MonitoringBerkasDigitalController extends Controller
                                 COALESCE(
                                     (
                                         SELECT d3.nm_dokter
-                                        FROM resume_pasien r
+                                        FROM resume_pasien_ranap r
                                         JOIN dokter d3
                                             ON d3.kd_dokter = r.kd_dokter
                                         WHERE r.no_rawat = rp.no_rawat
@@ -78,6 +78,20 @@ class MonitoringBerkasDigitalController extends Controller
                     "),
 
                 DB::raw("COALESCE(bs.no_sep, '-') as no_sep"),
+                DB::raw("
+                            EXISTS (
+                                SELECT 1
+                                FROM resep_obat ro
+                                WHERE ro.no_rawat = rp.no_rawat
+                            ) AS has_resep_obat
+                        "),
+                DB::raw("
+                            EXISTS (
+                                SELECT 1
+                                FROM resep_pulang rep
+                                WHERE rep.no_rawat = rp.no_rawat
+                            ) AS has_resep_pulang
+                        "),
                 DB::raw("COALESCE(ni.tanggal, nj.tanggal) as tgl_closing"),
 
                 DB::raw("
@@ -269,7 +283,7 @@ class MonitoringBerkasDigitalController extends Controller
                             ELSE 'Tidak Lengkap'
                         END AS status_asmed
                     "),
-                    
+
                 DB::raw("
                     CASE
                         WHEN rp.kd_poli <> 'IGDK' THEN 'Tidak Ada'

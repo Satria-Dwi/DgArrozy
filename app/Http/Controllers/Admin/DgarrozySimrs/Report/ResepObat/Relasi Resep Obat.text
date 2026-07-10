@@ -1,0 +1,360 @@
+Oke, ini aku ringkas **relasi tabel + alur data + query full versi SIMRS kamu** supaya kamu benar-benar paham struktur datanya (ini penting biar nggak salah mapping lagi).
+
+---
+
+# 🧠 1. RELASI INTI (ALUR RESEP OBAT)
+
+## 🔵 MASTER RESEP
+
+### `resep_obat (ro)`
+
+Ini tabel **header resep**
+
+Relasi:
+
+* `ro.no_rawat` → `reg_periksa.no_rawat`
+* `ro.kd_dokter` → `dokter.kd_dokter`
+
+---
+
+## 🟡 REGISTRASI PASIEN
+
+### `reg_periksa (rp)`
+
+* sumber pasien rawat jalan / inap
+
+Relasi:
+
+* `rp.no_rkm_medis` → `pasien.no_rkm_medis`
+
+---
+
+## 🟢 PASIEN
+
+### `pasien (ps)`
+
+* identitas pasien
+
+---
+
+## 🔵 DETAIL OBAT NON RACIKAN
+
+### `detail_pemberian_obat (dpo)`
+
+Ini isi obat langsung (bukan racikan)
+
+Relasi:
+
+* `dpo.no_rawat` → `resep_obat.no_rawat`
+* `dpo.kode_brng` → `databarang.kode_brng`
+
+---
+
+## 🟣 ATURAN PAKAI
+
+### `aturan_pakai (ap)`
+
+* aturan tiap obat
+
+Relasi:
+
+* `ap.no_rawat`
+* `ap.kode_brng`
+
+---
+
+## 🔴 RACIKAN HEADER
+
+### `obat_racikan (or)`
+
+* 1 resep bisa punya banyak racikan
+
+Relasi:
+
+* `or.no_resep` (logikanya sama group resep)
+* `or.no_rawat`
+
+---
+
+## 🟠 RACIKAN DETAIL
+
+### `detail_obat_racikan (dor)`
+
+* isi bahan racikan
+
+Relasi:
+
+* `dor.no_racik`
+* `dor.kode_brng`
+* `dor.no_rawat`
+
+---
+
+## 🟤 MASTER OBAT
+
+### `databarang (db)`
+
+* nama obat + harga
+
+---
+
+## 🧑‍⚕️ DOKTER
+
+### `dokter (dk)`
+
+* pembuat resep
+
+---
+
+## 🏥 RAWAT INAP (opsional filter)
+
+### `kamar_inap`
+
+* untuk menentukan range tanggal
+
+---
+
+# 🔥 2. ALUR DATA (SIMPLE)
+
+```
+resep_obat (HEADER)
+    │
+    ├── reg_periksa → pasien
+    ├── dokter
+    │
+    ├── detail_pemberian_obat (NON RACIK)
+    │       └── aturan_pakai
+    │
+    └── obat_racikan (HEADER RACIK)
+            └── detail_obat_racikan
+                    └── databarang
+```
+
+---
+
+# 🧾 3. QUERY FULL (VERSI FINAL CLEAN LARAVEL)
+
+## 🔵 HEADER RESEP
+
+```php
+$resep = DB::table('resep_obat as ro')
+    ->join('reg_periksa as rp', 'rp.no_rawat', '=', 'ro.no_rawat')
+    ->join('pasien as ps', 'ps.no_rkm_medis', '=', 'rp.no_rkm_medis')
+    ->join('dokter as dk', 'dk.kd_dokter', '=', 'ro.kd_dokter')
+    ->where('ro.no_rawat', $no_rawat)
+    ->select(
+        'ro.no_resep',
+        'ro.no_rawat',
+        'ro.tgl_perawatan',
+        'ro.jam',
+        'ro.kd_dokter',
+        'ps.no_rkm_medis',
+        'ps.nm_pasien',
+        'dk.nm_dokter'
+    )
+    ->orderBy('ro.tgl_perawatan')
+    ->orderBy('ro.jam')
+    ->get();
+```
+
+---
+
+# 🟡 LOOP PER RESEP
+
+```php
+$data = [];
+$grandTotal = 0;
+
+foreach ($resep as $item) {
+
+    $totalResep = 0;
+```
+
+---
+
+## 🟢 NON RACIKAN
+
+```php
+$obat = DB::table('detail_pemberian_obat as dpo')
+    ->join('databarang as db', 'db.kode_brng', '=', 'dpo.kode_brng')
+    ->where('dpo.tgl_perawatan', $item->tgl_perawatan)
+    ->where('dpo.jam', $item->jam)
+    ->where('dpo.no_rawat', $item->no_rawat)
+    ->whereNotIn('dpo.kode_brng', function ($q) use ($item) {
+        $q->select('kode_brng')
+            ->from('detail_obat_racikan')
+            ->where('tgl_perawatan', $item->tgl_perawatan)
+            ->where('jam', $item->jam)
+            ->where('no_rawat', $item->no_rawat);
+    })
+    ->get();
+```
+
+---
+
+## 🟣 RACIKAN HEADER
+
+```php
+$racikan = DB::table('obat_racikan as or')
+    ->join('metode_racik as mr', 'mr.kd_racik', '=', 'or.kd_racik')
+    ->where('or.tgl_perawatan', $item->tgl_perawatan)
+    ->where('or.jam', $item->jam)
+    ->where('or.no_rawat', $item->no_rawat)
+    ->get();
+```
+
+---
+
+## 🟠 RACIKAN DETAIL
+
+```php
+$detail = DB::table('detail_obat_racikan as dor')
+    ->join('detail_pemberian_obat as dpo', function ($join) {
+        $join->on('dpo.kode_brng', '=', 'dor.kode_brng')
+             ->on('dpo.tgl_perawatan', '=', 'dor.tgl_perawatan')
+             ->on('dpo.jam', '=', 'dor.jam')
+             ->on('dpo.no_rawat', '=', 'dor.no_rawat');
+    })
+    ->join('databarang as db', 'db.kode_brng', '=', 'dpo.kode_brng')
+    ->where('dor.tgl_perawatan', $item->tgl_perawatan)
+    ->where('dor.jam', $item->jam)
+    ->where('dor.no_rawat', $item->no_rawat)
+    ->where('dor.no_racik', $racik->no_racik)
+    ->get();
+```
+
+---
+
+# 📌 4. INTI LOGIKA (YANG SERING SALAH)
+
+### ❗ NON RACIKAN
+
+* dari `detail_pemberian_obat`
+* kecuali yang masuk `detail_obat_racikan`
+
+---
+
+### ❗ RACIKAN
+
+* dari `obat_racikan`
+* detailnya dari `detail_obat_racikan`
+
+---
+
+### ❗ PENTING
+
+* key utama pengikat:
+
+```
+no_rawat + tgl_perawatan + jam
+```
+
+---
+
+# ⚠️ KESALAHAN UMUM (YANG KAMU SUDAH KENA)
+
+* join racikan di luar loop ❌
+* alias `or` ❌
+* akses array vs object ❌
+* wrapper data salah (`dataCetak`) ❌
+
+---
+
+# 🚀 KESIMPULAN SINGKAT
+
+👉 Sistem ini sebenarnya hanya 3 layer:
+
+1. `resep_obat` (header)
+2. `detail_pemberian_obat` + `obat_racikan`
+3. `detail_obat_racikan`
+
+---
+
+Kalau kamu mau, aku bisa bantu:
+
+🔥 bikin versi **1 query join (super optimized)**
+🔥 atau bikin **Eloquent relationship full model SIMRS**
+🔥 atau bikin **API versi clean (biar frontend gampang)**
+
+tinggal bilang aja 👍
+
+
+https://chatgpt.com/s/t_6a48ff28a4708191b6d2391e265a90ce
+
+$data = DB::table('resep_obat as ro')
+    ->join('reg_periksa as rp', 'rp.no_rawat', '=', 'ro.no_rawat')
+    ->join('pasien as ps', 'ps.no_rkm_medis', '=', 'rp.no_rkm_medis')
+    ->join('dokter as dk', 'dk.kd_dokter', '=', 'ro.kd_dokter')
+
+    // NON RACIKAN
+    ->leftJoin('detail_pemberian_obat as dpo', function ($join) {
+        $join->on('dpo.no_rawat', '=', 'ro.no_rawat')
+             ->on('dpo.tgl_perawatan', '=', 'ro.tgl_perawatan')
+             ->on('dpo.jam', '=', 'ro.jam');
+    })
+
+    ->leftJoin('databarang as db', 'db.kode_brng', '=', 'dpo.kode_brng')
+
+    // ATURAN PAKAI
+    ->leftJoin('aturan_pakai as ap', function ($join) {
+        $join->on('ap.no_rawat', '=', 'dpo.no_rawat')
+             ->on('ap.tgl_perawatan', '=', 'dpo.tgl_perawatan')
+             ->on('ap.jam', '=', 'dpo.jam')
+             ->on('ap.kode_brng', '=', 'dpo.kode_brng');
+    })
+
+    // RACIKAN HEADER
+    ->leftJoin('obat_racikan as orc', function ($join) {
+        $join->on('orc.no_rawat', '=', 'ro.no_rawat')
+             ->on('orc.tgl_perawatan', '=', 'ro.tgl_perawatan')
+             ->on('orc.jam', '=', 'ro.jam');
+    })
+
+    ->leftJoin('metode_racik as mr', 'mr.kd_racik', '=', 'orc.kd_racik')
+
+    // RACIKAN DETAIL
+    ->leftJoin('detail_obat_racikan as dor', function ($join) {
+        $join->on('dor.no_rawat', '=', 'orc.no_rawat')
+             ->on('dor.tgl_perawatan', '=', 'orc.tgl_perawatan')
+             ->on('dor.jam', '=', 'orc.jam')
+             ->on('dor.no_racik', '=', 'orc.no_racik');
+    })
+
+    ->leftJoin('databarang as db2', 'db2.kode_brng', '=', 'dor.kode_brng')
+
+    ->where('ro.no_rawat', $no_rawat)
+
+    ->select([
+        'ro.no_resep',
+        'ro.tgl_perawatan',
+        'ro.jam',
+
+        'ps.no_rkm_medis',
+        'ps.nm_pasien',
+
+        'dk.kd_dokter',
+        'dk.nm_dokter',
+
+        // NON RACIKAN
+        'dpo.kode_brng as obat_kode',
+        'db.nama_brng as obat_nama',
+        'dpo.jml',
+        'dpo.total',
+        'ap.aturan',
+
+        // RACIKAN
+        'orc.no_racik',
+        'orc.nama_racik',
+        'orc.jml_dr',
+        'orc.aturan_pakai as aturan_racik',
+        'mr.nm_racik',
+
+        // DETAIL RACIKAN
+        'db2.nama_brng as racik_obat',
+        'dor.kode_brng as racik_kode'
+    ])
+
+    ->orderBy('ro.tgl_perawatan')
+    ->orderBy('ro.jam')
+
+    ->get();

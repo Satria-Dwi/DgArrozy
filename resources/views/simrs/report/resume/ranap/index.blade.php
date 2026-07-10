@@ -190,41 +190,37 @@
             </tr>
         </table>
 
-        <div style="position:relative; padding:8px 0;">
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <td style="width:30%; vertical-align:top;">
+                    Pemeriksaan Penunjang Radiologi Terpenting
+                </td>
+                <td style="width:2%; vertical-align:top;">:</td>
+                <td style="vertical-align:top; white-space:pre-line;">
+                    {{ $data->penunjang1 }}
+                </td>
+            </tr>
 
-            <div style="position:absolute; left:0; width:30%;">
-                Pemeriksaan Penunjang Radiologi Terpenting
-            </div>
+            @if ($data->penunjang2)
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td style="white-space:pre-line;">
+                        {{ $data->penunjang2 }}
+                    </td>
+                </tr>
+            @endif
 
-            <div style="position:absolute; left:30%; width:2%;">
-                :
-            </div>
-
-            <div style="padding-left:32%; white-space:pre-line;">{{ $data->penunjang1 }}</div>
-
-        </div>
-
-        @if ($data->penunjang2)
-            <div style="page-break-before:always; "></div>
-
-            <div style="padding-left:32%; white-space:pre-line;">
-                {{ $data->penunjang2 }}
-            </div>
-        @endif
-
-        <div style="position:relative; padding:8px 0;">
-
-            <div style="position:absolute; left:0; width:30%;">
-                Tindakan/Operasi Selama Perawatan
-            </div>
-
-            <div style="position:absolute; left:30%; width:2%;">
-                :
-            </div>
-
-            <div style="padding-left:32%; white-space:pre-line;">{{ $data->tindakan1 }}</div>
-
-        </div>
+            <tr>
+                <td style="padding-top:8px; vertical-align:top;">
+                    Tindakan/Operasi Selama Perawatan
+                </td>
+                <td style="padding-top:8px; vertical-align:top;">:</td>
+                <td style="padding-top:8px; white-space:pre-line;">
+                    {{ $data->tindakan1 }}
+                </td>
+            </tr>
+        </table>
 
         @if ($data->tindakan2)
             <div style="page-break-before:always; "></div>
