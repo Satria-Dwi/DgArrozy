@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin\DgarrozySimrs;
 
-use App\Http\Controllers\admin\MainAdminController;
+use App\Http\Controllers\Admin\MainAdminController;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
