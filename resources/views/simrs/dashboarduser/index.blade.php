@@ -436,10 +436,6 @@
             </div>
         </div>
     </div>
-    {{-- <div class="min-h-screen bg-gradient-to-br from-white via-blue-50 to-indigo-50 text-slate-800"> --}}
-    {{-- USER INFO --}}
-
-    {{-- </div> --}}
 @endsection
 @section('scripts')
     <script src="{{ asset('js/dashboard.js') }}"></script>

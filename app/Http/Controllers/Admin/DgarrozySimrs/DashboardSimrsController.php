@@ -623,68 +623,92 @@ class DashboardSimrsController extends Controller
     {
         $mainAdmin = app(MainAdminController::class);
 
+        $pasien        = $mainAdmin->pasienSummary()->getData(true);
+        $manajemen     = $mainAdmin->manajemendata($request)->getData(true);
+        $tempatTidur   = $mainAdmin->tempatTidurPerBangsal()->getData(true);
+        $penyakit      = $mainAdmin->topPenyakitBulanIni()->getData(true);
+        $kunjunganPoli = $mainAdmin->updatepoli()->getData(true);
+
+        // ================= CHART KUNJUNGAN 7 HARI =================
+        $kunjungan = DB::table('reg_periksa')
+            ->select(
+                DB::raw("DATE(tgl_registrasi) as tanggal"),
+                DB::raw("SUM(CASE WHEN kd_pj = 'BPJ' THEN 1 ELSE 0 END) as bpjs"),
+                DB::raw("SUM(CASE WHEN kd_pj <> 'BPJ' THEN 1 ELSE 0 END) as umum"),
+                DB::raw("COUNT(*) as total")
+            )
+            ->whereBetween('tgl_registrasi', [
+                now()->subDays(6)->toDateString(),
+                now()->toDateString()
+            ])
+            ->whereIn('stts', ['Belum', 'Sudah'])
+            ->groupBy(DB::raw("DATE(tgl_registrasi)"))
+            ->orderBy('tanggal')
+            ->get();
+
+        $chartKunjungan = [
+            'tanggal' => [],
+            'bpjs' => [],
+            'umum' => [],
+            'total' => [],
+        ];
+
+        foreach ($kunjungan as $row) {
+            $chartKunjungan['tanggal'][] = Carbon::parse($row->tanggal)->format('d M');
+            $chartKunjungan['bpjs'][] = (int) $row->bpjs;
+            $chartKunjungan['umum'][] = (int) $row->umum;
+            $chartKunjungan['total'][] = (int) $row->total;
+        }
+
         return response()->json([
-            'pasien_summary'  => $mainAdmin->pasienSummary()->getData(true),
 
-            // Kirim object Request ke method manajemendata()
-            'manajemen_data'  => $mainAdmin->manajemendata($request)->getData(true),
+            // summary
+            'summary' => [
+                ...$manajemen['summary'],
+                'pasien' => $pasien['total_pasien']
+            ],
 
-            'tempat_tidur'    => $mainAdmin->tempatTidurPerBangsal()->getData(true),
-            'top_penyakit'    => $mainAdmin->topPenyakitBulanIni()->getData(true),
-            'kunjungan_poli'  => $mainAdmin->updatepoli()->getData(true),
+            // chart kunjungan 7 hari
+            'chart_kunjungan' => $chartKunjungan,
 
-            // Jika method ini masih ada
-            // 'chart_kunjungan' => $this->chartKunjunganPoliHariIni()->getData(true),
+            // chart harian
+            'chart_harian' => $manajemen['summary']['reg_pasien'],
+
+            // poli hari ini
+            'chart_poli_hari_ini' => collect($kunjunganPoli['labels'])
+                ->map(function ($label, $i) use ($kunjunganPoli) {
+                    return [
+                        'nm_poli' => $label,
+                        'total'   => $kunjunganPoli['data'][$i] ?? 0
+                    ];
+                })
+                ->values(),
+
+            // tempat tidur
+            'tempat_tidur_per_bangsal' => $tempatTidur,
+
+            // penyakit
+            'penyakit_bulan_ini' => $penyakit,
+
+            'chart_tahun' => [
+                'labels' => [],
+                'data' => []
+            ],
+
+            'jenis_kelamin' => [
+                'labels' => [],
+                'data' => []
+            ],
+
+            'penjamin' => [
+                'labels' => [],
+                'data' => []
+            ],
+
+            'status_kamar' => [
+                'labels' => [],
+                'data' => []
+            ]
         ]);
     }
-
-    // public function chartKunjunganPoliHariIni()
-    // {
-    //     $today = Carbon::today()->toDateString();
-
-    //     $data = DB::table('reg_periksa as r')
-    //         ->join('poliklinik as p', 'p.kd_poli', '=', 'r.kd_poli')
-    //         ->whereDate('r.tgl_registrasi', $today)
-    //         ->where('p.status', '1') // sesuaikan: '1' / 'AKTIF'
-    //         ->groupBy('r.kd_poli', 'p.nm_poli')
-    //         ->orderBy('p.nm_poli')
-    //         ->select(
-    //             'p.nm_poli',
-    //             DB::raw('COUNT(*) as total')
-    //         )
-    //         ->get();
-
-    //     return response()->json([
-    //         'labels' => $data->pluck('nm_poli'),
-    //         'series' => $data->pluck('total'),
-    //         'tanggal' => $today
-    //     ]);
-    // }
-
-
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'judul' => 'required|string|max:255',
-    //         'deskripsi' => 'required|string',
-    //         'kategori' => 'required|string|max:100',
-    //         'prioritas' => 'required|in:rendah,sedang,tinggi',
-    //     ]);
-
-    //     DB::table('dgarrozy_ticketserm')->insert([
-    //         'user_nik'       => session('simrs_nik'),
-    //         'user_nama'      => session('simrs_nama'),
-    //         'user_departemen' => session('simrs_dept'),
-    //         'kode_ticket'    => 'TKT-' . time(), // auto generate kode unik
-    //         'judul'          => $request->judul,
-    //         'deskripsi'      => $request->deskripsi,
-    //         'kategori'       => $request->kategori,
-    //         'prioritas'      => $request->prioritas,
-    //         'status'         => 'open',
-    //         'created_at'     => now(),
-    //         'updated_at'     => now(),
-    //     ]);
-
-    //     return back()->with('success', 'Tiket berhasil dibuat!');
-    // }
 }

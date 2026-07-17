@@ -202,57 +202,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const isTablet = window.matchMedia("(max-width:1024px)").matches;
     const isMobile = window.matchMedia("(max-width:768px)").matches;
 
-    // // ===== CHART HARIAN =====
-    // if (el("chartHarian")) {
-    //     chartHarian = new Chart(el("chartHarian"), {
-    //         type: "bar",
-    //         data: {
-    //             labels: json.chart_harian.map((d) => d.tgl),
-    //             datasets: [
-    //                 {
-    //                     label: "Jumlah Pasien",
-    //                     data: json.chart_harian.map((d) => d.total),
-    //                     backgroundColor: "#4facfe",
-    //                     borderRadius: 8,
-    //                     maxBarThickness: isMobile ? 18 : 32,
-    //                 },
-    //             ],
-    //         },
-    //         options: { responsive: true, maintainAspectRatio: false },
-    //     });
-    // }
-
-    // // ===== CHART POLI =====
-    // if (el("chartPolihari")) {
-    //     chartPoliHariIni = new Chart(el("chartPolihari"), {
-    //         type: "bar",
-    //         data: {
-    //             labels: json.chart_poli_hari_ini.map((d) => d.nm_poli),
-    //             datasets: [
-    //                 {
-    //                     label: "Pasien Hari Ini",
-    //                     data: json.chart_poli_hari_ini.map((d) => d.total),
-    //                     backgroundColor: "#fb923c",
-    //                     borderRadius: 8,
-    //                 },
-    //             ],
-    //         },
-    //         options: { responsive: true, maintainAspectRatio: false },
-    //     });
-    // }
-
-    // // ===== CHART TAHUN =====
-    // if (el("chartTahunPasien") && json.chart_tahun) {
-    //     chartTahunPasien = new Chart(el("chartTahunPasien"), {
-    //         type: "doughnut",
-    //         data: {
-    //             labels: json.chart_tahun.labels,
-    //             datasets: [{ data: json.chart_tahun.data }],
-    //         },
-    //         options: { responsive: true, maintainAspectRatio: false },
-    //     });
-    // }
-
     // ===== CHART JK =====
     if (document.querySelector("#chartJK")) {
         const options = {
@@ -671,18 +620,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         window.bangsalChart.render();
     }
-
-    // // ===== CHART PENYAKIT =====
-    // if (el("chartPenyakitBulanIni")) {
-    //     chartPenyakitBulanIni = new Chart(el("chartPenyakitBulanIni"), {
-    //         type: "line",
-    //         data: {
-    //             labels: json.penyakit_bulan_ini.labels,
-    //             datasets: [{ data: json.penyakit_bulan_ini.data }],
-    //         },
-    //         options: { responsive: true },
-    //     });
-    // }
 
     realtimeClock();
     setInterval(realtimeClock, 1000);
