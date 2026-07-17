@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin\DgarrozySimrs;
 
+use App\Http\Controllers\admin\MainAdminController;
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
 
 class DashboardSimrsController extends Controller
 {
@@ -616,6 +617,20 @@ class DashboardSimrsController extends Controller
             ->get();
 
         return response()->json($data);
+    }
+
+    public function dashboardData()
+    {
+        $mainAdmin = app(MainAdminController::class);
+
+        return response()->json([
+            'pasien_summary'      => $mainAdmin->pasienSummary()->getData(true),
+            'manajemen_data'      => $mainAdmin->manajemendata()->getData(true),
+            'tempat_tidur'        => $mainAdmin->tempatTidurPerBangsal()->getData(true),
+            'top_penyakit'        => $mainAdmin->topPenyakitBulanIni()->getData(true),
+            'kunjungan_poli'      => $mainAdmin->updatepoli()->getData(true),
+            'chart_kunjungan'     => $this->chartKunjunganPoliHariIni()->getData(true),
+        ]);
     }
 
     // public function chartKunjunganPoliHariIni()
