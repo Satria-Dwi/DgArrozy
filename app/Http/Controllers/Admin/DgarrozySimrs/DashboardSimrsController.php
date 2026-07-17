@@ -662,11 +662,12 @@ class DashboardSimrsController extends Controller
 
         return response()->json([
 
-            // summary
-            'summary' => [
-                ...$manajemen['summary'],
-                'pasien' => $pasien['total_pasien']
-            ],
+            'summary' => array_merge(
+                $manajemen['summary'],
+                [
+                    'pasien' => $pasien['total_pasien']
+                ]
+            ),
 
             // chart kunjungan 7 hari
             'chart_kunjungan' => $chartKunjungan,
