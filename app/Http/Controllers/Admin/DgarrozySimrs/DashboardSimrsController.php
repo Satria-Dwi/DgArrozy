@@ -619,17 +619,22 @@ class DashboardSimrsController extends Controller
         return response()->json($data);
     }
 
-    public function dashboardData()
+    public function dashboardData(Request $request)
     {
         $mainAdmin = app(MainAdminController::class);
 
         return response()->json([
-            'pasien_summary'      => $mainAdmin->pasienSummary()->getData(true),
-            'manajemen_data'      => $mainAdmin->manajemendata()->getData(true),
-            'tempat_tidur'        => $mainAdmin->tempatTidurPerBangsal()->getData(true),
-            'top_penyakit'        => $mainAdmin->topPenyakitBulanIni()->getData(true),
-            'kunjungan_poli'      => $mainAdmin->updatepoli()->getData(true),
-            'chart_kunjungan'     => $this->chartKunjunganPoliHariIni()->getData(true),
+            'pasien_summary'  => $mainAdmin->pasienSummary()->getData(true),
+
+            // Kirim object Request ke method manajemendata()
+            'manajemen_data'  => $mainAdmin->manajemendata($request)->getData(true),
+
+            'tempat_tidur'    => $mainAdmin->tempatTidurPerBangsal()->getData(true),
+            'top_penyakit'    => $mainAdmin->topPenyakitBulanIni()->getData(true),
+            'kunjungan_poli'  => $mainAdmin->updatepoli()->getData(true),
+
+            // Jika method ini masih ada
+            // 'chart_kunjungan' => $this->chartKunjunganPoliHariIni()->getData(true),
         ]);
     }
 
