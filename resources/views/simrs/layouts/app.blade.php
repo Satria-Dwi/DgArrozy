@@ -25,14 +25,6 @@
 
 <body class="bg-white text-gray-800 font-sans">
 
-    {{-- NAVBAR --}}
-    {{-- @include('partials.mainmenu.navbar') --}}
-
-    {{-- CONTENT --}}
-    {{-- <div class="page-wrapper">
-        @yield('content')
-    </div> --}}
-
     <div x-data="{ open: false, collapse: false }" @toggle-sidebar.window="open = !open" class="flex min-h-screen overflow-hidden">
 
         {{-- SIDEBAR --}}
